@@ -1,0 +1,3 @@
+<img src="https://raw.githubusercontent.com/polystat/polystat.github.io/master/logo.svg" height="64px"/>
+
+Work is still in progress...
