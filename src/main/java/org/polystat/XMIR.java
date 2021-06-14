@@ -32,7 +32,9 @@ import java.util.List;
 import org.cactoos.Func;
 import org.cactoos.io.InputOf;
 import org.cactoos.io.OutputTo;
+import org.eolang.parser.Spy;
 import org.eolang.parser.Syntax;
+import org.eolang.parser.Xsline;
 
 /**
  * A collection of all EO files, which are accessible as XMIR elements.
@@ -72,6 +74,11 @@ public final class XMIR implements Func<String, XML> {
                 new InputOf(this.sources.resolve("test.eo")),
                 new OutputTo(xml)
             ).parse();
+            new Xsline(
+                new XMLDocument(xml),
+                new OutputTo(xml),
+                new Spy.Verbose()
+            ).pass();
         }
         XML obj = new XMLDocument(xml).nodes("/program/objects").get(0);
         for (int idx = 1; idx < parts.length; ++idx) {
