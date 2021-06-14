@@ -1,0 +1,8 @@
++package org.polystat
+
+[x y] > f
+  add. > @
+    x
+    div.
+      x y
+
