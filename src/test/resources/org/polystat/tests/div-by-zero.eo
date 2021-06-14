@@ -1,6 +1,6 @@
 +package org.polystat
 
-[x y] > f
+[x y] > foo
   add. > @
     x
     div.

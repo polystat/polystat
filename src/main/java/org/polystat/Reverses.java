@@ -24,57 +24,43 @@
 
 package org.polystat;
 
-import com.jcabi.log.Logger;
-import java.io.PrintStream;
-import java.nio.file.Paths;
+import com.jcabi.xml.XML;
 import java.util.Collection;
+import java.util.LinkedList;
+import org.cactoos.Func;
+import org.cactoos.func.UncheckedFunc;
 
 /**
- * Main entrance.
+ * Finding bugs via reverses.
  *
  * @since 1.0
  */
-public final class Polystat {
+public final class Reverses {
 
     /**
-     * The stream to print to.
+     * The XMIR of the code.
      */
-    private final PrintStream stdout;
+    private final UncheckedFunc<String, XML> xmir;
 
     /**
      * Ctor.
-     * @param out The stream to print to
+     * @param src The XMIR
      */
-    public Polystat(final PrintStream out) {
-        this.stdout = out;
+    public Reverses(final Func<String, XML> src) {
+        this.xmir = new UncheckedFunc<>(src);
     }
 
     /**
-     * Main entrance for Java command line.
-     * @param args The args
-     * @throws Exception If fails
+     * Find all errors.
+     * @return List of errors
      */
-    public static void main(final String... args) throws Exception {
-        new Polystat(System.out).exec(args);
-    }
-
-    /**
-     * Run it.
-     * @param args The args
-     * @throws Exception If fails
-     */
-    public void exec(final String... args) throws Exception {
-        if (args.length == 2) {
-            final Collection<String> errors = new Reverses(
-                new XMIR(Paths.get(args[0]), Paths.get(args[1]))
-            ).errors();
-            Logger.info(this, "%d errors found", errors.size());
-            for (final String error : errors) {
-                this.stdout.println(error);
-            }
-        } else {
-            this.stdout.println("Hello, world!");
+    public Collection<String> errors() {
+        final Collection<String> bugs = new LinkedList<>();
+        final XML obj = this.xmir.apply("\\Phi.foo");
+        if (obj.nodes("o").size() > 2) {
+            bugs.add("Too many attributes in the object");
         }
+        return bugs;
     }
 
 }

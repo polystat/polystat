@@ -23,8 +23,7 @@
  */
 package org.polystat;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import com.jcabi.xml.XML;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,24 +34,15 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test case for {@link Polystat}.
+ * Test case for {@link XMIR}.
  *
  * @since 0.1
+ * @checkstyle AbbreviationAsWordInNameCheck (3 lines)
  */
-public final class PolystatTest {
+public final class XMIRTest {
 
     @Test
-    public void saysHello() throws Exception {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        new Polystat(new PrintStream(out)).exec();
-        MatcherAssert.assertThat(
-            out.toString(),
-            Matchers.equalTo("Hello, world!\n")
-        );
-    }
-
-    @Test
-    public void analyzesOneEolangProgram() throws Exception {
+    public void interpretsOneEolangProgram() throws Exception {
         final Path sources = Files.createTempDirectory("sources");
         Files.write(
             sources.resolve("test.eo"),
@@ -61,14 +51,11 @@ public final class PolystatTest {
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
         final Path temp = Files.createTempDirectory("temp");
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        new Polystat(new PrintStream(out)).exec(
-            sources.toAbsolutePath().toString(),
-            temp.toAbsolutePath().toString()
-        );
+        final XMIR xmir = new XMIR(sources, temp);
+        final XML foo = xmir.apply("\\Phi.foo");
         MatcherAssert.assertThat(
-            out.toString(),
-            Matchers.notNullValue()
+            foo.xpath("@name").get(0),
+            Matchers.equalTo("foo")
         );
     }
 
