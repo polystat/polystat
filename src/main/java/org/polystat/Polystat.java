@@ -67,7 +67,7 @@ public final class Polystat {
         if (args.length == 2) {
             final Collection<String> errors = new Reverses(
                 new XMIR(Paths.get(args[0]), Paths.get(args[1]))
-            ).errors();
+            ).errors("\\Phi.foo");
             Logger.info(this, "%d errors found", errors.size());
             for (final String error : errors) {
                 this.stdout.println(error);

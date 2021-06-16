@@ -24,11 +24,17 @@
 
 package org.polystat;
 
+import com.jcabi.xml.ClasspathSources;
 import com.jcabi.xml.XML;
+import com.jcabi.xml.XSL;
+import com.jcabi.xml.XSLDocument;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.cactoos.Func;
 import org.cactoos.func.UncheckedFunc;
+import org.cactoos.io.ResourceOf;
+import org.cactoos.text.TextOf;
 
 /**
  * Finding bugs via reverses.
@@ -52,11 +58,17 @@ public final class Reverses {
 
     /**
      * Find all errors.
+     * @param locator The locator of the object to analyze
      * @return List of errors
+     * @throws IOException If fails
      */
-    public Collection<String> errors() {
+    public Collection<String> errors(final String locator) throws IOException {
         final Collection<String> bugs = new LinkedList<>();
-        final XML obj = this.xmir.apply("\\Phi.foo");
+        final XML obj = this.xmir.apply(locator);
+        final XSL xsl = new XSLDocument(
+            new TextOf(new ResourceOf("org/polystat/reverses.xsl")).asString()
+        ).with(new ClasspathSources());
+        xsl.with("out", "\\perp").transform(obj);
         if (obj.nodes("o").size() > 2) {
             bugs.add("Too many attributes in the object");
         }
