@@ -7,7 +7,7 @@
       x
       divide y x
   [a b] > divide
-    div.
+    div. > @
       a
       b
 

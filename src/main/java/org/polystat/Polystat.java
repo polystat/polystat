@@ -28,6 +28,7 @@ import com.jcabi.log.Logger;
 import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.util.Collection;
+import org.polystat.far.Reverses;
 
 /**
  * Main entrance.

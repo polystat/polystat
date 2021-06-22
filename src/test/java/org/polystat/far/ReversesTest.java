@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.polystat;
+package org.polystat.far;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -31,6 +31,7 @@ import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.polystat.XMIR;
 
 /**
  * Test case for {@link Reverses}.

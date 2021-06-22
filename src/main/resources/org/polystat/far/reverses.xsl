@@ -40,7 +40,9 @@ SOFTWARE.
       </xsl:variable>
       <xsl:choose>
         <xsl:when test="@base=$attr/@name and @ref=$attr/@line">
-          <xsl:copy-of select="$i"/>
+          <xsl:element name="opts">
+            <xsl:copy-of select="$i"/>
+          </xsl:element>
         </xsl:when>
         <xsl:otherwise>
           <xsl:call-template name="r">

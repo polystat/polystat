@@ -22,24 +22,32 @@
  * SOFTWARE.
  */
 
-package org.polystat;
+package org.polystat.far;
 
+import com.jcabi.log.Logger;
 import com.jcabi.xml.ClasspathSources;
 import com.jcabi.xml.XML;
+import com.jcabi.xml.XMLDocument;
 import com.jcabi.xml.XSL;
 import com.jcabi.xml.XSLDocument;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.cactoos.Func;
 import org.cactoos.func.UncheckedFunc;
+import org.cactoos.io.OutputTo;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.text.TextOf;
+import org.eolang.parser.Spy;
+import org.eolang.parser.Xsline;
 
 /**
  * Finding bugs via reverses.
  *
  * @since 1.0
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class Reverses {
 
@@ -65,14 +73,35 @@ public final class Reverses {
     public Collection<String> errors(final String locator) throws IOException {
         final Collection<String> bugs = new LinkedList<>();
         final XML obj = this.xmir.apply(locator);
-        final XSL xsl = new XSLDocument(
-            new TextOf(new ResourceOf("org/polystat/reverses.xsl")).asString()
-        ).with(new ClasspathSources());
-        xsl.with("out", "\\perp").transform(obj);
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        new Xsline(obj, new OutputTo(baos), new Spy.Verbose())
+            .with(Reverses.xsl("expected.xsl").with("expected", "\\perp"))
+            .with(Reverses.xsl("reverses.xsl"))
+            .pass();
+        final XML out = new XMLDocument(
+            baos.toString(StandardCharsets.UTF_8.name())
+        );
+        Logger.info(this, "OUT: %s", out);
         if (obj.nodes("o").size() > 2) {
             bugs.add("Too many attributes in the object");
         }
         return bugs;
+    }
+
+    /**
+     * Make XSL.
+     * @param name Name of it
+     * @return A new XSL
+     * @throws IOException If fails
+     */
+    private static XSL xsl(final String name) throws IOException {
+        return new XSLDocument(
+            new TextOf(
+                new ResourceOf(
+                    String.format("org/polystat/far/%s", name)
+                )
+            ).asString()
+        ).with(new ClasspathSources());
     }
 
 }

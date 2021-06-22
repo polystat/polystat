@@ -36,7 +36,7 @@ SOFTWARE.
   <name>polystat</name>
   <description>Polyglot Static Analyzer</description>
   <properties>
-    <eolang.version>0.1.26</eolang.version>
+    <eolang.version>0.1.27</eolang.version>
   </properties>
   <dependencies>
     <dependency>
