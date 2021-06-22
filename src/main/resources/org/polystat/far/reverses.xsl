@@ -56,7 +56,7 @@ SOFTWARE.
       </xsl:choose>
     </xsl:for-each>
   </xsl:template>
-  <xsl:template match="o[not(@base) and not(o) and parent::o[o[@name='@']]]">
+  <xsl:template match="o[not(@base) and not(o) and parent::o[o[@name='@']] and not(parent::o/parent::o)]">
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
       <xsl:call-template name="r">

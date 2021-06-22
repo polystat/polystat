@@ -3,11 +3,7 @@
 [x y] > foo
   add. > @
     x
-    divide
+    div.
       x
-      divide y x
-  [a b] > divide
-    div. > @
-      a
-      b
+      div. y x
 

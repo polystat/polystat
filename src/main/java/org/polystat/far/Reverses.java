@@ -24,7 +24,6 @@
 
 package org.polystat.far;
 
-import com.jcabi.log.Logger;
 import com.jcabi.xml.ClasspathSources;
 import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
@@ -39,6 +38,7 @@ import org.cactoos.Func;
 import org.cactoos.func.UncheckedFunc;
 import org.cactoos.io.OutputTo;
 import org.cactoos.io.ResourceOf;
+import org.cactoos.list.ListOf;
 import org.cactoos.text.TextOf;
 import org.eolang.parser.Spy;
 import org.eolang.parser.Xsline;
@@ -74,16 +74,19 @@ public final class Reverses {
         final Collection<String> bugs = new LinkedList<>();
         final XML obj = this.xmir.apply(locator);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        new Xsline(obj, new OutputTo(baos), new Spy.Verbose())
+        new Xsline(obj, new OutputTo(baos), new Spy.Verbose(), new ListOf<>())
             .with(Reverses.xsl("expected.xsl").with("expected", "\\perp"))
             .with(Reverses.xsl("reverses.xsl"))
+            .with(
+                Reverses.xsl("calculate.xsl"),
+                xml -> !xml.nodes("//r").isEmpty()
+            )
             .pass();
         final XML out = new XMLDocument(
             baos.toString(StandardCharsets.UTF_8.name())
         );
-        Logger.info(this, "OUT: %s", out);
-        if (obj.nodes("o").size() > 2) {
-            bugs.add("Too many attributes in the object");
+        if (out.nodes("//opt").size() > 2) {
+            bugs.add("There are some possible errors");
         }
         return bugs;
     }
