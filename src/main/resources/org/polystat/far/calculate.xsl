@@ -24,6 +24,7 @@ SOFTWARE.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ps="https://www.polystat.org" xmlns:xs="http://www.w3.org/2001/XMLSchema" id="calculate" version="2.0">
   <xsl:strip-space elements="*"/>
+  <xsl:import href="calc-function.xsl"/>
   <xsl:function name="ps:tau">
     <xsl:param name="idx" as="xs:integer"/>
     <xsl:param name="v" as="xs:integer"/>
@@ -33,89 +34,6 @@ SOFTWARE.
     <xsl:text>=</xsl:text>
     <xsl:value-of select="$v"/>
     <xsl:text>}</xsl:text>
-  </xsl:function>
-  <xsl:function name="ps:calc">
-    <xsl:param name="func" as="xs:string"/>
-    <xsl:param name="pos" as="xs:integer"/>
-    <xsl:param name="y" as="xs:string"/>
-    <xsl:choose>
-      <xsl:when test="$y = 'ANY'">
-        <v>ANY</v>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:choose>
-          <xsl:when test="$func = '.add'">
-            <xsl:choose>
-              <xsl:when test="$pos = 1">
-                <xsl:choose>
-                  <xsl:when test="$y = '\perp'">
-                    <v>\perp</v>
-                    <v>ANY</v>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <v>0</v>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:when>
-              <xsl:when test="$pos = 2">
-                <xsl:choose>
-                  <xsl:when test="$y = '\perp'">
-                    <v>ANY</v>
-                    <v>\perp</v>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="$y"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:message terminate="yes">
-                  <xsl:text>The position '</xsl:text>
-                  <xsl:value-of select="$pos"/>
-                  <xsl:text>' is not valid for ADD</xsl:text>
-                </xsl:message>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:when test="$func = '.div'">
-            <xsl:choose>
-              <xsl:when test="$pos = 1">
-                <xsl:choose>
-                  <xsl:when test="$y = '\perp'">
-                    <v>ANY</v>
-                    <v>\perp</v>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="$y"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:when>
-              <xsl:when test="$pos = 2">
-                <xsl:choose>
-                  <xsl:when test="$y = '\perp'">
-                    <v>0</v>
-                    <v>ANY</v>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <v>1</v>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:message terminate="yes">
-                  <xsl:text>The position '</xsl:text>
-                  <xsl:value-of select="$pos"/>
-                  <xsl:text>' is not valid for DIV</xsl:text>
-                </xsl:message>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:otherwise>
-            <v>NONE</v>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:otherwise>
-    </xsl:choose>
   </xsl:function>
   <xsl:template name="print">
     <xsl:param name="f"/>

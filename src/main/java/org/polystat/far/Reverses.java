@@ -34,12 +34,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedList;
+import javax.xml.transform.stream.StreamSource;
 import org.cactoos.Func;
 import org.cactoos.func.UncheckedFunc;
+import org.cactoos.io.InputStreamOf;
 import org.cactoos.io.OutputTo;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.list.ListOf;
 import org.cactoos.text.TextOf;
+import org.cactoos.text.UncheckedText;
 import org.eolang.parser.Spy;
 import org.eolang.parser.Xsline;
 
@@ -78,7 +81,21 @@ public final class Reverses {
             .with(Reverses.xsl("expected.xsl").with("expected", "\\perp"))
             .with(Reverses.xsl("reverses.xsl"))
             .with(
-                Reverses.xsl("calculate.xsl"),
+                Reverses.xsl("calculate.xsl").with(
+                    (href, base) -> new StreamSource(
+                        new InputStreamOf(
+                            new Calc(
+                                new UncheckedText(
+                                    new TextOf(
+                                        new ResourceOf(
+                                            "org/polystat/far/rules.txt"
+                                        )
+                                    )
+                                ).asString().trim()
+                            ).xsl().toString()
+                        )
+                    )
+                ),
                 xml -> !xml.nodes("//r").isEmpty()
             )
             .with(Reverses.xsl("remove-input-perps.xsl"))

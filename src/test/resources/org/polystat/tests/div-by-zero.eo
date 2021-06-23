@@ -1,9 +1,9 @@
 +package org.polystat
 
-[x y] > foo
+[a b] > foo
   add. > @
-    div. x y
+    div. a b
     div.
-      x
-      div. y x
+      a
+      div. b a
 
