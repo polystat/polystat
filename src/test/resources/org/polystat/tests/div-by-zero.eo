@@ -2,7 +2,7 @@
 
 [x y] > foo
   add. > @
-    x
+    div. x y
     div.
       x
       div. y x
