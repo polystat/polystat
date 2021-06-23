@@ -24,26 +24,8 @@ SOFTWARE.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="remove-input-perps" version="2.0">
   <xsl:strip-space elements="*"/>
-  <xsl:template match="opt">
-    <xsl:variable name="o" select="."/>
-    <xsl:variable name="parent" select="parent::opts/parent::o/parent::o"/>
-    <xsl:variable name="taus">
-      <xsl:for-each select="$parent/o/opts/opt[@x='\perp']">
-        <xsl:for-each select="tokenize(text(), ' ')">
-          <xsl:if test="contains($o/text(), .)">
-            <found>
-              <xsl:attribute name="token" select="."/>
-              <xsl:attribute name="text" select="$o/text()"/>
-            </found>
-          </xsl:if>
-        </xsl:for-each>
-      </xsl:for-each>
-    </xsl:variable>
-    <xsl:if test="count($taus/found) = 0">
-      <xsl:copy>
-        <xsl:apply-templates select="node()|@*"/>
-      </xsl:copy>
-    </xsl:if>
+  <xsl:template match="opt[@x = '\perp']">
+    <!-- just delete it -->
   </xsl:template>
   <xsl:template match="node()|@*">
     <xsl:copy>
