@@ -24,6 +24,16 @@ SOFTWARE.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ps="https://www.polystat.org" xmlns:xs="http://www.w3.org/2001/XMLSchema" id="calculate" version="2.0">
   <xsl:strip-space elements="*"/>
+  <xsl:function name="ps:tau">
+    <xsl:param name="idx" as="xs:integer"/>
+    <xsl:param name="v" as="xs:integer"/>
+    <xsl:text>{</xsl:text>
+    <xsl:text>&#x1D70F;</xsl:text>
+    <xsl:value-of select="$idx"/>
+    <xsl:text>=</xsl:text>
+    <xsl:value-of select="$v"/>
+    <xsl:text>}</xsl:text>
+  </xsl:function>
   <xsl:function name="ps:calc">
     <xsl:param name="func" as="xs:string"/>
     <xsl:param name="pos" as="xs:integer"/>
@@ -128,12 +138,7 @@ SOFTWARE.
         <xsl:with-param name="y" select="$y"/>
         <xsl:with-param name="x" select="."/>
         <xsl:with-param name="pos" select="$r/@pos"/>
-        <xsl:with-param name="tau">
-          <xsl:text>&#x1D70F;</xsl:text>
-          <xsl:value-of select="$r/@tau"/>
-          <xsl:text>=</xsl:text>
-          <xsl:value-of select="position()"/>
-        </xsl:with-param>
+        <xsl:with-param name="tau" select="ps:tau($r/@tau, position())"/>
       </xsl:call-template>
     </xsl:for-each>
   </xsl:template>
@@ -152,10 +157,7 @@ SOFTWARE.
           <xsl:with-param name="x" select="."/>
           <xsl:with-param name="pos" select="$r/@pos"/>
           <xsl:with-param name="tau">
-            <xsl:text>&#x1D70F;</xsl:text>
-            <xsl:value-of select="$r/@tau"/>
-            <xsl:text>=</xsl:text>
-            <xsl:value-of select="position()"/>
+            <xsl:value-of select="ps:tau($r/@tau, position())"/>
             <xsl:text> </xsl:text>
             <xsl:value-of select="$opt/text()"/>
           </xsl:with-param>

@@ -81,6 +81,7 @@ public final class Reverses {
                 Reverses.xsl("calculate.xsl"),
                 xml -> !xml.nodes("//r").isEmpty()
             )
+            .with(Reverses.xsl("remove-input-perps.xsl"))
             .pass();
         final XML out = new XMLDocument(
             baos.toString(StandardCharsets.UTF_8.name())
