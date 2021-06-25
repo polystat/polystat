@@ -99,6 +99,7 @@ public final class Reverses {
                 xml -> !xml.nodes("//r").isEmpty()
             )
             .with(Reverses.xsl("remove-input-perps.xsl"))
+            .with(Reverses.xsl("taus-to-tree.xsl"))
             .pass();
         final XML out = new XMLDocument(
             baos.toString(StandardCharsets.UTF_8.name())
