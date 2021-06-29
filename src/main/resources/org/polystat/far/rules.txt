@@ -1,4 +1,4 @@
-.add(\perp) -> {{ANY \perp} {\perp ANY}}
+.add(\perp) -> {{\any \perp} {\perp \any}}
 .add(y) -> {{0 y}}
-.div(\perp) -> {{ANY \perp} {\perp ANY} {ANY 0}}
+.div(\perp) -> {{\any \perp} {\perp \any} {\any 0}}
 .div(y) -> {{y 1}}

@@ -2,8 +2,12 @@
 
 [a b] > foo
   add. > @
-    div. a b
     div.
       a
-      div. b a
+      b
+    div.
+      div.
+        b
+        a
+      a
 

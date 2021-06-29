@@ -23,6 +23,11 @@
  */
 package org.polystat.far;
 
+import com.jcabi.log.Logger;
+import com.jcabi.xml.XSL;
+import org.cactoos.io.ResourceOf;
+import org.cactoos.text.TextOf;
+import org.cactoos.text.UncheckedText;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -35,8 +40,29 @@ import org.junit.jupiter.api.Test;
 public final class CalcTest {
 
     @Test
-    public void buildsRulesXsl() {
+    public void buildsSimpleRulesXsl() {
         final Calc rules = new Calc("add(y) -> {{y 0}}");
+        final XSL xsl = rules.xsl();
+        Logger.debug(this, "calc.xsl:%n%s", xsl.toString());
+        MatcherAssert.assertThat(
+            rules.xsl(),
+            Matchers.notNullValue()
+        );
+    }
+
+    @Test
+    public void buildsRealRulesXsl() {
+        final Calc rules = new Calc(
+            new UncheckedText(
+                new TextOf(
+                    new ResourceOf(
+                        "org/polystat/far/rules.txt"
+                    )
+                )
+            ).asString().trim()
+        );
+        final XSL xsl = rules.xsl();
+        Logger.debug(this, "calc.xsl:%n%s", xsl.toString());
         MatcherAssert.assertThat(
             rules.xsl(),
             Matchers.notNullValue()

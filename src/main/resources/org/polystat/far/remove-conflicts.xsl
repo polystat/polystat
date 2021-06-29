@@ -59,7 +59,7 @@ SOFTWARE.
     <xsl:variable name="o" select="."/>
     <xsl:variable name="conflicts">
       <xsl:for-each select="parent::opts/parent::o/opts[generate-id() != generate-id(current()/parent::opts)]">
-        <xsl:variable name="opts" select="./opt[$o/@x=@x]"/>
+        <xsl:variable name="opts" select="./opt[$o/@x=@x or @x='\any' or $o/@x='\any']"/>
         <xsl:variable name="cs" select="ps:conflicts($o, $opts)"/>
         <xsl:if test="count($cs) = count($opts)">
           <xsl:element name="v">

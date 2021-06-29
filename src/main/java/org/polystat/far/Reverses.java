@@ -96,7 +96,7 @@ public final class Reverses {
                         )
                     )
                 ),
-                xml -> !xml.nodes("//r").isEmpty()
+                (before, after) -> !after.nodes("//r").isEmpty()
             )
             .with(Reverses.xsl("remove-input-perps.xsl"))
             .with(Reverses.xsl("remove-outsiders.xsl"))

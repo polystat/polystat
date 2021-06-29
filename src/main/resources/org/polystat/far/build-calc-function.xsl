@@ -138,10 +138,22 @@ SOFTWARE.
           </xsl:element>
         </xsl:element>
         <xsl:element name="xsl:choose">
-          <xsl:apply-templates select="rule"/>
-          <xsl:element name="xsl:otherwise">
+          <xsl:element name="xsl:when">
+            <xsl:attribute name="test">
+              <xsl:text>$y = '\any'</xsl:text>
+            </xsl:attribute>
             <xsl:element name="v">
-              <xsl:text>NONE</xsl:text>
+              <xsl:text>\any</xsl:text>
+            </xsl:element>
+          </xsl:element>
+          <xsl:element name="xsl:otherwise">
+            <xsl:element name="xsl:choose">
+              <xsl:apply-templates select="rule"/>
+              <xsl:element name="xsl:otherwise">
+                <xsl:element name="v">
+                  <xsl:text>NONE</xsl:text>
+                </xsl:element>
+              </xsl:element>
             </xsl:element>
           </xsl:element>
         </xsl:element>
