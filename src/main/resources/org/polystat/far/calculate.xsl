@@ -26,7 +26,7 @@ SOFTWARE.
   <xsl:strip-space elements="*"/>
   <xsl:import href="calc-function.xsl"/>
   <xsl:function name="ps:tau">
-    <xsl:param name="idx" as="xs:integer"/>
+    <xsl:param name="idx" as="xs:string"/>
     <xsl:param name="v" as="xs:integer"/>
     <xsl:text>{</xsl:text>
     <xsl:text>&#x1D70F;</xsl:text>
@@ -65,7 +65,7 @@ SOFTWARE.
         <xsl:with-param name="y" select="$y"/>
         <xsl:with-param name="x" select="."/>
         <xsl:with-param name="pos" select="$r/@pos"/>
-        <xsl:with-param name="tau" select="ps:tau($r/@tau, position())"/>
+        <xsl:with-param name="tau" select="ps:tau(concat($r/@tau, ':', last()), position())"/>
       </xsl:call-template>
     </xsl:for-each>
   </xsl:template>
@@ -84,7 +84,7 @@ SOFTWARE.
           <xsl:with-param name="x" select="."/>
           <xsl:with-param name="pos" select="$r/@pos"/>
           <xsl:with-param name="tau">
-            <xsl:value-of select="ps:tau($r/@tau, position())"/>
+            <xsl:value-of select="ps:tau(concat($r/@tau, ':', last()), position())"/>
             <xsl:text> </xsl:text>
             <xsl:value-of select="$opt/text()"/>
           </xsl:with-param>
