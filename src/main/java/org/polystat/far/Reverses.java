@@ -101,7 +101,10 @@ public final class Reverses {
             .with(Reverses.xsl("remove-input-perps.xsl"))
             .with(Reverses.xsl("remove-outsiders.xsl"))
             .with(Reverses.xsl("taus-to-tree.xsl"))
-            .with(Reverses.xsl("remove-conflicts.xsl"))
+            .with(
+                Reverses.xsl("remove-conflicts.xsl"),
+                (before, after) -> !before.toString().equals(after.toString())
+            )
             .pass();
         final XML out = new XMLDocument(
             baos.toString(StandardCharsets.UTF_8.name())

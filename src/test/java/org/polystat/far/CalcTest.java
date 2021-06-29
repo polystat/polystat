@@ -62,7 +62,7 @@ public final class CalcTest {
             ).asString().trim()
         );
         final XSL xsl = rules.xsl();
-        Logger.debug(this, "calc.xsl:%n%s", xsl.toString());
+        Logger.debug(this, "big-calc.xsl:%n%s", xsl.toString());
         MatcherAssert.assertThat(
             rules.xsl(),
             Matchers.notNullValue()
