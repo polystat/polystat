@@ -105,6 +105,7 @@ public final class Reverses {
                 Reverses.xsl("remove-conflicts.xsl"),
                 (before, after) -> !before.toString().equals(after.toString())
             )
+            .with(Reverses.xsl("opts-to-boolean-expressions.xsl"))
             .pass();
         final XML out = new XMLDocument(
             baos.toString(StandardCharsets.UTF_8.name())
