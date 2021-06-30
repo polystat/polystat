@@ -39,7 +39,7 @@ SOFTWARE.
               <xsl:text> and </xsl:text>
             </xsl:if>
             <xsl:text>(</xsl:text>
-            <xsl:for-each select="opt">
+            <xsl:for-each select="opt[@x=$x or @x='\any']">
               <xsl:if test="position() &gt; 1">
                 <xsl:text> or </xsl:text>
               </xsl:if>
