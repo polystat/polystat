@@ -54,7 +54,10 @@ public final class ReversesTest {
         final Path temp = Files.createTempDirectory("temp");
         final Reverses reverses = new Reverses(new XMIR(sources, temp));
         final Collection<String> bugs = reverses.errors("\\Phi.foo");
-        MatcherAssert.assertThat(bugs, Matchers.not(Matchers.emptyIterable()));
+        MatcherAssert.assertThat(
+            bugs,
+            Matchers.iterableWithSize(Matchers.not(Matchers.greaterThan(3)))
+        );
         Logger.debug(this, "Bugs found: %s", bugs);
     }
 

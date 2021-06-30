@@ -34,7 +34,6 @@ SOFTWARE.
         <xsl:element name="r">
           <xsl:attribute name="f" select="$o/@base"/>
           <xsl:attribute name="pos" select="position()"/>
-          <xsl:attribute name="tau" select="$o/@line"/>
           <xsl:copy-of select="$result"/>
         </xsl:element>
       </xsl:variable>

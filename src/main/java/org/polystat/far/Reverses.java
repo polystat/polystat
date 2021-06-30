@@ -84,6 +84,7 @@ public final class Reverses {
         new Xsline(obj, new OutputTo(baos), new Spy.Verbose(), new ListOf<>())
             .with(Reverses.xsl("expected.xsl").with("expected", "\\perp"))
             .with(Reverses.xsl("reverses.xsl"))
+            .with(Reverses.xsl("inject-tau-numbers.xsl"))
             .with(
                 Reverses.xsl("calculate.xsl").with(
                     (href, base) -> new StreamSource(

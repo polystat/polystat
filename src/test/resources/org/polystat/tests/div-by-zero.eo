@@ -2,12 +2,7 @@
 
 [a b] > foo
   add. > @
+    div. a b
     div.
+      div. b a
       a
-      b
-    div.
-      div.
-        b
-        a
-      a
-
