@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import javax.xml.transform.stream.StreamSource;
 import org.cactoos.Func;
 import org.cactoos.func.UncheckedFunc;
@@ -41,10 +42,13 @@ import org.cactoos.io.InputStreamOf;
 import org.cactoos.io.OutputTo;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.list.ListOf;
+import org.cactoos.list.Mapped;
 import org.cactoos.text.TextOf;
 import org.cactoos.text.UncheckedText;
 import org.eolang.parser.Spy;
 import org.eolang.parser.Xsline;
+import org.xembly.Directives;
+import org.xembly.Xembler;
 
 /**
  * Finding bugs via reverses.
@@ -108,11 +112,39 @@ public final class Reverses {
             .with(Reverses.xsl("opts-to-boolean-expressions.xsl"))
             .with(Reverses.xsl("expressions-to-inputs.xsl"))
             .pass();
-        final XML out = new XMLDocument(
+        XML out = new XMLDocument(
             baos.toString(StandardCharsets.UTF_8.name())
         );
-        if (out.nodes("//opt").size() > 2) {
-            bugs.add("There are some possible errors");
+        final Directives dirs = new Directives();
+        final List<XML> inputs = out.nodes("/o/input");
+        for (int idx = 0; idx < inputs.size(); ++idx) {
+            final String found = new Expr(
+                inputs.get(idx).xpath("expr/text()").get(0)
+            ).find();
+            dirs.xpath(String.format("/o/input[%d]", idx + 1));
+            if (found.isEmpty()) {
+                dirs.remove();
+            } else {
+                dirs.attr("found", found);
+            }
+        }
+        out = new XMLDocument(new Xembler(dirs).applyQuietly(out.node()));
+        for (final XML bug : out.nodes("/o/input[@found]")) {
+            bugs.add(
+                String.format(
+                    "\\perp at {%s}",
+                    String.join(
+                        ", ",
+                        new Mapped<>(
+                            attr -> String.format(
+                                "%s=%s", attr.xpath("@attr").get(0),
+                                attr.xpath("@x").get(0)
+                            ),
+                            bug.nodes("a")
+                        )
+                    )
+                )
+            );
         }
         return bugs;
     }

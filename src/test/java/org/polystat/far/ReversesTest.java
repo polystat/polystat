@@ -23,9 +23,11 @@
  */
 package org.polystat.far;
 
+import com.jcabi.log.Logger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
@@ -51,10 +53,9 @@ public final class ReversesTest {
         );
         final Path temp = Files.createTempDirectory("temp");
         final Reverses reverses = new Reverses(new XMIR(sources, temp));
-        MatcherAssert.assertThat(
-            reverses.errors("\\Phi.foo"),
-            Matchers.not(Matchers.emptyIterable())
-        );
+        final Collection<String> bugs = reverses.errors("\\Phi.foo");
+        MatcherAssert.assertThat(bugs, Matchers.not(Matchers.emptyIterable()));
+        Logger.debug(this, "Bugs found: %s", bugs);
     }
 
 }

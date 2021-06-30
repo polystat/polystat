@@ -42,7 +42,7 @@ public final class Expr {
     /**
      * The expression.
      */
-    private final String expr;
+    private final String exp;
 
     /**
      * Already defined taus.
@@ -64,7 +64,7 @@ public final class Expr {
      */
     public Expr(final Map<String, String> map, final String bexpr) {
         this.already = Collections.unmodifiableMap(map);
-        this.expr = bexpr;
+        this.exp = bexpr;
     }
 
     /**
@@ -72,23 +72,9 @@ public final class Expr {
      * @return TRUE if yes
      */
     public String find() {
-        final String[] ands = this.expr.split(" and ", 2);
-        final String[] ors = ands[0].substring(1, ands[0].length() - 1)
-            .split(" or ");
-        final Collection<Map<String, String>> parts =
-            new ArrayList<>(ors.length);
-        for (final String item : ors) {
-            final String[] taus = item.substring(1, item.length() - 1)
-                .split(" & ");
-            final Map<String, String> opts = new HashMap<>(taus.length);
-            for (final String tau : taus) {
-                final String[] eqs = tau.split("=");
-                opts.put(eqs[0], eqs[1]);
-            }
-            parts.add(opts);
-        }
+        final String[] ands = this.exp.split(" and ", 2);
         String result = "";
-        for (final Map<String, String> map : parts) {
+        for (final Map<String, String> map : Expr.parse(ands[0])) {
             if (!this.matches(map)) {
                 continue;
             }
@@ -105,6 +91,29 @@ public final class Expr {
             }
         }
         return result;
+    }
+
+    /**
+     * Parse it.
+     * @param txt The expression part
+     * @return List of ORs
+     */
+    private static Collection<Map<String, String>> parse(final String txt) {
+        final String[] ors = txt.substring(1, txt.length() - 1)
+            .split(" or ");
+        final Collection<Map<String, String>> parts =
+            new ArrayList<>(ors.length);
+        for (final String item : ors) {
+            final String[] taus = item.substring(1, item.length() - 1)
+                .split(" & ");
+            final Map<String, String> opts = new HashMap<>(taus.length);
+            for (final String tau : taus) {
+                final String[] eqs = tau.split("=");
+                opts.put(eqs[0], eqs[1]);
+            }
+            parts.add(opts);
+        }
+        return parts;
     }
 
     /**
@@ -128,8 +137,8 @@ public final class Expr {
     private boolean matches(final Map<String, String> map) {
         boolean matches = true;
         for (final Map.Entry<String, String> ent : this.already.entrySet()) {
-            if (map.containsKey(ent.getKey()) &&
-                !map.get(ent.getKey()).equals(ent.getValue())) {
+            if (map.containsKey(ent.getKey())
+                && !map.get(ent.getKey()).equals(ent.getValue())) {
                 matches = false;
                 break;
             }
