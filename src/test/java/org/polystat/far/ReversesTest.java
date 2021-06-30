@@ -56,6 +56,7 @@ public final class ReversesTest {
         final Collection<String> bugs = reverses.errors("\\Phi.foo");
         MatcherAssert.assertThat(
             bugs,
+            // @checkstyle MagicNumber (1 line)
             Matchers.iterableWithSize(Matchers.not(Matchers.greaterThan(3)))
         );
         Logger.debug(this, "Bugs found: %s", bugs);

@@ -24,6 +24,7 @@
 
 package org.polystat.far;
 
+import com.jcabi.log.Logger;
 import com.jcabi.xml.ClasspathSources;
 import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
@@ -123,13 +124,14 @@ public final class Reverses {
                 inputs.get(idx).xpath("expr/text()").get(0)
             ).find();
             dirs.xpath(String.format("/o/input[%d]", idx + 1));
-            if (found.isEmpty()) {
-                dirs.remove();
-            } else {
-                dirs.attr("found", found);
-            }
+            dirs.attr("found", found);
         }
-        out = new XMLDocument(new Xembler(dirs).applyQuietly(out.node()));
+        out = Reverses.xsl("remove-all-any.xsl").transform(
+            Reverses.xsl("remove-false-inputs.xsl").transform(
+                new XMLDocument(new Xembler(dirs).applyQuietly(out.node()))
+            )
+        );
+        Logger.debug(this, "XML output:%n%s", out);
         for (final XML bug : out.nodes("/o/input[@found]")) {
             bugs.add(
                 String.format(
