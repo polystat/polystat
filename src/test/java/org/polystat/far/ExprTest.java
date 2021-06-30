@@ -37,11 +37,11 @@ public final class ExprTest {
     @Test
     public void solvesSimpleExpression() {
         final Expr expr = new Expr(
-            "((a=1 & b=2) or (b=3)) and ((a=1) or (b=2))"
+            "((a=1 & b=2) or (b=3)) and ((a=7) or (b=2 & d=7))"
         );
         MatcherAssert.assertThat(
             expr.find(),
-            Matchers.equalTo("b=3 > a=1 b=3")
+            Matchers.equalTo("a=1 b=2 > a=1 b=2 d=7")
         );
     }
 

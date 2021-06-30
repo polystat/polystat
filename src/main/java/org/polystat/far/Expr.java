@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -112,14 +113,11 @@ public final class Expr {
      * @return String
      */
     private static String print(final Map<String, String> map) {
-        final StringBuilder out = new StringBuilder();
+        final Collection<String> eqs = new HashSet<>(map.size());
         for (final Map.Entry<String, String> ent : map.entrySet()) {
-            out.append(ent.getKey())
-                .append('=')
-                .append(ent.getValue())
-                .append(' ');
+            eqs.add(String.format("%s=%s", ent.getKey(), ent.getValue()));
         }
-        return out.toString().trim();
+        return String.join(" ", eqs);
     }
 
     /**
@@ -131,7 +129,7 @@ public final class Expr {
         boolean matches = true;
         for (final Map.Entry<String, String> ent : this.already.entrySet()) {
             if (map.containsKey(ent.getKey()) &&
-                map.get(ent.getKey()) != ent.getValue()) {
+                !map.get(ent.getKey()).equals(ent.getValue())) {
                 matches = false;
                 break;
             }
