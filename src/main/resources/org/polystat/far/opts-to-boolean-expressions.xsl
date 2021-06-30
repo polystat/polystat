@@ -46,7 +46,7 @@ SOFTWARE.
               <xsl:text>(</xsl:text>
               <xsl:for-each select="tau">
                 <xsl:if test="position() &gt; 1">
-                  <xsl:text> and </xsl:text>
+                  <xsl:text> &amp; </xsl:text>
                 </xsl:if>
                 <xsl:text>&#x1D70F;</xsl:text>
                 <xsl:variable name="parts" select="tokenize(@i, ':')"/>
