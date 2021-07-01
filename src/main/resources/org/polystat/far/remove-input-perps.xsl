@@ -24,7 +24,7 @@ SOFTWARE.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="remove-input-perps" version="2.0">
   <xsl:strip-space elements="*"/>
-  <xsl:template match="opt[@x = '\perp']">
+  <xsl:template match="input[a[@x = '\perp']]">
     <!-- just delete it -->
   </xsl:template>
   <xsl:template match="node()|@*">

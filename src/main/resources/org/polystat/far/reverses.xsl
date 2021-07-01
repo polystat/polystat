@@ -24,7 +24,6 @@ SOFTWARE.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="reverses" version="2.0">
   <xsl:strip-space elements="*"/>
-  <xsl:param name="out"/>
   <xsl:template name="r">
     <xsl:param name="result" select="''"/>
     <xsl:param name="o" as="node()"/>
@@ -34,11 +33,19 @@ SOFTWARE.
         <xsl:element name="r">
           <xsl:attribute name="f" select="$o/@base"/>
           <xsl:attribute name="pos" select="position()"/>
+          <xsl:attribute name="tau">
+            <xsl:value-of select="count($o/preceding::*) + count($o/ancestor::*)"/>
+          </xsl:attribute>
           <xsl:copy-of select="$result"/>
         </xsl:element>
       </xsl:variable>
       <xsl:choose>
         <xsl:when test="@base=$attr/@name and @ref=$attr/@line">
+          <xsl:element name="opts">
+            <xsl:copy-of select="$i"/>
+          </xsl:element>
+        </xsl:when>
+        <xsl:when test="text()=$attr/@data">
           <xsl:element name="opts">
             <xsl:copy-of select="$i"/>
           </xsl:element>

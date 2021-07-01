@@ -43,10 +43,10 @@ import org.polystat.XMIR;
 public final class ReversesTest {
 
     @Test
-    public void findsReversesInSimpleXml() throws Exception {
+    public void findsBugsInSimpleXml() throws Exception {
         final Path sources = Files.createTempDirectory("sources");
         Files.write(
-            sources.resolve("test.eo"),
+            sources.resolve("foo.eo"),
             new TextOf(
                 new ResourceOf("org/polystat/tests/div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
@@ -60,6 +60,21 @@ public final class ReversesTest {
             Matchers.iterableWithSize(Matchers.not(Matchers.greaterThan(3)))
         );
         Logger.debug(this, "Bugs found: %s", bugs);
+    }
+
+    @Test
+    public void findsNoBugsInSimpleXml() throws Exception {
+        final Path sources = Files.createTempDirectory("sources2");
+        Files.write(
+            sources.resolve("bar.eo"),
+            new TextOf(
+                new ResourceOf("org/polystat/tests/no-div-by-zero.eo")
+            ).asString().getBytes(StandardCharsets.UTF_8)
+        );
+        final Path temp = Files.createTempDirectory("temp2");
+        final Reverses reverses = new Reverses(new XMIR(sources, temp));
+        final Collection<String> bugs = reverses.errors("\\Phi.bar");
+        MatcherAssert.assertThat(bugs, Matchers.emptyIterable());
     }
 
 }

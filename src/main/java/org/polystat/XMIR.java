@@ -67,11 +67,12 @@ public final class XMIR implements Func<String, XML> {
     @Override
     public XML apply(final String locator) throws Exception {
         final String[] parts = locator.split("\\.");
-        final Path xml = this.temp.resolve("test.xml");
+        final String name = parts[1];
+        final Path xml = this.temp.resolve(String.format("%s.xml", name));
         if (!Files.exists(xml)) {
             new Syntax(
-                "test",
-                new InputOf(this.sources.resolve("test.eo")),
+                name,
+                new InputOf(this.sources.resolve(String.format("%s.eo", name))),
                 new OutputTo(xml)
             ).parse();
             new Xsline(

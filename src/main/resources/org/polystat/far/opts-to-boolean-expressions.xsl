@@ -34,19 +34,19 @@ SOFTWARE.
           <xsl:attribute name="x">
             <xsl:value-of select="$x"/>
           </xsl:attribute>
-          <xsl:for-each select="$o/opts">
+          <xsl:for-each select="$o/opts[opt[@x=$x or @x='\any']]">
             <xsl:if test="position() &gt; 1">
               <xsl:text> and </xsl:text>
             </xsl:if>
             <xsl:text>(</xsl:text>
-            <xsl:for-each select="opt[@x=$x or @x='\any']">
+            <xsl:for-each select="opt[@x=$x or @x='\any' and tau]">
               <xsl:if test="position() &gt; 1">
                 <xsl:text> or </xsl:text>
               </xsl:if>
               <xsl:text>(</xsl:text>
               <xsl:for-each select="tau">
                 <xsl:if test="position() &gt; 1">
-                  <xsl:text> &amp; </xsl:text>
+                  <xsl:text> &#x2227; </xsl:text>
                 </xsl:if>
                 <xsl:text>&#x1D70F;</xsl:text>
                 <xsl:variable name="parts" select="tokenize(@i, ':')"/>

@@ -37,23 +37,31 @@ public final class ExprTest {
     @Test
     public void solvesSimpleExpression() {
         final Expr expr = new Expr(
-            "((a=1 & b=2) or (b=3)) and ((a=7) or (b=2 & d=7))"
+            "((a=1 ∧ b=2) or (b=3)) and ((a=7) or (b=2 ∧ d=7))"
         );
         MatcherAssert.assertThat(
             expr.find(),
-            Matchers.equalTo("a=1 b=2 > a=1 b=2 d=7")
+            Matchers.equalTo("a=1 b=2 ➜ a=1 b=2 d=7")
         );
     }
 
     @Test
     public void failsSimpleExpression() {
         final Expr expr = new Expr(
-            "((a=1 & b=2) or (d=4)) and ((d=5 & a=7) or (b=6 & d=1))"
+            "((a=1 ∧ b=2) or (d=4)) and ((d=5 ∧ a=7) or (b=6 ∧ d=1))"
         );
         MatcherAssert.assertThat(
             expr.find(),
             Matchers.equalTo("")
         );
+    }
+
+    @Test
+    public void ignoresNever() {
+        final Expr expr = new Expr(
+            String.format("((a=1 ∧ b=%s)) and ((a=1))", Expr.NEVER)
+        );
+        MatcherAssert.assertThat(expr.find(), Matchers.equalTo(""));
     }
 
 }

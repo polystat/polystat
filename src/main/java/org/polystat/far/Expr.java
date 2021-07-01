@@ -40,6 +40,11 @@ import java.util.Map;
 public final class Expr {
 
     /**
+     * None.
+     */
+    public static final String NEVER = "N";
+
+    /**
      * The expression.
      */
     private final String exp;
@@ -86,7 +91,7 @@ public final class Expr {
             }
             final String kid = new Expr(join, ands[1]).find();
             if (!kid.isEmpty()) {
-                result = String.format("%s > %s", out, kid);
+                result = String.format("%s ➜ %s", out, kid);
                 break;
             }
         }
@@ -105,7 +110,7 @@ public final class Expr {
             new ArrayList<>(ors.length);
         for (final String item : ors) {
             final String[] taus = item.substring(1, item.length() - 1)
-                .split(" & ");
+                .split(" ∧ ");
             final Map<String, String> opts = new HashMap<>(taus.length);
             for (final String tau : taus) {
                 final String[] eqs = tau.split("=");
@@ -137,8 +142,16 @@ public final class Expr {
     private boolean matches(final Map<String, String> map) {
         boolean matches = true;
         for (final Map.Entry<String, String> ent : this.already.entrySet()) {
-            if (map.containsKey(ent.getKey())
-                && !map.get(ent.getKey()).equals(ent.getValue())) {
+            final String left = ent.getValue();
+            if (Expr.NEVER.equals(left)) {
+                matches = false;
+                break;
+            }
+            final String right = map.get(ent.getKey());
+            if (right == null) {
+                continue;
+            }
+            if (!right.equals(left)) {
                 matches = false;
                 break;
             }

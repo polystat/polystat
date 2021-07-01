@@ -84,8 +84,8 @@ public final class Reverses {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new Xsline(obj, new OutputTo(baos), new Spy.Verbose(), new ListOf<>())
             .with(Reverses.xsl("expected.xsl").with("expected", "\\perp"))
+            .with(Reverses.xsl("data-to-attrs.xsl"))
             .with(Reverses.xsl("reverses.xsl"))
-            .with(Reverses.xsl("inject-tau-numbers.xsl"))
             .with(
                 Reverses.xsl("calculate.xsl").with(
                     (href, base) -> new StreamSource(
@@ -104,15 +104,16 @@ public final class Reverses {
                 ),
                 (before, after) -> !after.nodes("//r").isEmpty()
             )
-            .with(Reverses.xsl("remove-input-perps.xsl"))
             .with(Reverses.xsl("remove-outsiders.xsl"))
             .with(Reverses.xsl("taus-to-tree.xsl"))
+            .with(Reverses.xsl("unmatch-data.xsl").with("never", Expr.NEVER))
             .with(
                 Reverses.xsl("remove-conflicts.xsl"),
                 (before, after) -> !before.toString().equals(after.toString())
             )
             .with(Reverses.xsl("opts-to-boolean-expressions.xsl"))
             .with(Reverses.xsl("expressions-to-inputs.xsl"))
+            .with(Reverses.xsl("remove-input-perps.xsl"))
             .pass();
         XML out = new XMLDocument(
             baos.toString(StandardCharsets.UTF_8.name())

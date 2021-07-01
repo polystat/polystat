@@ -45,7 +45,7 @@ public final class XMIRTest {
     public void interpretsOneEolangProgram() throws Exception {
         final Path sources = Files.createTempDirectory("sources");
         Files.write(
-            sources.resolve("test.eo"),
+            sources.resolve("foo.eo"),
             new TextOf(
                 new ResourceOf("org/polystat/tests/div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)

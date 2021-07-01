@@ -22,18 +22,28 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="remove-false-inputs" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="data-to-attrs" version="2.0">
   <xsl:strip-space elements="*"/>
-  <xsl:template match="input[@found='']">
-    <!-- remove it -->
-  </xsl:template>
-  <xsl:template match="input[@found!='']">
+  <xsl:template match="o[o[@name='@']]">
     <xsl:copy>
-      <xsl:attribute name="found">
-        <xsl:variable name="parts" select="tokenize(@found, ' &#x279C; ')"/>
-        <xsl:value-of select="$parts[count($parts)]"/>
-      </xsl:attribute>
-      <xsl:apply-templates select="node()|@* except @found"/>
+      <xsl:apply-templates select="@*|node()"/>
+      <xsl:for-each select=".//o[@base and @data and not(o)]">
+        <xsl:element name="o">
+          <xsl:attribute name="name">
+            <xsl:text>&#x3BA;</xsl:text>
+            <xsl:text>-</xsl:text>
+            <xsl:value-of select="count(./preceding::*) + count(ancestor::*) + 1"/>
+            <xsl:text>-</xsl:text>
+            <xsl:value-of select="@line"/>
+          </xsl:attribute>
+          <xsl:attribute name="line">
+            <xsl:value-of select="@line"/>
+          </xsl:attribute>
+          <xsl:attribute name="data">
+            <xsl:value-of select="text()"/>
+          </xsl:attribute>
+        </xsl:element>
+      </xsl:for-each>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="node()|@*">

@@ -22,14 +22,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="inject-tau-numbers" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="match-data" version="2.0">
   <xsl:strip-space elements="*"/>
-  <xsl:template match="r[not(@tau)]">
+  <xsl:param name="never"/>
+  <xsl:template match="tau">
     <xsl:copy>
-      <xsl:attribute name="tau">
-        <xsl:value-of select="count(./preceding::*) + count(ancestor::*) + 1"/>
-      </xsl:attribute>
-      <xsl:apply-templates select="node()|@*"/>
+      <xsl:apply-templates select="@*|node() except text()"/>
+      <xsl:variable name="opt" select="parent::opt"/>
+      <xsl:choose>
+        <xsl:when test="$opt/parent::opts/parent::o[@data and @data!=$opt/@x and $opt/@x!='\any']">
+          <xsl:value-of select="$never"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="text()"/>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="node()|@*">

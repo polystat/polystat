@@ -55,7 +55,7 @@ public final class PolystatTest {
     public void analyzesOneEolangProgram() throws Exception {
         final Path sources = Files.createTempDirectory("sources");
         Files.write(
-            sources.resolve("test.eo"),
+            sources.resolve("foo.eo"),
             new TextOf(
                 new ResourceOf("org/polystat/tests/div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)

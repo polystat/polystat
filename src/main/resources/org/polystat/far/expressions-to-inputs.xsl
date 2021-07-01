@@ -59,7 +59,6 @@ SOFTWARE.
               </xsl:if>
               <xsl:value-of select="text()"/>
             </xsl:for-each>
-            <xsl:value-of select="."/>
           </xsl:element>
         </xsl:element>
       </xsl:otherwise>
