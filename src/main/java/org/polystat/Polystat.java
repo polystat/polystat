@@ -74,7 +74,7 @@ public final class Polystat {
                 this.stdout.println(error);
             }
         } else {
-            this.stdout.println("Hello, world!");
+            this.stdout.println("Read our README in GitHub");
         }
     }
 

@@ -47,7 +47,7 @@ public final class PolystatTest {
         new Polystat(new PrintStream(out)).exec();
         MatcherAssert.assertThat(
             out.toString(),
-            Matchers.equalTo("Hello, world!\n")
+            Matchers.containsString("README")
         );
     }
 

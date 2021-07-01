@@ -16,7 +16,20 @@ This is an experimental polystat static analyzer.
 Download `polystat.jar` from Maven Central and then run:
 
 ```bash
-$ java -jar polystat.jar --help
+$ java -jar polystat.jar test.eo
 ```
 
-Read the output and follow the instructions.
+The `test.eo` file must contain the code in EOLANG, for example
+try this simple program that has a "division by zero" bug:
+
+```
+[x] > test
+  div. > @
+    5
+    add.
+      42
+      x
+```
+
+The output of Polystat will show you which `x` may cause
+this program to crash.
