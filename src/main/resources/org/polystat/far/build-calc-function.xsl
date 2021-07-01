@@ -108,35 +108,6 @@ SOFTWARE.
             <xsl:text>xs:string</xsl:text>
           </xsl:attribute>
         </xsl:element>
-        <xsl:element name="xsl:message">
-          <xsl:element name="xsl:text">
-            <xsl:text>ps:calc(</xsl:text>
-          </xsl:element>
-          <xsl:element name="xsl:value-of">
-            <xsl:attribute name="select">
-              <xsl:text>$func</xsl:text>
-            </xsl:attribute>
-          </xsl:element>
-          <xsl:element name="xsl:text">
-            <xsl:text>, </xsl:text>
-          </xsl:element>
-          <xsl:element name="xsl:value-of">
-            <xsl:attribute name="select">
-              <xsl:text>$pos</xsl:text>
-            </xsl:attribute>
-          </xsl:element>
-          <xsl:element name="xsl:text">
-            <xsl:text>, </xsl:text>
-          </xsl:element>
-          <xsl:element name="xsl:value-of">
-            <xsl:attribute name="select">
-              <xsl:text>$y</xsl:text>
-            </xsl:attribute>
-          </xsl:element>
-          <xsl:element name="xsl:text">
-            <xsl:text>)</xsl:text>
-          </xsl:element>
-        </xsl:element>
         <xsl:element name="xsl:choose">
           <xsl:element name="xsl:when">
             <xsl:attribute name="test">

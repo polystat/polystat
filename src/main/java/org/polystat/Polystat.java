@@ -56,6 +56,7 @@ public final class Polystat {
      * @throws Exception If fails
      */
     public static void main(final String... args) throws Exception {
+        Logger.info(Polystat.class, "Polystat (c) 2021");
         new Polystat(System.out).exec(args);
     }
 
@@ -71,7 +72,12 @@ public final class Polystat {
             ).errors("\\Phi.foo");
             Logger.info(this, "%d errors found", errors.size());
             for (final String error : errors) {
-                this.stdout.println(error);
+                Logger.info(this, "Error: %s", error);
+                this.stdout.printf("Error: %s%n", error);
+            }
+            if (errors.isEmpty()) {
+                Logger.info(this, "No errors found");
+                this.stdout.println("No errors");
             }
         } else {
             this.stdout.println("Read our README in GitHub");

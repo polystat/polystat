@@ -13,13 +13,14 @@
 
 This is an experimental polystat static analyzer.
 
-Download `polystat.jar` from Maven Central and then run:
+Download `polystat-0.1-jar-with-dependencies.jar` 
+from Maven Central and then run:
 
 ```bash
-$ java -jar polystat.jar test.eo
+$ java -jar polystat-0.1-jar-with-dependencies.jar src temp
 ```
 
-The `test.eo` file must contain the code in EOLANG, for example
+The `src/foo.eo` file must contain the code in EOLANG, for example
 try this simple program that has a "division by zero" bug:
 
 ```
@@ -32,4 +33,8 @@ try this simple program that has a "division by zero" bug:
 ```
 
 The output of Polystat will show you which `x` may cause
-this program to crash.
+this program to crash. The directory `temp` will be created
+automatically and will contain temporary files.
+
+You can also play with it by editing the files in `sandbox/`
+and then running `./try.sh`.

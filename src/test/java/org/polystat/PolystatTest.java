@@ -42,6 +42,11 @@ import org.junit.jupiter.api.Test;
 public final class PolystatTest {
 
     @Test
+    public void publicEntrance() throws Exception {
+        Polystat.main();
+    }
+
+    @Test
     public void saysHello() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         new Polystat(new PrintStream(out)).exec();

@@ -40,6 +40,16 @@ SOFTWARE.
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.eolang</groupId>
       <artifactId>eo-parser</artifactId>
       <version>${eolang.version}</version>
@@ -87,4 +97,34 @@ SOFTWARE.
       </build>
     </profile>
   </profiles>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <mergeManifestMode>merge</mergeManifestMode>
+              <archive>
+                <manifest>
+                  <mainClass>org.polystat.Polystat</mainClass>
+                </manifest>
+                <manifestEntries>
+                  <EO-Version>${eolang.version}</EO-Version>
+                </manifestEntries>
+              </archive>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
