@@ -31,6 +31,9 @@ import org.junit.jupiter.api.Test;
  * Test case for {@link Expr}.
  *
  * @since 0.1
+ * @todo #1:1h I suggest we refactor this class into a parametrized unit test.
+ *  As inputs we should probably have the expressions and the output
+ *  should be the expected result of the Expr class.
  */
 public final class ExprTest {
 
