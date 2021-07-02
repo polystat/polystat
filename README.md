@@ -29,7 +29,7 @@ The `src/foo.eo` file must contain the code in [EOLANG](https://www.eolang.org).
 For example, try this simple program that has a "division by zero" bug:
 
 ```
-[x] > test
+[x] > foo
   div. > @
     42
     x
