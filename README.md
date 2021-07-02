@@ -17,7 +17,8 @@
 This is an experimental polystat static analyzer.
 
 Download `polystat-*-jar-with-dependencies.jar` 
-from Maven Central and then run (replace the asterisk with the 
+from [Maven Central](https://search.maven.org/artifact/org.polystat/polystat) 
+and then run (replace the asterisk with the 
 [latest version](https://repo.maven.apache.org/maven2/org/polystat/polystat/)):
 
 ```bash
