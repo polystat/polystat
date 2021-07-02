@@ -25,18 +25,18 @@ and then run (replace the asterisk with the
 $ java -jar polystat-*-jar-with-dependencies.jar src temp
 ```
 
-The `src/foo.eo` file must contain the code in EOLANG, for example
-try this simple program that has a "division by zero" bug:
+The `src/foo.eo` file must contain the code in [EOLANG](https://www.eolang.org).
+For example, try this simple program that has a "division by zero" bug:
 
 ```
 [x] > test
   div. > @
-    5
+    42
     x
 ```
 
-The output of Polystat will show you which `x` may cause
-this program to crash. The directory `temp` will be created
+The output of Polystat will show you which values of `x` may cause
+this program to crash. A new directory `temp/` will be created
 automatically and will contain temporary files.
 
 You can also play with it by editing the files in `sandbox/`
