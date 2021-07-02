@@ -38,12 +38,6 @@ SOFTWARE.
   <properties>
     <eolang.version>0.1.30</eolang.version>
   </properties>
-  <distributionManagement>
-    <repository>
-      <id>oss.sonatype.org</id>
-      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2</url>
-    </repository>
-  </distributionManagement>
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -105,6 +99,14 @@ SOFTWARE.
   </profiles>
   <build>
     <plugins>
+      <plugin>
+        <!-- @see https://issues.sonatype.org/browse/OSSRH-70730 -->
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <configuration>
+          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
