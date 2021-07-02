@@ -77,6 +77,10 @@ public final class Reverses {
      * @param locator The locator of the object to analyze
      * @return List of errors
      * @throws IOException If fails
+     * @todo #1:1h The current implementation of the method is not perfect,
+     *  because Xsline doesn't allow anything aside from XSL to be inside it.
+     *  I suggest we add new functionality to Xsline and let it have
+     *  not only XSL but also Cactoos Func-s inside.
      */
     public Collection<String> errors(final String locator) throws IOException {
         final Collection<String> bugs = new LinkedList<>();
