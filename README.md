@@ -30,9 +30,7 @@ try this simple program that has a "division by zero" bug:
 [x] > test
   div. > @
     5
-    add.
-      42
-      x
+    x
 ```
 
 The output of Polystat will show you which `x` may cause
