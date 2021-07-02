@@ -40,11 +40,11 @@ import org.eolang.parser.Xsline;
  * A collection of all EO files, which are accessible as XMIR elements.
  *
  * @since 1.0
- * @checkstyle AbbreviationAsWordInNameCheck (5 lines)
  * @todo #1:1h The current implementation is very primitive and doesn't
  *  support the case of fetching an object with a locator longer
  *  than just something inside \Phi. Try to make an object with children
  *  and fetch a child.
+ * @checkstyle AbbreviationAsWordInNameCheck (5 lines)
  */
 public final class XMIR implements Func<String, XML> {
 
