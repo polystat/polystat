@@ -16,11 +16,12 @@
 
 This is an experimental polystat static analyzer.
 
-Download `polystat-0.1-jar-with-dependencies.jar` 
-from Maven Central and then run:
+Download `polystat-*-jar-with-dependencies.jar` 
+from Maven Central and then run (replace the asterisk with the 
+[latest version](https://repo.maven.apache.org/maven2/org/polystat/polystat/)):
 
 ```bash
-$ java -jar polystat-0.1-jar-with-dependencies.jar src temp
+$ java -jar polystat-*-jar-with-dependencies.jar src temp
 ```
 
 The `src/foo.eo` file must contain the code in EOLANG, for example
