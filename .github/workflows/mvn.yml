@@ -1,5 +1,5 @@
 ---
-name: CI
+name: mvn
 "on":
   push:
     branches:

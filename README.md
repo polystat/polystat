@@ -4,7 +4,7 @@
 [![DevOps By Rultor.com](http://www.rultor.com/b/polystat/polystat)](http://www.rultor.com/p/polystat/polystat)
 [![We recommend IntelliJ IDEA](https://www.elegantobjects.org/intellij-idea.svg)](https://www.jetbrains.com/idea/)
 
-[![CI checks](https://github.com/polystat/polystat/actions/workflows/ci.yml/badge.svg)](https://github.com/polystat/polystat/actions/workflows/ci.yml)
+[![CI checks](https://github.com/polystat/polystat/actions/workflows/mvn.yml/badge.svg)](https://github.com/polystat/polystat/actions/workflows/mvn.yml)
 [![PDD status](http://www.0pdd.com/svg?name=polystat/polystat)](http://www.0pdd.com/p?name=polystat/polystat)
 [![codecov](https://codecov.io/gh/polystat/polystat/branch/master/graph/badge.svg)](https://codecov.io/gh/polystat/polystat)
 
