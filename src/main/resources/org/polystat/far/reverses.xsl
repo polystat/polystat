@@ -23,6 +23,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="reverses" version="2.0">
+  <!--
+  This XSL goes through all free attributes of each abstract
+  object and adds <opts> elements to them.
+
+  If this is the input:
+  <o name="foo">
+    <o name="a"/>
+    <o name="@">
+      <o base="fun">
+        <o base="a"/>
+      </o>
+    </o>
+  </o>
+
+  The output will look like this:
+  <o name="foo">
+    <o name="a">
+      <opts>
+        <r f="fun" pos="1" tau="1"/>
+      </opts>
+    </o>
+    <o name="@">
+      <o base="fun">
+        <o base="a"/>
+      </o>
+    </o>
+  </o>
+
+  There will be as many <opts> elements as many times the attribute
+  is seen in the body of the object.
+  -->
   <xsl:strip-space elements="*"/>
   <xsl:template name="r">
     <xsl:param name="result" select="''"/>

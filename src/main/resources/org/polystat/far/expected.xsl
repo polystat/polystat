@@ -23,6 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="expected" version="2.0">
+  <!--
+  This XSL expects a parameter $expected, which it adds
+  to the XML element /o/@expected. The value is what the
+  object is expected to become with a certain combination
+  of its free attributes.
+  -->
   <xsl:strip-space elements="*"/>
   <xsl:param name="expected"/>
   <xsl:template match="/o">

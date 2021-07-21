@@ -60,7 +60,8 @@ import org.xembly.Xembler;
 public final class Reverses {
 
     /**
-     * The XMIR of the code.
+     * The XMIR of the code (most probably the implementation is
+     * an instance of class {@link org.polystat.XMIR}).
      */
     private final UncheckedFunc<String, XML> xmir;
 

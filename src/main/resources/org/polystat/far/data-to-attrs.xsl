@@ -23,6 +23,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="data-to-attrs" version="2.0">
+  <!--
+  This XSL takes all constants (data) anywhere in the object
+  and turns them into bound attributes. Each new attributes
+  gets a name that starts with a &#x3BA; and ends with a
+  unique number.
+
+  We need this because we want to turn the object into
+  a functional aggregate, which be definition consists of functions
+  and variables (no data, no constants).
+  -->
   <xsl:strip-space elements="*"/>
   <xsl:template match="o[o[@name='@']]">
     <xsl:copy>
