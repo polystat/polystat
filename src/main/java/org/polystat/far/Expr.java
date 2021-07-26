@@ -74,7 +74,7 @@ public final class Expr {
 
     /**
      * Is it possible?
-     * @return TRUE if yes
+     * @return Non-empty if YES, empty string if NO
      */
     public String find() {
         final String[] ands = this.exp.split(" and ", 2);
