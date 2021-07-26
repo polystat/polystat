@@ -132,10 +132,8 @@ public final class Reverses {
             dirs.xpath(String.format("/o/input[%d]", idx + 1));
             dirs.attr("found", found);
         }
-        out = Reverses.xsl("remove-all-any.xsl").transform(
-            Reverses.xsl("remove-false-inputs.xsl").transform(
-                new XMLDocument(new Xembler(dirs).applyQuietly(out.node()))
-            )
+        out = Reverses.xsl("remove-false-inputs.xsl").transform(
+            new XMLDocument(new Xembler(dirs).applyQuietly(out.node()))
         );
         Logger.debug(this, "XML output:%n%s", out);
         for (final XML bug : out.nodes("/o/input[@found]")) {
