@@ -24,6 +24,7 @@
 package org.polystat.far;
 
 import com.jcabi.log.Logger;
+import com.jcabi.matchers.XhtmlMatchers;
 import com.jcabi.xml.XSL;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.text.TextOf;
@@ -41,12 +42,14 @@ public final class CalcTest {
 
     @Test
     public void buildsSimpleRulesXsl() {
-        final Calc rules = new Calc("add(y) -> {{y 0}}");
-        final XSL xsl = rules.xsl();
-        Logger.debug(this, "calc.xsl:%n%s", xsl.toString());
         MatcherAssert.assertThat(
-            rules.xsl(),
-            Matchers.notNullValue()
+            XhtmlMatchers.xhtml(new Calc("add(y) -> {{y 0}}").xsl()),
+            Matchers.allOf(
+                XhtmlMatchers.hasXPath("//xsl:stylesheet"),
+                XhtmlMatchers.hasXPath("//xsl:function[@name='ps:calc']"),
+                XhtmlMatchers.hasXPath("//xsl:when[@test=\"$y = '\\any'\"]"),
+                XhtmlMatchers.hasXPath("//xsl:when[@test=\"$func = 'add'\"]")
+            )
         );
     }
 
