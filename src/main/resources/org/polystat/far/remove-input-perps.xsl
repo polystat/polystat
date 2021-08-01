@@ -23,6 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="remove-input-perps" version="2.0">
+  <!--
+  This XSL deletes all <input> elements, which have at least
+  one variable with \perp value. It's obvious, that such a
+  situation is impossible: \perp can't come in as a value.
+  -->
   <xsl:strip-space elements="*"/>
   <xsl:template match="input[a[@x = '\perp']]">
     <!-- just delete it -->

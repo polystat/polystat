@@ -23,6 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="remove-false-inputs" version="2.0">
+  <!--
+  This XSL simply deletes the <input> elements that don't have
+  the required @found attribute. When the attribute is found, it
+  modifies it taking only the last part of it, after the last
+  right-arrow.
+  -->
   <xsl:strip-space elements="*"/>
   <xsl:template match="input[@found='']">
     <!-- remove it -->
