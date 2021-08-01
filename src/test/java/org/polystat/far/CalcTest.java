@@ -23,9 +23,7 @@
  */
 package org.polystat.far;
 
-import com.jcabi.log.Logger;
 import com.jcabi.matchers.XhtmlMatchers;
-import com.jcabi.xml.XSL;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.text.TextOf;
 import org.cactoos.text.UncheckedText;
@@ -55,20 +53,19 @@ public final class CalcTest {
 
     @Test
     public void buildsRealRulesXsl() {
-        final Calc rules = new Calc(
-            new UncheckedText(
-                new TextOf(
-                    new ResourceOf(
-                        "org/polystat/far/rules.txt"
-                    )
-                )
-            ).asString().trim()
-        );
-        final XSL xsl = rules.xsl();
-        Logger.debug(this, "big-calc.xsl:%n%s", xsl.toString());
         MatcherAssert.assertThat(
-            rules.xsl(),
-            Matchers.notNullValue()
+            XhtmlMatchers.xhtml(
+                new Calc(
+                    new UncheckedText(
+                        new TextOf(
+                            new ResourceOf(
+                                "org/polystat/far/rules.txt"
+                            )
+                        )
+                    ).asString().trim()
+                ).xsl()
+            ),
+            XhtmlMatchers.hasXPath("//xsl:choose[count(xsl:when)=7]")
         );
     }
 
