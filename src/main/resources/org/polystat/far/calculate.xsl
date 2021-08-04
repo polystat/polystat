@@ -23,6 +23,44 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ps="https://www.polystat.org" xmlns:xs="http://www.w3.org/2001/XMLSchema" id="calculate" version="2.0">
+  <!--
+  This XSL relies on a pre-built XSL stylesheet known as "calc-function.xsl",
+  which is not a file, but a generated in runtime document. It is generated
+  by the Calc.java, with the help of "build-calc-function.xsl" stylesheet.
+
+  This XSL is supposed to be called multiple times on the same document,
+  until all <r> elements disappear.
+
+  Here, we take an <r> element and turn it into a few <opt> elements.
+  For example, this XML document:
+
+  <o name="foo">
+    <o line="3" name="a">
+      <opts>
+        <r f=".div" pos="2" tau="8">
+          <r f=".div" pos="1" tau="7">
+            <r f=".add" pos="2" tau="3"/>
+          </r>
+        </r>
+      </opts>
+    </o>
+  </o>
+
+  Will turn into:
+
+  <o name="foo">
+    <o line="3" name="a">
+      <opts>
+        <r f=".div" pos="2" tau="8">
+          <r f=".div" pos="1" tau="7">
+            <opt m=".add(\perp)[2]" x="\perp">{𝜏3:2=1}</opt>
+            <opt m=".add(\perp)[2]" x="\any">{𝜏3:2=2}</opt>
+          </r>
+        </r>
+      </opts>
+    </o>
+  </o>
+  -->
   <xsl:strip-space elements="*"/>
   <xsl:import href="calc-function.xsl"/>
   <xsl:function name="ps:tau">

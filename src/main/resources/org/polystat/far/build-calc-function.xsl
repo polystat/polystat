@@ -23,6 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="build-calc-function" version="2.0">
+  <!--
+  This XSL is used in the Calc.java class in order to turn "rules.txt"
+  into a new XSL document. Yes, this XSL produces another XSL. Run
+  CalcTest.java to see the example of it.
+  -->
   <xsl:strip-space elements="*"/>
   <xsl:template match="inputs">
     <xsl:variable name="inputs" select="."/>
