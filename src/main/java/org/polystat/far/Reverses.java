@@ -116,7 +116,7 @@ public final class Reverses {
                 Reverses.xsl("remove-conflicts.xsl"),
                 (before, after) -> !before.toString().equals(after.toString())
             )
-            .with(Reverses.xsl("opts-to-boolean-expressions.xsl"))
+            .with(Reverses.xsl("opts-to-expressions.xsl"))
             .with(Reverses.xsl("expressions-to-inputs.xsl"))
             .with(Reverses.xsl("remove-input-perps.xsl"))
             .pass();
