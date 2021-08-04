@@ -53,8 +53,8 @@ SOFTWARE.
       <opts>
         <r f=".div" pos="2" tau="8">
           <r f=".div" pos="1" tau="7">
-            <opt m=".add(\perp)[2]" x="\perp">{𝜏3:2=1}</opt>
-            <opt m=".add(\perp)[2]" x="\any">{𝜏3:2=2}</opt>
+            <opt m=".add(\perp)[2]" x="\perp">{t3:2=1}</opt>
+            <opt m=".add(\perp)[2]" x="\any">{t3:2=2}</opt>
           </r>
         </r>
       </opts>

@@ -42,7 +42,7 @@ SOFTWARE.
 
   <o name="foo">
     <o line="3" name="a">
-      <b x="\any">((𝜏4=1 ∧ 𝜏3=1))</b>
+      <b x="\any">((t4=1 ∧ t3=1))</b>
     </o>
   </o>
   -->

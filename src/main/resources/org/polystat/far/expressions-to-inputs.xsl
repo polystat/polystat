@@ -29,7 +29,7 @@ SOFTWARE.
 
   <o name="foo">
     <o line="3" name="a">
-      <b x="\any">((𝜏4=1 ∧ 𝜏3=1))</b>
+      <b x="\any">((t4=1 ∧ t3=1))</b>
     </o>
   </o>
 
@@ -37,8 +37,8 @@ SOFTWARE.
 
   <o name="foo">
     <input>
-      <a attr="a" x="\any">((𝜏4=1 ∧ 𝜏3=1))</a>
-      <expr>((𝜏4=1 ∧ 𝜏3=1))</expr>
+      <a attr="a" x="\any">((t4=1 ∧ t3=1))</a>
+      <expr>((t4=1 ∧ t3=1))</expr>
     </input>
   </o>
   -->

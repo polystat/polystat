@@ -30,7 +30,7 @@ SOFTWARE.
   <o name="foo">
     <o line="3" name="a">
       <opts>
-         <opt m="xx" x="\any">{𝜏4:1=1} {𝜏3:2=1}</opt>
+         <opt m="xx" x="\any">{t4:1=1} {t3:2=1}</opt>
       </opts>
     </o>
   </o>
