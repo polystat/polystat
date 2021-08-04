@@ -23,6 +23,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="taus-to-tree" version="2.0">
+  <!--
+  This XSL simply converts textual representation of options into
+  XML-tree format. For example, this XML:
+
+  <o name="foo">
+    <o line="3" name="a">
+      <opts>
+         <opt m="xx" x="\any">{𝜏4:1=1} {𝜏3:2=1}</opt>
+      </opts>
+    </o>
+  </o>
+
+  Will turn into:
+
+  <o name="foo">
+    <o line="3" name="a">
+      <opts>
+         <opt m="xx" x="\any">
+            <tau i="4:1">1</tau>
+            <tau i="3:2">1</tau>
+         </opt>
+      </opts>
+    </o>
+  </o>
+  -->
   <xsl:strip-space elements="*"/>
   <xsl:template match="opt[not(empty(text()))]">
     <xsl:copy>

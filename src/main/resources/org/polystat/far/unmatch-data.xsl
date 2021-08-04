@@ -22,7 +22,35 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="match-data" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="unmatch-data" version="2.0">
+  <!--
+  This XSL will find attributes that are data and will put "N"
+  into their TAU texts. For example, this XML:
+
+  <o name="foo">
+    <o line="3" name="a" data='42'>
+      <opts>
+         <opt m="xx" x="10">
+            <tau i="4:1">1</tau>
+            <tau i="3:2">1</tau>
+         </opt>
+      </opts>
+    </o>
+  </o>
+
+  Will turn into (because 42 doesn't equal to 10):
+
+  <o name="foo">
+    <o line="3" name="a" data='42'>
+      <opts>
+         <opt m="xx" x="10">
+            <tau i="4:1">N</tau>
+            <tau i="3:2">N</tau>
+         </opt>
+      </opts>
+    </o>
+  </o>
+  -->
   <xsl:strip-space elements="*"/>
   <xsl:param name="never"/>
   <xsl:template match="tau">
