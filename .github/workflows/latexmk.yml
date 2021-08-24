@@ -9,12 +9,13 @@ jobs:
       - uses: actions/checkout@v2
       - uses: yegor256/latexmk-action@0.2.2
         with:
+          path: white-paper
           opts: -pdf
           packages: ffcode href-ul huawei fmtcount trimspaces catchfile catchfile transparent textpos fvextra xstring framed environ titlesec
-      - run: mkdir pdf
-      - run: cp polystat-white-paper.pdf pdf
+      - run: mkdir white-paper/pdf
+      - run: cp white-paper/wp.pdf white-paper/pdf
       - uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
           branch: gh-pages
-          folder: pdf
+          folder: white-paper/pdf
           clean: false
