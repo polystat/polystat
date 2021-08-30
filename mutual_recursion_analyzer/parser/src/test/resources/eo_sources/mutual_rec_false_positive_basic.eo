@@ -1,0 +1,58 @@
++package sandbox
++alias stdout org.eolang.io.stdout
++alias sprintf org.eolang.txt.sprintf
+
+# Description:
+# In this example, "inheriting" base by derived and overriding n should result
+# in mutual recursion that actually never happens, because the code path is not
+# possible.
+#
+# Desired output:
+# The analyzer should output that either:
+# - there is no mutual recursion detected
+# - mutual recursion detected, but in the impossible code path for:
+#   - derived.n is mutually recursive with base.m, when self is an instance
+#     of derived
+#   - base.m is mutually recursive with derived.n, when self is an instance
+#     of derived
+
+[] > base
+  memory > x
+  [self v] > n
+    seq > @
+      stdout
+        sprintf "Calling base.n with v = %d\n" v
+      x.write v
+  [self v] > m
+    seq > @
+      stdout
+        sprintf "Calling base.m with v = %d\n" v
+      self.n self v
+
+[] > derived
+  base > @
+  [self v] > n
+    # TODO: introduce if that is always true
+    seq > @
+      stdout (sprintf "Calling derived.n with v = %d\n" v)
+      self.m self v
+
+[args...] > app
+  base > b
+  derived > d
+  seq > @
+    b.n b 10
+    stdout
+      sprintf
+        "base:\n\tx after n = %d\n"
+        b.x
+    b.m b 12
+    stdout
+      sprintf
+        "\tx after m = %d\n"
+        b.x
+    d.n d 5
+    stdout
+      sprintf
+        "\nderived:\n\tx after n = %d\n"
+        d.x

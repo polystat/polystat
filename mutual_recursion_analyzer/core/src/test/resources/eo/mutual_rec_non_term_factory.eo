@@ -1,0 +1,53 @@
++package sandbox
++alias stdout org.eolang.io.stdout
++alias sprintf org.eolang.txt.sprintf
+
+# Description:
+#
+# Desired output:
+# The analyzer should output that:
+# - derived.n is mutually recursive with base_factory.get_base.m, when self is an instance
+#   of derived
+# - base_factory.get_base.m is mutually recursive with derived.n, when self is an instance
+#   of derived
+
+[] > base_factory
+  [] > get_base
+    memory > x
+    [self v] > n
+      seq > @
+        stdout
+          sprintf "Calling base.n with v = %d\n" v
+        x.write v
+    [self v] > m
+      seq > @
+        stdout
+          sprintf "Calling base.m with v = %d\n" v
+        self.n self v
+
+[] > derived
+  base_factory.get_base > @
+  [self v] > n
+    seq > @
+      stdout (sprintf "Calling derived.n with v = %d\n" v)
+      self.m self v
+
+[args...] > app
+  base_factory.get_base > b
+  derived > d
+  seq > @
+    b.n b 10
+    stdout
+      sprintf
+        "base:\n\tx after n = %d\n"
+        b.x
+    b.m b 12
+    stdout
+      sprintf
+        "\tx after m = %d\n"
+        b.x
+    d.n d 5
+    stdout
+      sprintf
+        "\nderived:\n\tx after n = %d\n"
+        d.x

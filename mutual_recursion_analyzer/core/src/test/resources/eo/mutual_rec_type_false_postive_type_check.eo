@@ -1,0 +1,39 @@
++package sandbox
++alias stdout org.eolang.io.stdout
++alias sprintf org.eolang.txt.sprintf
+
+# Description:
+# In this example, base defines 2 attributes n and m and derived overrides n
+# seemingly resulting in a recursion, but in reality self of derived.n can be
+# only obj, because g is called on self and nor base nor derived have such
+# method, so only obj can be passed to derived.n safely.
+#
+# Desired output:
+# No recursion is detected
+
+[] > base
+  memory > x
+  [self v] > n
+    seq > @
+      stdout
+        sprintf "Calling base.n with v = %d\n" v
+      x.write v
+  [self v] > m
+    seq > @
+      stdout
+        sprintf "Calling base.m with v = %d\n" v
+      self.n self v
+
+[] > obj
+  [self v] > m
+    true > @
+  [self v] > g
+    false > @
+
+[] > derived
+  base > @
+  [self v] > n
+    seq > @
+      self.g self v
+      stdout (sprintf "Calling derived.n with v = %d\n" v)
+      self.m self v

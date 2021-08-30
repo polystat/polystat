@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>eolang-backend_2.13</artifactId>
+    <packaging>jar</packaging>
+    <parent>
+        <artifactId>backends_2.13</artifactId>
+        <groupId>sitiritis</groupId>
+        <version>0.1</version>
+    </parent>
+    <organization>
+        <name>sitiritis</name>
+    </organization>
+    <name>eolang-backend</name>
+    <version>0.1</version>
+    <description>eolang-backend</description>
+    <dependencies>
+        <dependency>
+            <groupId>sitiritis</groupId>
+            <artifactId>core_2.13</artifactId>
+            <version>0.1</version>
+        </dependency>
+    </dependencies>
+</project>

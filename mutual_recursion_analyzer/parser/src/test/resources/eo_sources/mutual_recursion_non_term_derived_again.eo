@@ -1,0 +1,51 @@
++package sandbox
++alias stdout org.eolang.io.stdout
++alias sprintf org.eolang.txt.sprintf
+
+# Description:
+# In this example, "inheriting" base by derived and overriding n should result
+# in non terminating mutual recursion, because derived.n will call base.m, which
+# will again call derived.n. Then derived is further "inherited" by
+# derived_again, which should emmit more problems related to mutual recursion.
+#
+# Desired output:
+# The analyzer should output that:
+# - derived.n is mutually recursive with base.m, when self is an instance
+#   of derived
+# - base.m is mutually recursive with derived.n, when self is an instance
+#   of derived
+# - derived_again.n is mutually recursive with base.m, when self is an instance
+#   of derived_again
+# - base.m is mutually recursive with derived_again.n, when self is an instance
+#   of derived_again
+# - derived_again.n is mutually recursive with base.m, when self is an instance
+#   of derived
+# - base.m is mutually recursive with derived_again.n, when self is an instance
+#   of derived
+# - derived.n is mutually recursive with base.m, when self is an instance
+#   of derived_again
+# - base.m is mutually recursive with derived.n, when self is an instance
+#   of derived_again
+
+[] > base
+  memory > x
+  [self v] > n
+    seq > @
+      stdout
+        sprintf "Calling base.n with v = %d\n" v
+      x.write v
+  [self v] > m
+    seq > @
+      stdout
+        sprintf "Calling base.m with v = %d\n" v
+      self.n self v
+
+[] > derived
+  base > @
+  [self v] > n
+    seq > @
+      stdout (sprintf "Calling derived.n with v = %d\n" v)
+      self.m self v
+
+[] > derived_again
+  derived > @

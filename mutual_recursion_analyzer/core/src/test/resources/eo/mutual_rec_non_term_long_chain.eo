@@ -1,0 +1,40 @@
++package sandbox
++alias stdout org.eolang.io.stdout
++alias sprintf org.eolang.txt.sprintf
+
+# Description:
+# In this example, at first derived "inherits" base and adds a method o, which
+# calls base.m, which calls base.n. Then, derived_again "inherits" n and
+# overrides base.n to call derived.o, resulting in an infinite recursion.
+#
+# Desired output:
+# The analyzer should output that:
+# - derived_again.n -> derived_again.@.o -> derived_again.@.derived.@.m -> (derived_again.@.derived.@.n <=> derived_again.n)
+#   is a mutual recursion, when self is derived_again
+
+[] > base
+  memory > x
+  [self v] > n
+    seq > @
+      stdout
+        sprintf "Calling base.n with v = %d\n" v
+      x.write v
+  [self v] > m
+    seq > @
+      stdout
+        sprintf "Calling base.m with v = %d\n" v
+      self.n self v
+
+[] > derived
+  base > @
+  [self v] > o
+    seq > @
+      stdout (sprintf "Calling derived.o with v = %d\n" v)
+      self.m self v
+
+[] > derived_again
+  derived > @
+  [self v] > n
+    seq > @
+      stdout (sprintf "Calling derived_again.n with v = %d\n" v)
+      self.o self v
