@@ -45,43 +45,6 @@ SOFTWARE.
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eolang</groupId>
-            <artifactId>eo-parser</artifactId>
-            <version>${eolang.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.cactoos</groupId>
-            <artifactId>cactoos</artifactId>
-            <version>0.46</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jcabi.incubator</groupId>
-            <artifactId>xembly</artifactId>
-            <version>0.25.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jcabi</groupId>
-            <artifactId>jcabi-log</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.jcabi</groupId>
-            <artifactId>jcabi-matchers</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.jcabi</groupId>
-            <artifactId>jcabi-xml</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>annotations</artifactId>
             <version>3.0.1</version>
@@ -94,6 +57,7 @@ SOFTWARE.
                 <!-- @see https://issues.sonatype.org/browse/OSSRH-70730 -->
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.8</version>
                 <configuration>
                     <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                 </configuration>

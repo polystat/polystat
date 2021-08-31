@@ -8,7 +8,6 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>polystat</artifactId>
     <dependencies>
         <dependency>
@@ -16,8 +15,44 @@
             <artifactId>parser_2.13</artifactId>
             <version>0.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eolang</groupId>
+            <artifactId>eo-parser</artifactId>
+            <version>${eolang.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.cactoos</groupId>
+            <artifactId>cactoos</artifactId>
+            <version>0.46</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcabi.incubator</groupId>
+            <artifactId>xembly</artifactId>
+            <version>0.25.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-log</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-matchers</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-xml</artifactId>
+        </dependency>
     </dependencies>
-
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
