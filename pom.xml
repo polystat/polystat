@@ -38,7 +38,7 @@ SOFTWARE.
     <artifactId>polystat-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>polystat</name>
+    <name>polystat-parent</name>
     <description>Polyglot Static Analyzer</description>
     <properties>
         <eolang.version>0.1.30</eolang.version>
