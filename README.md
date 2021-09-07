@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/polystat/polystat.github.io/master/logo.svg" height="92px"/>
+<img src="https://www.polystat.org/logo.svg" height="92px"/>
 
 [![EO principles respected here](https://www.elegantobjects.org/badge.svg)](https://www.elegantobjects.org)
 [![DevOps By Rultor.com](http://www.rultor.com/b/polystat/polystat)](http://www.rultor.com/p/polystat/polystat)
