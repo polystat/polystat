@@ -16,6 +16,8 @@
 
 This is an experimental polystat static analyzer.
 
+Read the [White Paper](https://www.polystat.org/wp.pdf) first.
+
 Download `polystat-*-jar-with-dependencies.jar` 
 from [Maven Central](https://search.maven.org/artifact/org.polystat/polystat) 
 and then run (replace the asterisk with the 

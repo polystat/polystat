@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/polystat/polystat.github.io/master/logo.svg" height="64px"/>
+<img src="https://www.polystat.org/logo.svg" height="92px"/>
 
 [![make](https://github.com/polystat/polystat/actions/workflows/latexmk.yml/badge.svg)](https://github.com/polystat/polystat/actions/workflows/latexmk.yml)
 
