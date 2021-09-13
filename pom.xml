@@ -37,6 +37,8 @@ SOFTWARE.
   <description>Polyglot Static Analyzer</description>
   <properties>
     <eolang.version>0.1.30</eolang.version>
+    <odin.version>0.1.0</odin.version>
+    <reactivstream.version>1.0.3</reactivstream.version>
   </properties>
   <dependencies>
     <dependency>
@@ -81,6 +83,11 @@ SOFTWARE.
       <artifactId>annotations</artifactId>
       <version>3.0.1</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.polystat.odin</groupId>
+      <artifactId>odin_2.13</artifactId>
+      <version>${odin.version}</version>
     </dependency>
   </dependencies>
   <build>

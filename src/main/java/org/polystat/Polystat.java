@@ -26,9 +26,17 @@ package org.polystat;
 
 import com.jcabi.log.Logger;
 import java.io.PrintStream;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import org.cactoos.io.InputOf;
+import org.cactoos.text.TextOf;
 import org.polystat.far.Reverses;
+import org.polystat.odin.interop.java.EOOdinAnalyzer;
+import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 /**
  * Main entrance.
@@ -63,6 +71,63 @@ public final class Polystat {
         new Polystat(System.out).exec(args);
     }
 
+    private void logError(final String error) {
+        Logger.info(this, "Error: %s", error);
+        this.stdout.printf("Error: %s%n", error);
+    }
+
+    private void polystatAnalysis(final Path src, final Path tmp) throws Exception {
+        // Reverses and XMIR needs to be refactored, since now XMIR is
+        // responsible for:
+        // 1. calculating of source code file path
+        // 2. reading the source file
+        // 3. getting AST for the source code
+        final XMIR xmir = new XMIR(src, tmp);
+        final Collection<String> errors = new Reverses(xmir)
+            .errors("\\Phi.foo");
+        Logger.info(this, "%d errors found", errors.size());
+        for (final String error : errors) {
+            logError(error);
+        }
+        if (errors.isEmpty()) {
+            Logger.info(this, "No errors found");
+            this.stdout.println("No errors");
+        }
+    }
+
+    private String readSourceCode(final Path sources, final String name) throws Exception {
+        final Path sourceCodePath = sources.resolve(String.format("%s.eo", name));
+        final TextOf textOf = new TextOf(new InputOf(sourceCodePath));
+        return textOf.asString();
+    }
+
+    private void odinAnalysis(final Path src) throws Exception {
+        final EOOdinAnalyzer odinAnalyzer = new EOOdinAnalyzer.EOOdinAnalyzerImpl();
+        final String sourceCode = readSourceCode(src, "foo");
+
+        final Publisher<OdinAnalysisErrorInterop> errorsPublisher =
+            odinAnalyzer.analyzeSourceCode(sourceCode);
+
+        errorsPublisher.subscribe(new Subscriber<OdinAnalysisErrorInterop>() {
+            @Override
+            public void onSubscribe(Subscription s) {
+            }
+
+            @Override
+            public void onNext(OdinAnalysisErrorInterop odinAnalysisErrorInterop) {
+                logError(odinAnalysisErrorInterop.message());
+            }
+
+            @Override
+            public void onError(Throwable t) {
+            }
+
+            @Override
+            public void onComplete() {
+            }
+        });
+    }
+
     /**
      * Run it.
      * @param args The args
@@ -77,21 +142,13 @@ public final class Polystat {
      */
     public void exec(final String... args) throws Exception {
         if (args.length == 2) {
-            final Collection<String> errors = new Reverses(
-                new XMIR(Paths.get(args[0]), Paths.get(args[1]))
-            ).errors("\\Phi.foo");
-            Logger.info(this, "%d errors found", errors.size());
-            for (final String error : errors) {
-                Logger.info(this, "Error: %s", error);
-                this.stdout.printf("Error: %s%n", error);
-            }
-            if (errors.isEmpty()) {
-                Logger.info(this, "No errors found");
-                this.stdout.println("No errors");
-            }
+            final Path src = Paths.get(args[0]);
+            final Path tmp = Paths.get(args[1]);
+
+            polystatAnalysis(src, tmp);
+            odinAnalysis(src);
         } else {
             this.stdout.println("Read our README in GitHub");
         }
     }
-
 }
