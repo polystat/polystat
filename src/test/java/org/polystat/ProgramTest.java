@@ -34,12 +34,12 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test case for {@link XMIR}.
+ * Test case for {@link Program}.
  *
  * @since 0.1
  * @checkstyle AbbreviationAsWordInNameCheck (3 lines)
  */
-public final class XMIRTest {
+public final class ProgramTest {
 
     @Test
     public void interpretsOneEolangProgram() throws Exception {
@@ -51,8 +51,8 @@ public final class XMIRTest {
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
         final Path temp = Files.createTempDirectory("temp");
-        final XMIR xmir = new XMIR(sources, temp);
-        final XML foo = xmir.apply("\\Phi.foo");
+        final Program program = new Program(sources, temp);
+        final XML foo = program.apply("\\Phi.foo");
         MatcherAssert.assertThat(
             foo.xpath("@name").get(0),
             Matchers.equalTo("foo")

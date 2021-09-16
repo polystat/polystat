@@ -87,7 +87,7 @@ public final class Polystat {
      */
     public void exec(final String... args) throws Exception {
         if (args.length == 2) {
-            final Func<String, XML> xmir = new XMIR(
+            final Func<String, XML> xmir = new Program(
                 Paths.get(args[0]), Paths.get(args[1])
             );
             for (final Analysis analysis : Polystat.ALL) {

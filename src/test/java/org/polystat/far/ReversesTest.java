@@ -33,7 +33,7 @@ import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.polystat.XMIR;
+import org.polystat.Program;
 
 /**
  * Test case for {@link Reverses}.
@@ -54,7 +54,7 @@ public final class ReversesTest {
         final Path temp = Files.createTempDirectory("temp");
         final Reverses reverses = new Reverses();
         final Collection<String> bugs = reverses.errors(
-            new XMIR(sources, temp), "\\Phi.foo"
+            new Program(sources, temp), "\\Phi.foo"
         );
         MatcherAssert.assertThat(
             bugs,
@@ -76,7 +76,7 @@ public final class ReversesTest {
         final Path temp = Files.createTempDirectory("temp2");
         final Reverses reverses = new Reverses();
         final Collection<String> bugs = reverses.errors(
-            new XMIR(sources, temp), "\\Phi.bar"
+            new Program(sources, temp), "\\Phi.bar"
         );
         MatcherAssert.assertThat(bugs, Matchers.emptyIterable());
     }
