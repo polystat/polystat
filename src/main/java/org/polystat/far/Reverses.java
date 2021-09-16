@@ -38,7 +38,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.xml.transform.stream.StreamSource;
 import org.cactoos.Func;
-import org.cactoos.func.UncheckedFunc;
 import org.cactoos.io.InputStreamOf;
 import org.cactoos.io.OutputTo;
 import org.cactoos.io.ResourceOf;
@@ -48,6 +47,7 @@ import org.cactoos.text.TextOf;
 import org.cactoos.text.UncheckedText;
 import org.eolang.parser.Spy;
 import org.eolang.parser.Xsline;
+import org.polystat.Analysis;
 import org.xembly.Directives;
 import org.xembly.Xembler;
 
@@ -57,35 +57,18 @@ import org.xembly.Xembler;
  * @since 1.0
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-public final class Reverses {
+public final class Reverses implements Analysis {
 
-    /**
-     * The XMIR of the code (most probably the implementation is
-     * an instance of class {@link org.polystat.XMIR}).
-     */
-    private final UncheckedFunc<String, XML> xmir;
-
-    /**
-     * Ctor.
-     * @param src The XMIR
-     */
-    public Reverses(final Func<String, XML> src) {
-        this.xmir = new UncheckedFunc<>(src);
-    }
-
-    /**
-     * Find all errors.
-     * @param locator The locator of the object to analyze
-     * @return List of errors
-     * @throws IOException If fails
-     * @todo #1:1h The current implementation of the method is not perfect,
-     *  because Xsline doesn't allow anything aside from XSL to be inside it.
-     *  I suggest we add new functionality to Xsline and let it have
-     *  not only XSL but also Cactoos Func-s inside.
-     */
-    public Collection<String> errors(final String locator) throws IOException {
+    // @todo #1:1h The current implementation of the method is not perfect,
+    //  because Xsline doesn't allow anything aside from XSL to be inside it.
+    //  I suggest we add new functionality to Xsline and let it have
+    //  not only XSL but also Cactoos Func-s inside.
+    //
+    @Override
+    public Collection<String> errors(final Func<String, XML> xmir,
+        final String locator) throws Exception {
         final Collection<String> bugs = new LinkedList<>();
-        final XML obj = this.xmir.apply(locator);
+        final XML obj = xmir.apply(locator);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new Xsline(obj, new OutputTo(baos), new Spy.Verbose(), new ListOf<>())
             .with(Reverses.xsl("expected.xsl").with("expected", "\\perp"))

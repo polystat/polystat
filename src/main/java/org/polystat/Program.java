@@ -37,7 +37,8 @@ import org.eolang.parser.Syntax;
 import org.eolang.parser.Xsline;
 
 /**
- * A collection of all EO files, which are accessible as XMIR elements.
+ * A collection of all EO files, which are accessible as XMIR elements,
+ * by their object locators.
  *
  * @since 1.0
  * @todo #1:1h The current implementation is very primitive and doesn't
@@ -46,7 +47,7 @@ import org.eolang.parser.Xsline;
  *  and fetch a child.
  * @checkstyle AbbreviationAsWordInNameCheck (5 lines)
  */
-public final class XMIR implements Func<String, XML> {
+public final class Program implements Func<String, XML> {
 
     /**
      * The directory with EO files.
@@ -63,7 +64,7 @@ public final class XMIR implements Func<String, XML> {
      * @param src The dir with .eo sources
      * @param tmp Temp dir with .xml files
      */
-    public XMIR(final Path src, final Path tmp) {
+    public Program(final Path src, final Path tmp) {
         this.sources = src;
         this.temp = tmp;
     }

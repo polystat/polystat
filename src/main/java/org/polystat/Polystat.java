@@ -25,7 +25,10 @@
 package org.polystat;
 
 import com.jcabi.log.Logger;
+import com.jcabi.xml.XML;
+import org.cactoos.Func;
 import org.cactoos.io.InputOf;
+import org.cactoos.list.ListOf;
 import org.cactoos.text.TextOf;
 import org.polystat.far.Reverses;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
@@ -34,18 +37,24 @@ import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.List;
 
 /**
  * Main entrance.
  *
- * @todo #1:1h Let's use some library for command line arguments parsing.
- * The current implementation in this class is super primitive and must
- * be replaced by something decent.
  * @since 1.0
+ * @todo #1:1h Let's use some library for command line arguments parsing.
+ *  The current implementation in this class is super primitive and must
+ *  be replaced by something decent.
  */
 public final class Polystat {
+
+    /**
+     * Analyzers.
+     */
+    private static final Analysis[] ALL = {
+        new Reverses(),
+    };
 
     /**
      * The stream to print to.
@@ -54,7 +63,6 @@ public final class Polystat {
 
     /**
      * Ctor.
-     *
      * @param out The stream to print to
      */
     public Polystat(final PrintStream out) {
@@ -63,7 +71,6 @@ public final class Polystat {
 
     /**
      * Main entrance for Java command line.
-     *
      * @param args The args
      * @throws Exception If fails
      */
@@ -75,25 +82,6 @@ public final class Polystat {
     private void logError(final String error) {
         Logger.info(this, "Error: %s", error);
         this.stdout.printf("Error: %s%n", error);
-    }
-
-    private void polystatAnalysis(final Path src, final Path tmp) throws Exception {
-        // Reverses and XMIR needs to be refactored, since now XMIR is
-        // responsible for:
-        // 1. calculating of source code file path
-        // 2. reading the source file
-        // 3. getting AST for the source code
-        final XMIR xmir = new XMIR(src, tmp);
-        final Collection<String> errors = new Reverses(xmir)
-            .errors("\\Phi.foo");
-        Logger.info(this, "%d errors found", errors.size());
-        for (final String error : errors) {
-            logError(error);
-        }
-        if (errors.isEmpty()) {
-            Logger.info(this, "No errors found");
-            this.stdout.println("No errors");
-        }
     }
 
     private String readSourceCode(final Path sources, final String name) throws Exception {
@@ -132,24 +120,38 @@ public final class Polystat {
 
     /**
      * Run it.
-     *
      * @param args The args
      * @throws Exception If fails
      * @todo #1:1h For some reason, the Logger.info() doesn't print anything
-     * to the console when the JAR is run via command line. It does print
-     * during testing, but doesn't show anything when being run as
-     * a JAR-with-dependencies. I didn't manage to find the reason, that's
-     * why added these "printf" instructions. Let's fix it, make sure
-     * Logger works in the JAR-with-dependencies, and remove this.stdout
-     * from this class at all.
+     *  to the console when the JAR is run via command line. It does print
+     *  during testing, but doesn't show anything when being run as
+     *  a JAR-with-dependencies. I didn't manage to find the reason, that's
+     *  why added these "printf" instructions. Let's fix it, make sure
+     *  Logger works in the JAR-with-dependencies, and remove this.stdout
+     *  from this class at all.
      */
     public void exec(final String... args) throws Exception {
         if (args.length == 2) {
-            final Path src = Paths.get(args[0]);
-            final Path tmp = Paths.get(args[1]);
-
-            polystatAnalysis(src, tmp);
-            odinAnalysis(src);
+            final Func<String, XML> xmir = new Program(
+                Paths.get(args[0]), Paths.get(args[1])
+            );
+            for (final Analysis analysis : Polystat.ALL) {
+                final List<String> errors = new ListOf<>(
+                    analysis.errors(xmir, "\\Phi.foo")
+                );
+                Logger.info(
+                    this, "%d errors found by %s",
+                    errors.size(), analysis.getClass()
+                );
+                for (final String error : errors) {
+                    Logger.info(this, "Error: %s", error);
+                    this.stdout.printf("Error: %s%n", error);
+                }
+                if (errors.isEmpty()) {
+                    Logger.info(this, "No errors found");
+                    this.stdout.println("No errors");
+                }
+            }
         } else {
             this.stdout.println("Read our README in GitHub");
         }
