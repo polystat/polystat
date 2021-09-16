@@ -25,9 +25,12 @@
 package org.polystat;
 
 import com.jcabi.log.Logger;
+import com.jcabi.xml.XML;
 import java.io.PrintStream;
 import java.nio.file.Paths;
-import java.util.Collection;
+import java.util.List;
+import org.cactoos.Func;
+import org.cactoos.list.ListOf;
 import org.polystat.far.Reverses;
 
 /**
@@ -39,6 +42,13 @@ import org.polystat.far.Reverses;
  *  be replaced by something decent.
  */
 public final class Polystat {
+
+    /**
+     * Analyzers.
+     */
+    private static final Analysis[] ALL = {
+        new Reverses(),
+    };
 
     /**
      * The stream to print to.
@@ -77,17 +87,25 @@ public final class Polystat {
      */
     public void exec(final String... args) throws Exception {
         if (args.length == 2) {
-            final Collection<String> errors = new Reverses(
-                new XMIR(Paths.get(args[0]), Paths.get(args[1]))
-            ).errors("\\Phi.foo");
-            Logger.info(this, "%d errors found", errors.size());
-            for (final String error : errors) {
-                Logger.info(this, "Error: %s", error);
-                this.stdout.printf("Error: %s%n", error);
-            }
-            if (errors.isEmpty()) {
-                Logger.info(this, "No errors found");
-                this.stdout.println("No errors");
+            final Func<String, XML> xmir = new XMIR(
+                Paths.get(args[0]), Paths.get(args[1])
+            );
+            for (final Analysis analysis : Polystat.ALL) {
+                final List<String> errors = new ListOf<>(
+                    analysis.errors(xmir, "\\Phi.foo")
+                );
+                Logger.info(
+                    this, "%d errors found by %s",
+                    errors.size(), analysis.getClass()
+                );
+                for (final String error : errors) {
+                    Logger.info(this, "Error: %s", error);
+                    this.stdout.printf("Error: %s%n", error);
+                }
+                if (errors.isEmpty()) {
+                    Logger.info(this, "No errors found");
+                    this.stdout.println("No errors");
+                }
             }
         } else {
             this.stdout.println("Read our README in GitHub");

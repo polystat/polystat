@@ -52,8 +52,10 @@ public final class ReversesTest {
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
         final Path temp = Files.createTempDirectory("temp");
-        final Reverses reverses = new Reverses(new XMIR(sources, temp));
-        final Collection<String> bugs = reverses.errors("\\Phi.foo");
+        final Reverses reverses = new Reverses();
+        final Collection<String> bugs = reverses.errors(
+            new XMIR(sources, temp), "\\Phi.foo"
+        );
         MatcherAssert.assertThat(
             bugs,
             // @checkstyle MagicNumber (1 line)
@@ -72,8 +74,10 @@ public final class ReversesTest {
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
         final Path temp = Files.createTempDirectory("temp2");
-        final Reverses reverses = new Reverses(new XMIR(sources, temp));
-        final Collection<String> bugs = reverses.errors("\\Phi.bar");
+        final Reverses reverses = new Reverses();
+        final Collection<String> bugs = reverses.errors(
+            new XMIR(sources, temp), "\\Phi.bar"
+        );
         MatcherAssert.assertThat(bugs, Matchers.emptyIterable());
     }
 
