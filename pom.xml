@@ -37,7 +37,7 @@ SOFTWARE.
   <description>Polyglot Static Analyzer</description>
   <properties>
     <eolang.version>0.1.30</eolang.version>
-    <odin.version>0.1.0</odin.version>
+    <odin.version>0.1.1</odin.version>
     <reactivstream.version>1.0.3</reactivstream.version>
   </properties>
   <dependencies>

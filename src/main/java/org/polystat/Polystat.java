@@ -25,26 +25,25 @@
 package org.polystat;
 
 import com.jcabi.log.Logger;
-import java.io.PrintStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
 import org.cactoos.io.InputOf;
 import org.cactoos.text.TextOf;
 import org.polystat.far.Reverses;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
 import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
+
+import java.io.PrintStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Main entrance.
  *
- * @since 1.0
  * @todo #1:1h Let's use some library for command line arguments parsing.
- *  The current implementation in this class is super primitive and must
- *  be replaced by something decent.
+ * The current implementation in this class is super primitive and must
+ * be replaced by something decent.
+ * @since 1.0
  */
 public final class Polystat {
 
@@ -55,6 +54,7 @@ public final class Polystat {
 
     /**
      * Ctor.
+     *
      * @param out The stream to print to
      */
     public Polystat(final PrintStream out) {
@@ -63,6 +63,7 @@ public final class Polystat {
 
     /**
      * Main entrance for Java command line.
+     *
      * @param args The args
      * @throws Exception If fails
      */
@@ -103,42 +104,44 @@ public final class Polystat {
 
     private void odinAnalysis(final Path src) throws Exception {
         final EOOdinAnalyzer odinAnalyzer = new EOOdinAnalyzer.EOOdinAnalyzerImpl();
-        final String sourceCode = readSourceCode(src, "foo");
+        final String fileToAnalyze = "mutual_rec";
+        final String sourceCode = readSourceCode(src, fileToAnalyze);
 
-        final Publisher<OdinAnalysisErrorInterop> errorsPublisher =
+        Logger.info(this, "Analyzing %s eo file with odin", fileToAnalyze);
+
+        final List<OdinAnalysisErrorInterop> odinErrors =
             odinAnalyzer.analyzeSourceCode(sourceCode);
 
-        errorsPublisher.subscribe(new Subscriber<OdinAnalysisErrorInterop>() {
-            @Override
-            public void onSubscribe(Subscription s) {
-            }
+        if (!odinErrors.isEmpty()) {
+            Logger.info(
+                this,
+                "Odin analysis of %s eo file finished with %d errors",
+                fileToAnalyze,
+                odinErrors.size()
+            );
 
-            @Override
-            public void onNext(OdinAnalysisErrorInterop odinAnalysisErrorInterop) {
-                logError(odinAnalysisErrorInterop.message());
-            }
-
-            @Override
-            public void onError(Throwable t) {
-            }
-
-            @Override
-            public void onComplete() {
-            }
-        });
+            odinErrors.forEach(error -> logError(error.message()));
+        } else {
+            Logger.info(
+                this,
+                "Odin analysis of %s eo file finished with no errors",
+                fileToAnalyze
+            );
+        }
     }
 
     /**
      * Run it.
+     *
      * @param args The args
      * @throws Exception If fails
      * @todo #1:1h For some reason, the Logger.info() doesn't print anything
-     *  to the console when the JAR is run via command line. It does print
-     *  during testing, but doesn't show anything when being run as
-     *  a JAR-with-dependencies. I didn't manage to find the reason, that's
-     *  why added these "printf" instructions. Let's fix it, make sure
-     *  Logger works in the JAR-with-dependencies, and remove this.stdout
-     *  from this class at all.
+     * to the console when the JAR is run via command line. It does print
+     * during testing, but doesn't show anything when being run as
+     * a JAR-with-dependencies. I didn't manage to find the reason, that's
+     * why added these "printf" instructions. Let's fix it, make sure
+     * Logger works in the JAR-with-dependencies, and remove this.stdout
+     * from this class at all.
      */
     public void exec(final String... args) throws Exception {
         if (args.length == 2) {
