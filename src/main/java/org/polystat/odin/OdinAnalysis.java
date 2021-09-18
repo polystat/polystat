@@ -26,7 +26,7 @@ public class OdinAnalysis implements Analysis {
     }
 
     @Override
-    public String analysisName() {
+    public String name() {
         return "Odin (object dependency inspector)";
     }
 }

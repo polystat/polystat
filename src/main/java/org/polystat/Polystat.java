@@ -149,7 +149,7 @@ public final class Polystat {
                     Logger.error(
                         this,
                         "Analysis method \"%s\" finished with exception:\n%s",
-                        analysis.analysisName(),
+                        analysis.name(),
                         e.toString()
                     );
                     continue;

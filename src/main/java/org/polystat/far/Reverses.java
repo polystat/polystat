@@ -140,7 +140,7 @@ public final class Reverses implements Analysis {
     }
 
     @Override
-    public String analysisName() {
+    public String name() {
         return "FAR";
     }
 

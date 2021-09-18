@@ -48,5 +48,5 @@ public interface Analysis {
     /**
      * @return Name of the analysis.
      */
-    String analysisName();
+    String name();
 }
