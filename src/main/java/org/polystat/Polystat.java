@@ -81,45 +81,6 @@ public final class Polystat {
         new Polystat(System.out).exec(args);
     }
 
-    private void logError(final String error) {
-        Logger.info(this, "Error: %s", error);
-        this.stdout.printf("Error: %s%n", error);
-    }
-
-    private String readSourceCode(final Path sources, final String name) throws Exception {
-        final Path sourceCodePath = sources.resolve(String.format("%s.eo", name));
-        final TextOf textOf = new TextOf(new InputOf(sourceCodePath));
-        return textOf.asString();
-    }
-
-    private void odinAnalysis(final Path src) throws Exception {
-        final EOOdinAnalyzer odinAnalyzer = new EOOdinAnalyzer.EOOdinAnalyzerImpl();
-        final String fileToAnalyze = "mutual_rec";
-        final String sourceCode = readSourceCode(src, fileToAnalyze);
-
-        Logger.info(this, "Analyzing %s eo file with odin", fileToAnalyze);
-
-        final List<OdinAnalysisErrorInterop> odinErrors =
-            odinAnalyzer.analyzeSourceCode(sourceCode);
-
-        if (!odinErrors.isEmpty()) {
-            Logger.info(
-                this,
-                "Odin analysis of %s eo file finished with %d errors",
-                fileToAnalyze,
-                odinErrors.size()
-            );
-
-            odinErrors.forEach(error -> logError(error.message()));
-        } else {
-            Logger.info(
-                this,
-                "Odin analysis of %s eo file finished with no errors",
-                fileToAnalyze
-            );
-        }
-    }
-
     /**
      * Run it.
      * @param args The args
