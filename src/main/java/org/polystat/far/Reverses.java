@@ -139,6 +139,11 @@ public final class Reverses implements Analysis {
         return bugs;
     }
 
+    @Override
+    public String analysisName() {
+        return "FAR";
+    }
+
     /**
      * Make XSL.
      * @param name Name of it

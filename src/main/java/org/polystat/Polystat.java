@@ -31,6 +31,7 @@ import org.cactoos.io.InputOf;
 import org.cactoos.list.ListOf;
 import org.cactoos.text.TextOf;
 import org.polystat.far.Reverses;
+import org.polystat.odin.OdinAnalysis;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
 import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
 
@@ -54,6 +55,7 @@ public final class Polystat {
      */
     private static final Analysis[] ALL = {
         new Reverses(),
+        new OdinAnalysis()
     };
 
     /**
@@ -136,9 +138,23 @@ public final class Polystat {
                 Paths.get(args[0]), Paths.get(args[1])
             );
             for (final Analysis analysis : Polystat.ALL) {
-                final List<String> errors = new ListOf<>(
-                    analysis.errors(xmir, "\\Phi.foo")
-                );
+                List<String> errors = new ListOf<>();
+
+                try {
+                    errors = new ListOf<>(
+                        analysis.errors(xmir, "\\Phi.foo")
+                    );
+                }
+                catch (Exception e) {
+                    Logger.error(
+                        this,
+                        "Analysis method \"%s\" finished with exception:\n%s",
+                        analysis.analysisName(),
+                        e.toString()
+                    );
+                    continue;
+                }
+
                 Logger.info(
                     this, "%d errors found by %s",
                     errors.size(), analysis.getClass()
