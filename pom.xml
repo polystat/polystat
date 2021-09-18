@@ -38,7 +38,6 @@ SOFTWARE.
   <properties>
     <eolang.version>0.5.0</eolang.version>
     <odin.version>0.1.1</odin.version>
-    <reactivstream.version>1.0.3</reactivstream.version>
   </properties>
   <dependencies>
     <dependency>
