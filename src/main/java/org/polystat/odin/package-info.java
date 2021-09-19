@@ -22,48 +22,10 @@
  * SOFTWARE.
  */
 
-package org.polystat.odin;
-
-import com.jcabi.xml.XML;
-import java.util.stream.Collectors;
-import org.cactoos.Func;
-import org.eolang.parser.XMIR;
-import org.polystat.Analysis;
-import org.polystat.odin.interop.java.EOOdinAnalyzer;
-
 /**
- * The implementation of analysis via odin (object dependency inspector).
+ * Package related to odin.
  *
- * @see <a href="https://github.com/polystat/odin">Github</a>
  * @since 0.3
+ * @see <a href="https://github.com/polystat/odin">GitHub Org</a>
  */
-public final class OdinAnalysis implements Analysis {
-    /**
-     * Odin analyzer that performs analysis.
-     */
-    private final EOOdinAnalyzer analyzer;
-
-    /**
-     * Ctor.
-     */
-    public OdinAnalysis() {
-        this.analyzer = new EOOdinAnalyzer.EOOdinAnalyzerImpl();
-    }
-
-    @Override
-    public Iterable<String> errors(
-        final Func<String, XML> xmir,
-        final String locator
-    ) throws Exception {
-        final XMIR xsrc = new XMIR(xmir.apply("\\Phi"));
-        final String src = xsrc.toEO();
-        return this.analyzer.analyzeSourceCode(src).stream()
-            .map(error -> error.message())
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public String name() {
-        return "Odin (object dependency inspector)";
-    }
-}
+package org.polystat.odin;

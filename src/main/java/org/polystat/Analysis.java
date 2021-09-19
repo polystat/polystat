@@ -46,6 +46,7 @@ public interface Analysis {
         String locator) throws Exception;
 
     /**
+     * Name of the analysis.
      * @return Name of the analysis.
      */
     String name();

@@ -86,7 +86,7 @@ SOFTWARE.
     </dependency>
     <dependency>
       <groupId>org.polystat.odin</groupId>
-      <artifactId>odin_2.13</artifactId>
+      <artifactId>interop_2.13</artifactId>
       <version>${odin.version}</version>
     </dependency>
   </dependencies>

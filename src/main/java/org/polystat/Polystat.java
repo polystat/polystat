@@ -26,19 +26,13 @@ package org.polystat;
 
 import com.jcabi.log.Logger;
 import com.jcabi.xml.XML;
-import org.cactoos.Func;
-import org.cactoos.io.InputOf;
-import org.cactoos.list.ListOf;
-import org.cactoos.text.TextOf;
-import org.polystat.far.Reverses;
-import org.polystat.odin.OdinAnalysis;
-import org.polystat.odin.interop.java.EOOdinAnalyzer;
-import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
-
 import java.io.PrintStream;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import org.cactoos.Func;
+import org.cactoos.list.ListOf;
+import org.polystat.far.Reverses;
+import org.polystat.odin.OdinAnalysis;
 
 /**
  * Main entrance.
@@ -55,7 +49,7 @@ public final class Polystat {
      */
     private static final Analysis[] ALL = {
         new Reverses(),
-        new OdinAnalysis()
+        new OdinAnalysis(),
     };
 
     /**
@@ -99,23 +93,20 @@ public final class Polystat {
                 Paths.get(args[0]), Paths.get(args[1])
             );
             for (final Analysis analysis : Polystat.ALL) {
-                List<String> errors = new ListOf<>();
-
+                final List<String> errors;
                 try {
                     errors = new ListOf<>(
                         analysis.errors(xmir, "\\Phi.foo")
                     );
-                }
-                catch (Exception e) {
+                } catch (final IndexOutOfBoundsException ex) {
                     Logger.error(
                         this,
                         "Analysis method \"%s\" finished with exception:\n%s",
                         analysis.name(),
-                        e.toString()
+                        ex.toString()
                     );
                     continue;
                 }
-
                 Logger.info(
                     this, "%d errors found by %s",
                     errors.size(), analysis.getClass()
