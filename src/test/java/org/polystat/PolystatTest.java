@@ -58,15 +58,14 @@ public final class PolystatTest {
     }
 
     @Test
-    public void analyzesOneEolangProgram(@TempDir final Path sources)
-        throws Exception {
+    public void analyzesOneEolangProgram(@TempDir final Path sources,
+        @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("foo.eo"),
             new TextOf(
                 new ResourceOf("org/polystat/tests/div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
-        final Path temp = Files.createTempDirectory("temp");
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         new Polystat(new PrintStream(out)).exec(
             sources.toAbsolutePath().toString(),

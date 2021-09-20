@@ -43,15 +43,14 @@ import org.junit.jupiter.api.io.TempDir;
 public final class ProgramTest {
 
     @Test
-    public void interpretOneEolangProgram(@TempDir final Path sources)
-        throws Exception {
+    public void interpretOneEolangProgram(@TempDir final Path sources,
+        @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("foo.eo"),
             new TextOf(
                 new ResourceOf("org/polystat/tests/div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
-        final Path temp = Files.createTempDirectory("temp");
         final Program program = new Program(sources, temp);
         final XML foo = program.apply("\\Phi.foo");
         MatcherAssert.assertThat(
