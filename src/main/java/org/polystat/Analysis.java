@@ -45,9 +45,4 @@ public interface Analysis {
     Iterable<String> errors(Func<String, XML> xmir,
         String locator) throws Exception;
 
-    /**
-     * Name of the analysis.
-     * @return Name of the analysis.
-     */
-    String name();
 }
