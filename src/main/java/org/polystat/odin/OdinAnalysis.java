@@ -30,7 +30,6 @@ import org.cactoos.Func;
 import org.eolang.parser.XMIR;
 import org.polystat.Analysis;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
-import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
 
 /**
  * The implementation of analysis via odin (object dependency inspector).
