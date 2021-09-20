@@ -40,15 +40,15 @@ import org.junit.jupiter.api.io.TempDir;
  *
  * @since 0.1
  */
-public final class PolystatTest {
+final class PolystatTest {
 
     @Test
-    public void publicEntrance() throws Exception {
+    void publicEntrance() throws Exception {
         Polystat.main();
     }
 
     @Test
-    public void saysHello() throws Exception {
+    void saysHello() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         new Polystat(new PrintStream(out)).exec();
         MatcherAssert.assertThat(
@@ -58,7 +58,7 @@ public final class PolystatTest {
     }
 
     @Test
-    public void analyzesOneEolangProgram(@TempDir final Path sources,
+    void analyzesOneEolangProgram(@TempDir final Path sources,
         @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("foo.eo"),

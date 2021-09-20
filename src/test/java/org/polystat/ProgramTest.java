@@ -38,12 +38,11 @@ import org.junit.jupiter.api.io.TempDir;
  * Test case for {@link Program}.
  *
  * @since 0.1
- * @checkstyle AbbreviationAsWordInNameCheck (3 lines)
  */
-public final class ProgramTest {
+final class ProgramTest {
 
     @Test
-    public void interpretOneEolangProgram(@TempDir final Path sources,
+    void interpretOneEolangProgram(@TempDir final Path sources,
         @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("foo.eo"),

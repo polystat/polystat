@@ -41,10 +41,10 @@ import org.polystat.Program;
  *
  * @since 0.1
  */
-public final class ReversesTest {
+final class ReversesTest {
 
     @Test
-    public void findsBugsInSimpleXml(@TempDir final Path sources,
+    void findsBugsInSimpleXml(@TempDir final Path sources,
         @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("foo.eo"),
@@ -65,7 +65,7 @@ public final class ReversesTest {
     }
 
     @Test
-    public void findsNoBugsInSimpleXml(@TempDir final Path sources,
+    void findsNoBugsInSimpleXml(@TempDir final Path sources,
         @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("bar.eo"),
