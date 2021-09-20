@@ -33,6 +33,7 @@ import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.polystat.Program;
 
 /**
@@ -43,8 +44,8 @@ import org.polystat.Program;
 public final class ReversesTest {
 
     @Test
-    public void findsBugsInSimpleXml() throws Exception {
-        final Path sources = Files.createTempDirectory("sources");
+    public void findsBugsInSimpleXml(@TempDir final Path sources)
+        throws Exception {
         Files.write(
             sources.resolve("foo.eo"),
             new TextOf(
@@ -65,8 +66,8 @@ public final class ReversesTest {
     }
 
     @Test
-    public void findsNoBugsInSimpleXml() throws Exception {
-        final Path sources = Files.createTempDirectory("sources2");
+    public void findsNoBugsInSimpleXml(@TempDir final Path sources)
+        throws Exception {
         Files.write(
             sources.resolve("bar.eo"),
             new TextOf(

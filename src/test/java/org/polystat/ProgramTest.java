@@ -32,6 +32,7 @@ import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test case for {@link Program}.
@@ -42,8 +43,8 @@ import org.junit.jupiter.api.Test;
 public final class ProgramTest {
 
     @Test
-    public void interpretsOneEolangProgram() throws Exception {
-        final Path sources = Files.createTempDirectory("sources");
+    public void interpretOneEolangProgram(@TempDir final Path sources)
+        throws Exception {
         Files.write(
             sources.resolve("foo.eo"),
             new TextOf(

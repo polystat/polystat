@@ -33,6 +33,7 @@ import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test case for {@link Polystat}.
@@ -57,8 +58,8 @@ public final class PolystatTest {
     }
 
     @Test
-    public void analyzesOneEolangProgram() throws Exception {
-        final Path sources = Files.createTempDirectory("sources");
+    public void analyzesOneEolangProgram(@TempDir final Path sources)
+        throws Exception {
         Files.write(
             sources.resolve("foo.eo"),
             new TextOf(
