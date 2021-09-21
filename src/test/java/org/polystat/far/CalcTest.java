@@ -36,10 +36,10 @@ import org.junit.jupiter.api.Test;
  *
  * @since 0.1
  */
-public final class CalcTest {
+final class CalcTest {
 
     @Test
-    public void buildsSimpleRulesXsl() {
+    void buildsSimpleRulesXsl() {
         MatcherAssert.assertThat(
             XhtmlMatchers.xhtml(new Calc("add(y) -> {{y 0}}").xsl()),
             Matchers.allOf(
@@ -52,7 +52,7 @@ public final class CalcTest {
     }
 
     @Test
-    public void buildsRealRulesXsl() {
+    void buildsRealRulesXsl() {
         MatcherAssert.assertThat(
             XhtmlMatchers.xhtml(
                 new Calc(

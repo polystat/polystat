@@ -33,6 +33,7 @@ import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.polystat.Program;
 
 /**
@@ -40,18 +41,17 @@ import org.polystat.Program;
  *
  * @since 0.1
  */
-public final class ReversesTest {
+final class ReversesTest {
 
     @Test
-    public void findsBugsInSimpleXml() throws Exception {
-        final Path sources = Files.createTempDirectory("sources");
+    void findsBugsInSimpleXml(@TempDir final Path sources,
+        @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("foo.eo"),
             new TextOf(
                 new ResourceOf("org/polystat/tests/div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
-        final Path temp = Files.createTempDirectory("temp");
         final Reverses reverses = new Reverses();
         final Collection<String> bugs = reverses.errors(
             new Program(sources, temp), "\\Phi.foo"
@@ -65,15 +65,14 @@ public final class ReversesTest {
     }
 
     @Test
-    public void findsNoBugsInSimpleXml() throws Exception {
-        final Path sources = Files.createTempDirectory("sources2");
+    void findsNoBugsInSimpleXml(@TempDir final Path sources,
+        @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("bar.eo"),
             new TextOf(
                 new ResourceOf("org/polystat/tests/no-div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
-        final Path temp = Files.createTempDirectory("temp2");
         final Reverses reverses = new Reverses();
         final Collection<String> bugs = reverses.errors(
             new Program(sources, temp), "\\Phi.bar"

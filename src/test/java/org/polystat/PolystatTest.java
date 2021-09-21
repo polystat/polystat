@@ -33,21 +33,22 @@ import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test case for {@link Polystat}.
  *
  * @since 0.1
  */
-public final class PolystatTest {
+final class PolystatTest {
 
     @Test
-    public void publicEntrance() throws Exception {
+    void publicEntrance() throws Exception {
         Polystat.main();
     }
 
     @Test
-    public void saysHello() throws Exception {
+    void saysHello() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         new Polystat(new PrintStream(out)).exec();
         MatcherAssert.assertThat(
@@ -57,15 +58,14 @@ public final class PolystatTest {
     }
 
     @Test
-    public void analyzesOneEolangProgram() throws Exception {
-        final Path sources = Files.createTempDirectory("sources");
+    void analyzesOneEolangProgram(@TempDir final Path sources,
+        @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("foo.eo"),
             new TextOf(
                 new ResourceOf("org/polystat/tests/div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
-        final Path temp = Files.createTempDirectory("temp");
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         new Polystat(new PrintStream(out)).exec(
             sources.toAbsolutePath().toString(),

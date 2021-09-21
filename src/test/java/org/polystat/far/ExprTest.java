@@ -35,10 +35,10 @@ import org.junit.jupiter.api.Test;
  *  As inputs we should probably have the expressions and the output
  *  should be the expected result of the Expr class.
  */
-public final class ExprTest {
+final class ExprTest {
 
     @Test
-    public void solvesSimpleExpression() {
+    void solvesSimpleExpression() {
         final Expr expr = new Expr(
             "((a=1 ∧ b=2) or (b=3)) and ((a=7) or (b=2 ∧ d=7))"
         );
@@ -49,7 +49,7 @@ public final class ExprTest {
     }
 
     @Test
-    public void failsSimpleExpression() {
+    void failsSimpleExpression() {
         final Expr expr = new Expr(
             "((a=1 ∧ b=2) or (d=4)) and ((d=5 ∧ a=7) or (b=6 ∧ d=1))"
         );
@@ -60,7 +60,7 @@ public final class ExprTest {
     }
 
     @Test
-    public void ignoresNever() {
+    void ignoresNever() {
         final Expr expr = new Expr(
             String.format("((a=1 ∧ b=%s)) and ((a=1))", Expr.NEVER)
         );
