@@ -98,14 +98,13 @@ public final class Polystat {
                     errors = new ListOf<>(
                         analysis.errors(xmir, "\\Phi.foo")
                     );
-                } catch (final IndexOutOfBoundsException ex) {
-                    Logger.error(
-                        this,
+                } catch (final Exception ex) {
+                    throw new Exception(
+                            String.format(
                         "Analysis method \"%s\" finished with exception:\n%s",
                         analysis.getClass().getTypeName(),
-                        ex.toString()
+                                    ex)
                     );
-                    continue;
                 }
                 Logger.info(
                     this, "%d errors found by %s",
