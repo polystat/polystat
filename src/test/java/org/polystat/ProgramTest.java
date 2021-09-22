@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * Test case for {@link Program}.
+ * Test case for {@link XMIR}.
  *
  * @since 0.1
  */
@@ -50,8 +50,12 @@ final class ProgramTest {
                 new ResourceOf("org/polystat/tests/div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
-        final Program program = new Program(sources, temp);
-        final XML foo = program.apply("\\Phi.foo");
+        final XMIR program = new XMIR(
+            "\\Phi.foo"
+        );
+        final XML foo = program.apply(
+            new EOSource(sources.resolve("foo.eo"), temp)
+        );
         MatcherAssert.assertThat(
             foo.xpath("@name").get(0),
             Matchers.equalTo("foo")

@@ -24,17 +24,20 @@
 package org.polystat.far;
 
 import com.jcabi.log.Logger;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+
 import org.cactoos.io.ResourceOf;
 import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.polystat.Program;
+import org.polystat.EOSource;
+import org.polystat.XMIR;
 
 /**
  * Test case for {@link Reverses}.
@@ -45,16 +48,19 @@ final class ReversesTest {
 
     @Test
     void findsBugsInSimpleXml(@TempDir final Path sources,
-        @TempDir final Path temp) throws Exception {
+                              @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("foo.eo"),
             new TextOf(
                 new ResourceOf("org/polystat/tests/div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
-        final Reverses reverses = new Reverses();
+        final Reverses reverses = new Reverses(
+            new XMIR("\\Phi.foo").apply(
+                new EOSource(sources.resolve("foo.eo"), temp)
+            ));
         final Collection<String> bugs = reverses.errors(
-            new Program(sources, temp), "\\Phi.foo"
+
         );
         MatcherAssert.assertThat(
             bugs,
@@ -66,17 +72,18 @@ final class ReversesTest {
 
     @Test
     void findsNoBugsInSimpleXml(@TempDir final Path sources,
-        @TempDir final Path temp) throws Exception {
+                                @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("bar.eo"),
             new TextOf(
                 new ResourceOf("org/polystat/tests/no-div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
-        final Reverses reverses = new Reverses();
-        final Collection<String> bugs = reverses.errors(
-            new Program(sources, temp), "\\Phi.bar"
-        );
+        final Reverses reverses = new Reverses(
+            new XMIR("\\Phi.bar").apply(
+                new EOSource(sources.resolve("bar.eo"), temp)
+            ));
+        final Collection<String> bugs = reverses.errors();
         MatcherAssert.assertThat(bugs, Matchers.emptyIterable());
     }
 

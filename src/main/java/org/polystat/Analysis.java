@@ -37,12 +37,9 @@ public interface Analysis {
     /**
      * Analyse the specified object in the provided XMIR
      * and return the list of errors found.
-     * @param xmir The XMIR
-     * @param locator The locator of the object, for example "\\Phi.foo"
-     * @return List of exeptions
+     * @return List of exceptions
      * @throws Exception If fails
      */
-    Iterable<String> errors(Func<String, XML> xmir,
-        String locator) throws Exception;
+    Iterable<String> errors() throws Exception;
 
 }

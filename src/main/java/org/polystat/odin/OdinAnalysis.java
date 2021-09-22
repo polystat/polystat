@@ -29,7 +29,9 @@ import java.util.stream.Collectors;
 import org.cactoos.Func;
 import org.eolang.parser.XMIR;
 import org.polystat.Analysis;
+import org.polystat.SourceCode;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
+import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
 
 /**
  * The implementation of analysis via odin (object dependency inspector).
@@ -42,23 +44,20 @@ public final class OdinAnalysis implements Analysis {
      * Odin analyzer that performs analysis.
      */
     private final EOOdinAnalyzer analyzer;
+    private final String src;
 
     /**
      * Ctor.
      */
-    public OdinAnalysis() {
+    public OdinAnalysis(String src) {
+        this.src = src;
         this.analyzer = new EOOdinAnalyzer.EOOdinAnalyzerImpl();
     }
 
     @Override
-    public Iterable<String> errors(
-        final Func<String, XML> xmir,
-        final String locator
-    ) throws Exception {
-        final XMIR xsrc = new XMIR(xmir.apply("\\Phi"));
-        final String src = xsrc.toEO();
+    public Iterable<String> errors() throws Exception {
         return this.analyzer.analyzeSourceCode(src).stream()
-            .map(error -> error.message())
+            .map(OdinAnalysisErrorInterop::message)
             .collect(Collectors.toList());
     }
 

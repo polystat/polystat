@@ -48,6 +48,8 @@ import org.cactoos.text.UncheckedText;
 import org.eolang.parser.Spy;
 import org.eolang.parser.Xsline;
 import org.polystat.Analysis;
+import org.polystat.EORepresentation;
+import org.polystat.XMIR;
 import org.xembly.Directives;
 import org.xembly.Xembler;
 
@@ -64,13 +66,17 @@ public final class Reverses implements Analysis {
     //  I suggest we add new functionality to Xsline and let it have
     //  not only XSL but also Cactoos Func-s inside.
     //
+    private final XML xmir;
+
+    public Reverses(XML xmir) {
+        this.xmir = xmir;
+    }
+
     @Override
-    public Collection<String> errors(final Func<String, XML> xmir,
-        final String locator) throws Exception {
+    public Collection<String> errors() throws Exception {
         final Collection<String> bugs = new LinkedList<>();
-        final XML obj = xmir.apply(locator);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        new Xsline(obj, new OutputTo(baos), new Spy.Verbose(), new ListOf<>())
+        new Xsline(this.xmir, new OutputTo(baos), new Spy.Verbose(), new ListOf<>())
             .with(Reverses.xsl("expected.xsl").with("expected", "\\perp"))
             .with(Reverses.xsl("data-to-attrs.xsl"))
             .with(Reverses.xsl("reverses.xsl"))
