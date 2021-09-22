@@ -93,19 +93,9 @@ public final class Polystat {
                 Paths.get(args[0]), Paths.get(args[1])
             );
             for (final Analysis analysis : Polystat.ALL) {
-                final List<String> errors;
-                try {
-                    errors = new ListOf<>(
-                        analysis.errors(xmir, "\\Phi.foo")
-                    );
-                } catch (final Exception ex) {
-                    throw new Exception(
-                            String.format(
-                        "Analysis method \"%s\" finished with exception:\n%s",
-                        analysis.getClass().getTypeName(),
-                                    ex)
-                    );
-                }
+                final List<String> errors = new ListOf<>(
+                    analysis.errors(xmir, "\\Phi.foo")
+                );
                 Logger.info(
                     this, "%d errors found by %s",
                     errors.size(), analysis.getClass()

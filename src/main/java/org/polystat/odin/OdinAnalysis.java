@@ -55,7 +55,7 @@ public final class OdinAnalysis implements Analysis {
         final Func<String, XML> xmir,
         final String locator
     ) throws Exception {
-        final XMIR xsrc = new XMIR(xmir.apply("\\Phi"));
+        final XMIR xsrc = new XMIR(xmir.apply(locator));
         final String src = xsrc.toEO();
         return this.analyzer.analyzeSourceCode(src).stream()
             .map(error -> error.message())
