@@ -2,7 +2,7 @@
 +alias stdout org.eolang.io.stdout
 +alias sprintf org.eolang.txt.sprintf
 
-[] > base
+[] > mutual_rec
   memory > x
   [self v] > f
     x.write > @
@@ -12,7 +12,7 @@
       self
       v
 [] > derived
-  base > @
+  mutual_rec > @
   [self v] > f
     self.g > @
       self
