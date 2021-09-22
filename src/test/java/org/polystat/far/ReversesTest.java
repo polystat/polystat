@@ -58,7 +58,7 @@ final class ReversesTest {
         final Reverses reverses = new Reverses(
             new XMIR(
                 new EOSource(sources, temp)
-            ).repr("\\Phi.foo")
+            )
         );
         final Collection<String> bugs = reverses.errors("\\Phi.foo");
         MatcherAssert.assertThat(
@@ -80,8 +80,8 @@ final class ReversesTest {
         );
         final Reverses reverses = new Reverses(
             new XMIR(
-                new EOSource(sources, temp))
-                .repr("\\Phi.bar")
+                new EOSource(sources, temp)
+            )
         );
         final Collection<String> bugs = reverses.errors("\\Phi.bar");
         MatcherAssert.assertThat(bugs, Matchers.emptyIterable());

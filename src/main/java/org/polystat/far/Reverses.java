@@ -66,9 +66,9 @@ public final class Reverses implements Analysis {
     //  I suggest we add new functionality to Xsline and let it have
     //  not only XSL but also Cactoos Func-s inside.
     //
-    private final XML xmir;
+    private final XMIR xmir;
 
-    public Reverses(XML xmir) {
+    public Reverses(XMIR xmir) {
         this.xmir = xmir;
     }
 
@@ -76,7 +76,7 @@ public final class Reverses implements Analysis {
     public Collection<String> errors(String locator) throws Exception {
         final Collection<String> bugs = new LinkedList<>();
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        new Xsline(this.xmir, new OutputTo(baos), new Spy.Verbose(), new ListOf<>())
+        new Xsline(this.xmir.repr(locator), new OutputTo(baos), new Spy.Verbose(), new ListOf<>())
             .with(Reverses.xsl("expected.xsl").with("expected", "\\perp"))
             .with(Reverses.xsl("data-to-attrs.xsl"))
             .with(Reverses.xsl("reverses.xsl"))

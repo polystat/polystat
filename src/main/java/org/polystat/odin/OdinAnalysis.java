@@ -44,19 +44,19 @@ public final class OdinAnalysis implements Analysis {
      * Odin analyzer that performs analysis.
      */
     private final EOOdinAnalyzer analyzer;
-    private final String src;
+    private final SourceCode src;
 
     /**
      * Ctor.
      */
-    public OdinAnalysis(String src) {
+    public OdinAnalysis(SourceCode src) {
         this.src = src;
         this.analyzer = new EOOdinAnalyzer.EOOdinAnalyzerImpl();
     }
 
     @Override
     public Iterable<String> errors(String locator) throws Exception {
-        return this.analyzer.analyzeSourceCode(src).stream()
+        return this.analyzer.analyzeSourceCode(src.repr(locator)).stream()
             .map(OdinAnalysisErrorInterop::message)
             .collect(Collectors.toList());
     }

@@ -88,9 +88,9 @@ public final class Polystat {
             final String locator = "\\Phi.mutual_rec";
 
             final Analysis reverses = new Reverses(
-                new XMIR(src).repr(locator)
+                new XMIR(src)
             );
-            final Analysis odinAnalysis = new OdinAnalysis(new SourceCode(src).repr(locator));
+            final Analysis odinAnalysis = new OdinAnalysis(new SourceCode(src));
 
             final Analysis[] analyses = {
                 reverses, odinAnalysis
