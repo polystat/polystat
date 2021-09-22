@@ -55,7 +55,7 @@ public final class OdinAnalysis implements Analysis {
     }
 
     @Override
-    public Iterable<String> errors() throws Exception {
+    public Iterable<String> errors(String locator) throws Exception {
         return this.analyzer.analyzeSourceCode(src).stream()
             .map(OdinAnalysisErrorInterop::message)
             .collect(Collectors.toList());

@@ -6,16 +6,16 @@ import java.util.List;
 
 public class XMIR implements EORepresentation<XML> {
 
-    private final String objectLocator;
+    private final EOSource src;
 
-    public XMIR(String objectLocator) {
-        this.objectLocator = objectLocator;
+    public XMIR(EOSource src) {
+        this.src = src;
     }
 
     @Override
-    public XML apply(EOSource src) throws Exception {
+    public XML repr(String objectLocator) throws Exception {
 
-        XML obj = src.xmir().nodes("/program/objects").get(0);
+        XML obj = src.xmir(objectLocator).nodes("/program/objects").get(0);
         final String[] parts = objectLocator.split("\\.");
         for (int idx = 1; idx < parts.length; ++idx) {
             final List<XML> objs = obj.nodes(

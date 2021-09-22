@@ -56,12 +56,11 @@ final class ReversesTest {
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
         final Reverses reverses = new Reverses(
-            new XMIR("\\Phi.foo").apply(
-                new EOSource(sources.resolve("foo.eo"), temp)
-            ));
-        final Collection<String> bugs = reverses.errors(
-
+            new XMIR(
+                new EOSource(sources, temp)
+            ).repr("\\Phi.foo")
         );
+        final Collection<String> bugs = reverses.errors("\\Phi.foo");
         MatcherAssert.assertThat(
             bugs,
             // @checkstyle MagicNumber (1 line)
@@ -80,10 +79,11 @@ final class ReversesTest {
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
         final Reverses reverses = new Reverses(
-            new XMIR("\\Phi.bar").apply(
-                new EOSource(sources.resolve("bar.eo"), temp)
-            ));
-        final Collection<String> bugs = reverses.errors();
+            new XMIR(
+                new EOSource(sources, temp))
+                .repr("\\Phi.bar")
+        );
+        final Collection<String> bugs = reverses.errors("\\Phi.bar");
         MatcherAssert.assertThat(bugs, Matchers.emptyIterable());
     }
 

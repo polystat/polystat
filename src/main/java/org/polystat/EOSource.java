@@ -36,15 +36,18 @@ public class EOSource {
         this.temp = tmp;
     }
 
-    XML xmir() throws IOException {
-        final String eo = this.source.toFile().getAbsolutePath();
-        final String[] nameParts = Paths.get(eo).getFileName().toString().split("\\.");
-        final String filename = nameParts[0];
-        final Path xml = this.temp.resolve(String.format("%s.xml", filename));
+    private static String getFilenameFromLocator(String locator) {
+        final String[] parts = locator.split("\\.");
+        return parts[1];
+    }
+
+    XML xmir(String locator) throws IOException {
+        final String name = getFilenameFromLocator(locator);
+        final Path xml = this.temp.resolve(String.format("%s.xml", name));
         if (!Files.exists(xml)) {
             new Syntax(
-                filename,
-                new InputOf(this.source.resolve(eo)),
+                name,
+                new InputOf(this.source.resolve(String.format("%s.eo", name))),
                 new OutputTo(xml)
             ).parse();
             new Xsline(
@@ -57,10 +60,12 @@ public class EOSource {
     }
 
 
-    String sourceCode() throws IOException {
+    String sourceCode(String locator) throws IOException {
         return new TextOf(
             new InputOf(
-                this.source.resolve(this.source.toFile().getAbsolutePath())
+                this.source.resolve(
+                    String.format("%s.eo", getFilenameFromLocator(locator))
+                )
             )
         ).asString();
     }

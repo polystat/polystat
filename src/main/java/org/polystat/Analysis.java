@@ -40,6 +40,6 @@ public interface Analysis {
      * @return List of exceptions
      * @throws Exception If fails
      */
-    Iterable<String> errors() throws Exception;
+    Iterable<String> errors(String locator) throws Exception;
 
 }

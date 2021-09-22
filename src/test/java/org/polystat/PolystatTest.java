@@ -68,7 +68,7 @@ final class PolystatTest {
         );
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         new Polystat(new PrintStream(out)).exec(
-            sources.resolve("foo.eo").toAbsolutePath().toString(),
+            sources.toAbsolutePath().toString(),
             temp.toAbsolutePath().toString()
         );
         MatcherAssert.assertThat(

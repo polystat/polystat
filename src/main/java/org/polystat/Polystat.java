@@ -25,13 +25,12 @@
 package org.polystat;
 
 import com.jcabi.log.Logger;
-import com.jcabi.xml.XML;
+
 import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.util.List;
-import org.cactoos.Func;
+
 import org.cactoos.list.ListOf;
-import org.polystat.XMIR;
 import org.polystat.far.Reverses;
 import org.polystat.odin.OdinAnalysis;
 
@@ -86,10 +85,12 @@ public final class Polystat {
                 Paths.get(args[0]),
                 Paths.get(args[1])
             );
+            final String locator = "\\Phi.mutual_rec";
+
             final Analysis reverses = new Reverses(
-                new XMIR("\\Phi.foo").apply(src)
+                new XMIR(src).repr(locator)
             );
-            final Analysis odinAnalysis = new OdinAnalysis(new SourceCode().apply(src));
+            final Analysis odinAnalysis = new OdinAnalysis(new SourceCode(src).repr(locator));
 
             final Analysis[] analyses = {
                 reverses, odinAnalysis
@@ -99,7 +100,7 @@ public final class Polystat {
                 final List<String> errors;
                 try {
                     errors = new ListOf<>(
-                        analysis.errors()
+                        analysis.errors(locator)
                     );
                 } catch (final Exception ex) {
                     throw new Exception(

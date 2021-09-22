@@ -73,7 +73,7 @@ public final class Reverses implements Analysis {
     }
 
     @Override
-    public Collection<String> errors() throws Exception {
+    public Collection<String> errors(String locator) throws Exception {
         final Collection<String> bugs = new LinkedList<>();
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new Xsline(this.xmir, new OutputTo(baos), new Spy.Verbose(), new ListOf<>())

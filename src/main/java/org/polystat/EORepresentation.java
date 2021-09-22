@@ -3,4 +3,6 @@ package org.polystat;
 import org.cactoos.Func;
 
 
-public interface EORepresentation<R> extends Func<EOSource, R> {}
+public interface EORepresentation<R> {
+    R repr(String locator) throws Exception;
+}
