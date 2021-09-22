@@ -39,7 +39,7 @@ import org.junit.jupiter.api.io.TempDir;
  *
  * @since 0.1
  */
-final class ProgramTest {
+final class XMIRTest {
 
     @Test
     void interpretOneEolangProgram(@TempDir final Path sources,
