@@ -26,7 +26,6 @@ package org.polystat;
 import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import org.cactoos.io.InputOf;
 import org.cactoos.io.OutputTo;
@@ -72,18 +71,16 @@ public class EoSource {
     XML xmir(final String locator) throws IOException {
         final String name = getFilenameFromLocator(locator);
         final Path xml = this.temp.resolve(String.format("%s.xml", name));
-        if (!Files.exists(xml)) {
-            new Syntax(
-                name,
-                new InputOf(this.source.resolve(eoFilename(name))),
-                new OutputTo(xml)
-            ).parse();
-            new Xsline(
-                new XMLDocument(xml),
-                new OutputTo(xml),
-                new Spy.Verbose()
-            ).pass();
-        }
+        new Syntax(
+            name,
+            new InputOf(this.source.resolve(eoFilename(name))),
+            new OutputTo(xml)
+        ).parse();
+        new Xsline(
+            new XMLDocument(xml),
+            new OutputTo(xml),
+            new Spy.Verbose()
+        ).pass();
         return new XMLDocument(xml);
     }
 
