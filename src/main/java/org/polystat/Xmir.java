@@ -24,39 +24,37 @@
 package org.polystat;
 
 import com.jcabi.xml.XML;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import org.cactoos.io.ResourceOf;
-import org.cactoos.text.TextOf;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import java.util.List;
 
 /**
- * Test case for {@link XMIR}.
- *
- * @since 0.1
+ * XMIR representation of the EO program.
+ * @since 1.0
  */
-final class XMIRTest {
+public final class Xmir implements EoRepresentation<XML> {
 
-    @Test
-    void interpretOneEolangProgram(@TempDir final Path sources,
-        @TempDir final Path temp) throws Exception {
-        Files.write(
-            sources.resolve("foo.eo"),
-            new TextOf(
-                new ResourceOf("org/polystat/tests/div-by-zero.eo")
-            ).asString().getBytes(StandardCharsets.UTF_8)
-        );
-        final EOSource src = new EOSource(sources, temp);
-        final XMIR program = new XMIR(src);
-        final XML foo = program.repr("\\Phi.foo");
-        MatcherAssert.assertThat(
-            foo.xpath("@name").get(0),
-            Matchers.equalTo("foo")
-        );
+    /**
+     * Where to look for EO sources.
+     */
+    private final EoSource src;
+
+    /**
+     * Ctor.
+     * @param src Where to look for source code.
+     */
+    public Xmir(final EoSource src) {
+        this.src = src;
     }
 
+    @Override
+    public XML repr(final String locator) throws Exception {
+        XML obj = this.src.xmir(locator).nodes("/program/objects").get(0);
+        final String[] parts = locator.split("\\.");
+        for (int idx = 1; idx < parts.length; ++idx) {
+            final List<XML> objs = obj.nodes(
+                String.format("o[@name='%s']", parts[idx])
+            );
+            obj = objs.get(0);
+        }
+        return obj;
+    }
 }

@@ -24,20 +24,18 @@
 package org.polystat.far;
 
 import com.jcabi.log.Logger;
-
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-
 import org.cactoos.io.ResourceOf;
 import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.polystat.EOSource;
-import org.polystat.XMIR;
+import org.polystat.EoSource;
+import org.polystat.Xmir;
 
 /**
  * Test case for {@link Reverses}.
@@ -47,8 +45,10 @@ import org.polystat.XMIR;
 final class ReversesTest {
 
     @Test
-    void findsBugsInSimpleXml(@TempDir final Path sources,
-                              @TempDir final Path temp) throws Exception {
+    void findsBugsInSimpleXml(
+        @TempDir final Path sources,
+        @TempDir final Path temp
+    ) throws Exception {
         Files.write(
             sources.resolve("foo.eo"),
             new TextOf(
@@ -56,8 +56,8 @@ final class ReversesTest {
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
         final Reverses reverses = new Reverses(
-            new XMIR(
-                new EOSource(sources, temp)
+            new Xmir(
+                new EoSource(sources, temp)
             )
         );
         final Collection<String> bugs = reverses.errors("\\Phi.foo");
@@ -70,8 +70,10 @@ final class ReversesTest {
     }
 
     @Test
-    void findsNoBugsInSimpleXml(@TempDir final Path sources,
-                                @TempDir final Path temp) throws Exception {
+    void findsNoBugsInSimpleXml(
+        @TempDir final Path sources,
+        @TempDir final Path temp
+    ) throws Exception {
         Files.write(
             sources.resolve("bar.eo"),
             new TextOf(
@@ -79,8 +81,8 @@ final class ReversesTest {
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
         final Reverses reverses = new Reverses(
-            new XMIR(
-                new EOSource(sources, temp)
+            new Xmir(
+                new EoSource(sources, temp)
             )
         );
         final Collection<String> bugs = reverses.errors("\\Phi.bar");

@@ -23,27 +23,40 @@
  */
 package org.polystat;
 
+import com.jcabi.xml.XML;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import org.cactoos.io.ResourceOf;
+import org.cactoos.text.TextOf;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 /**
- * A plain-text representation of EO program.
- * @since 1.0
+ * Test case for {@link Xmir}.
+ *
+ * @since 0.1
  */
-public final class SourceCode implements EoRepresentation<String> {
+final class XmirTest {
 
-    /**
-     * Where to get the EO program.
-     */
-    private final EoSource src;
-
-    /**
-     * Ctor.
-     * @param src Source for EO program.
-     */
-    public SourceCode(final EoSource src) {
-        this.src = src;
+    @Test
+    void interpretOneEolangProgram(@TempDir final Path sources,
+        @TempDir final Path temp) throws Exception {
+        Files.write(
+            sources.resolve("foo.eo"),
+            new TextOf(
+                new ResourceOf("org/polystat/tests/div-by-zero.eo")
+            ).asString().getBytes(StandardCharsets.UTF_8)
+        );
+        final EoSource src = new EoSource(sources, temp);
+        final Xmir program = new Xmir(src);
+        final XML foo = program.repr("\\Phi.foo");
+        MatcherAssert.assertThat(
+            foo.xpath("@name").get(0),
+            Matchers.equalTo("foo")
+        );
     }
 
-    @Override
-    public String repr(final String locator) throws Exception {
-        return this.src.sourceCode(locator);
-    }
 }

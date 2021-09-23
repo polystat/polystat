@@ -21,13 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package org.polystat.odin;
 
-import com.jcabi.xml.XML;
 import java.util.stream.Collectors;
-import org.cactoos.Func;
-import org.eolang.parser.XMIR;
 import org.polystat.Analysis;
 import org.polystat.SourceCode;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
@@ -40,25 +36,30 @@ import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
  * @since 0.3
  */
 public final class OdinAnalysis implements Analysis {
+
     /**
      * Odin analyzer that performs analysis.
      */
     private final EOOdinAnalyzer analyzer;
+
+    /**
+     * Source code representation of the EO program.
+     */
     private final SourceCode src;
 
     /**
      * Ctor.
+     * @param src Where to look for EO source code.
      */
-    public OdinAnalysis(SourceCode src) {
+    public OdinAnalysis(final SourceCode src) {
         this.src = src;
         this.analyzer = new EOOdinAnalyzer.EOOdinAnalyzerImpl();
     }
 
     @Override
-    public Iterable<String> errors(String locator) throws Exception {
-        return this.analyzer.analyzeSourceCode(src.repr(locator)).stream()
+    public Iterable<String> errors(final String locator) throws Exception {
+        return this.analyzer.analyzeSourceCode(this.src.repr(locator)).stream()
             .map(OdinAnalysisErrorInterop::message)
             .collect(Collectors.toList());
     }
-
 }

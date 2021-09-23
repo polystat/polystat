@@ -21,15 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package org.polystat;
 
 import com.jcabi.log.Logger;
-
 import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.util.List;
-import org.cactoos.Func;
 import org.cactoos.list.ListOf;
 import org.polystat.far.Reverses;
 import org.polystat.odin.OdinAnalysis;
@@ -48,11 +45,17 @@ public final class Polystat {
      * The stream to print to.
      */
     private final PrintStream stdout;
+
+    /**
+     * A special string which is used to
+     * uniquely identify the object subject to analysis.
+     */
     private final String locator;
 
     /**
      * Ctor.
      * @param out The stream to print to
+     * @param locator Used to uniquely identify EO object
      */
     public Polystat(final PrintStream out, final String locator) {
         this.stdout = out;
@@ -83,18 +86,13 @@ public final class Polystat {
      */
     public void exec(final String... args) throws Exception {
         if (args.length == 2) {
-            final EOSource src = new EOSource(
+            final EoSource src = new EoSource(
                 Paths.get(args[0]),
                 Paths.get(args[1])
             );
-
-            final Analysis reverses = new Reverses(new XMIR(src));
-            final Analysis odinAnalysis = new OdinAnalysis(new SourceCode(src));
-
-            final Analysis[] analyses = {
-                reverses, odinAnalysis
-            };
-
+            final Analysis reverses = new Reverses(new Xmir(src));
+            final Analysis odin = new OdinAnalysis(new SourceCode(src));
+            final Analysis[] analyses = {reverses, odin, };
             for (final Analysis analysis : analyses) {
                 final List<String> errors;
                 errors = new ListOf<>(

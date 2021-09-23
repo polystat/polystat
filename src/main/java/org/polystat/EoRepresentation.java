@@ -24,26 +24,17 @@
 package org.polystat;
 
 /**
- * A plain-text representation of EO program.
+ * Abstraction for the different ways to represent EO code.
+ * @param <R> The type of EO representation.
  * @since 1.0
  */
-public final class SourceCode implements EoRepresentation<String> {
+public interface EoRepresentation<R> {
 
     /**
-     * Where to get the EO program.
+     * Represents the object identified by locator as an instance of type R.
+     * @param locator Used to uniquely identify EO object.
+     * @return The representation of the object.
+     * @throws Exception When it is not possible to represent the object.
      */
-    private final EoSource src;
-
-    /**
-     * Ctor.
-     * @param src Source for EO program.
-     */
-    public SourceCode(final EoSource src) {
-        this.src = src;
-    }
-
-    @Override
-    public String repr(final String locator) throws Exception {
-        return this.src.sourceCode(locator);
-    }
+    R repr(String locator) throws Exception;
 }

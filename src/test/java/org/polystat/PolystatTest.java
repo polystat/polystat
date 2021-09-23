@@ -50,7 +50,7 @@ final class PolystatTest {
     @Test
     void saysHello() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        new Polystat(new PrintStream(out), "\\Phi.foo").exec();
+        new Polystat(new PrintStream(out), "").exec();
         MatcherAssert.assertThat(
             out.toString(),
             Matchers.containsString("README")
@@ -58,8 +58,10 @@ final class PolystatTest {
     }
 
     @Test
-    void analyzesOneEolangProgram(@TempDir final Path sources,
-        @TempDir final Path temp) throws Exception {
+    void analyzesOneEolangProgram(
+        @TempDir final Path sources,
+        @TempDir final Path temp
+    ) throws Exception {
         Files.write(
             sources.resolve("foo.eo"),
             new TextOf(
