@@ -29,7 +29,7 @@ import com.jcabi.log.Logger;
 import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.util.List;
-
+import org.cactoos.Func;
 import org.cactoos.list.ListOf;
 import org.polystat.far.Reverses;
 import org.polystat.odin.OdinAnalysis;
