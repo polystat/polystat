@@ -48,13 +48,15 @@ public final class Polystat {
      * The stream to print to.
      */
     private final PrintStream stdout;
+    private final String locator;
 
     /**
      * Ctor.
      * @param out The stream to print to
      */
-    public Polystat(final PrintStream out) {
+    public Polystat(final PrintStream out, final String locator) {
         this.stdout = out;
+        this.locator = locator;
     }
 
     /**
@@ -64,7 +66,7 @@ public final class Polystat {
      */
     public static void main(final String... args) throws Exception {
         Logger.info(Polystat.class, "Polystat (c) 2021");
-        new Polystat(System.out).exec(args);
+        new Polystat(System.out, "\\Phi.mutual_rec").exec(args);
     }
 
     /**
@@ -85,11 +87,8 @@ public final class Polystat {
                 Paths.get(args[0]),
                 Paths.get(args[1])
             );
-            final String locator = "\\Phi.mutual_rec";
 
-            final Analysis reverses = new Reverses(
-                new XMIR(src)
-            );
+            final Analysis reverses = new Reverses(new XMIR(src));
             final Analysis odinAnalysis = new OdinAnalysis(new SourceCode(src));
 
             final Analysis[] analyses = {
@@ -98,18 +97,9 @@ public final class Polystat {
 
             for (final Analysis analysis : analyses) {
                 final List<String> errors;
-                try {
-                    errors = new ListOf<>(
-                        analysis.errors(locator)
-                    );
-                } catch (final Exception ex) {
-                    throw new Exception(
-                            String.format(
-                        "Analysis method \"%s\" finished with exception:\n%s",
-                        analysis.getClass().getTypeName(),
-                                    ex)
-                    );
-                }
+                errors = new ListOf<>(
+                    analysis.errors(this.locator)
+                );
                 Logger.info(
                     this, "%d errors found by %s",
                     errors.size(), analysis.getClass()

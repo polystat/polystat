@@ -1,7 +1,7 @@
 +package org.polystat
 
 [a b] > foo
-  add. > @
+  add. > c
     div. a b
     div.
       div. b a
