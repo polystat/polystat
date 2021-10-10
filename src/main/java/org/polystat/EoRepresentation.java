@@ -29,7 +29,6 @@ package org.polystat;
  * @since 1.0
  */
 public interface EoRepresentation<R> {
-
     /**
      * Represents the object identified by locator as an instance of type R.
      * @param locator Used to uniquely identify EO object.

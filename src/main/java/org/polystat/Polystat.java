@@ -69,7 +69,7 @@ public final class Polystat {
      */
     public static void main(final String... args) throws Exception {
         Logger.info(Polystat.class, "Polystat (c) 2021");
-        new Polystat(System.out, "\\Phi.mutual_rec").exec(args);
+        new Polystat(System.out, "\\Phi.derived").exec(args);
     }
 
     /**
@@ -86,16 +86,16 @@ public final class Polystat {
      */
     public void exec(final String... args) throws Exception {
         if (args.length == 2) {
-            final EoSource src = new EoSource(
+            final EoSource source = new EoSource(
                 Paths.get(args[0]),
                 Paths.get(args[1])
             );
-            final Analysis reverses = new Reverses(new Xmir(src));
-            final Analysis odin = new OdinAnalysis(new SourceCode(src));
-            final Analysis[] analyses = {reverses, odin, };
+            final Xmir xmir = new Xmir(source);
+            final Analysis reverses = new Reverses(xmir);
+            final Analysis odin = new OdinAnalysis(xmir);
+            final Analysis[] analyses = new Analysis[]{reverses, odin, };
             for (final Analysis analysis : analyses) {
-                final List<String> errors;
-                errors = new ListOf<>(
+                final List<String> errors = new ListOf<>(
                     analysis.errors(this.locator)
                 );
                 Logger.info(

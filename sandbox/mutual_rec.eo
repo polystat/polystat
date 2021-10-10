@@ -11,9 +11,3 @@
     self.f > @
       self
       v
-[] > derived
-  mutual_rec > @
-  [self v] > f
-    self.g > @
-      self
-      v

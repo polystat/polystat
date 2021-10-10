@@ -28,7 +28,6 @@ package org.polystat;
  * @since 0.2
  */
 public interface Analysis {
-
     /**
      * Analyse the entity specified by locator
      * and return the list of errors found.
@@ -37,5 +36,4 @@ public interface Analysis {
      * @throws Exception If fails
      */
     Iterable<String> errors(String locator) throws Exception;
-
 }

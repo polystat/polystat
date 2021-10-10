@@ -23,9 +23,10 @@
  */
 package org.polystat.odin;
 
+import com.jcabi.xml.XML;
 import java.util.stream.Collectors;
 import org.polystat.Analysis;
-import org.polystat.SourceCode;
+import org.polystat.Xmir;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
 import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
 
@@ -40,25 +41,28 @@ public final class OdinAnalysis implements Analysis {
     /**
      * Odin analyzer that performs analysis.
      */
-    private final EOOdinAnalyzer analyzer;
+    private final EOOdinAnalyzer<String> analyzer;
 
     /**
-     * Source code representation of the EO program.
+     * XMIR representation of the entire source code.
      */
-    private final SourceCode src;
+    private final Xmir xmir;
 
     /**
      * Ctor.
-     * @param src Where to look for EO source code.
+     * @param xmir XMIR representation of the entire source code.
      */
-    public OdinAnalysis(final SourceCode src) {
-        this.src = src;
-        this.analyzer = new EOOdinAnalyzer.EOOdinAnalyzerImpl();
+    public OdinAnalysis(final Xmir xmir) {
+        this.xmir = xmir;
+        this.analyzer = new EOOdinAnalyzer.EOOdinXmirAnalyzer();
     }
 
     @Override
     public Iterable<String> errors(final String locator) throws Exception {
-        return this.analyzer.analyzeSourceCode(this.src.repr(locator)).stream()
+        final XML xml = this.xmir.repr(locator);
+        final String str = xml.toString();
+        // TODO: recursively retrieve the xml
+        return this.analyzer.analyze(str).stream()
             .map(OdinAnalysisErrorInterop::message)
             .collect(Collectors.toList());
     }

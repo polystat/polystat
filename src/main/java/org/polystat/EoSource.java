@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import org.cactoos.io.InputOf;
 import org.cactoos.io.OutputTo;
-import org.cactoos.text.TextOf;
 import org.eolang.parser.Spy;
 import org.eolang.parser.Syntax;
 import org.eolang.parser.Xsline;
@@ -82,22 +81,6 @@ public class EoSource {
             new Spy.Verbose()
         ).pass();
         return new XMLDocument(xml);
-    }
-
-    /**
-     * Returns the source code for a given EO object.
-     * @param locator Used to uniquely identify EO object in the destination.
-     * @return EO source code of the object.
-     * @throws IOException When IO fails.
-     */
-    String sourceCode(final String locator) throws IOException {
-        return new TextOf(
-            new InputOf(
-                this.source.resolve(
-                    eoFilename(getFilenameFromLocator(locator))
-                )
-            )
-        ).asString();
     }
 
     /**

@@ -1,9 +1,10 @@
 +package sandbox
 +alias stdout org.eolang.io.stdout
 +alias sprintf org.eolang.txt.sprintf
++alias mutual_rec sandbox.mutual_rec
 
 [] > derived
-  base > @
+  mutual_rec > @
   [self v] > f
     self.g > @
       self
