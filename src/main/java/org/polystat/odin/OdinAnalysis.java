@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import org.cactoos.list.ListOf;
 import org.polystat.Analysis;
 import org.polystat.Xmir;
+import org.polystat.odin.analysis.mutualrec.naive.exceptions.UnsupportedDecoration;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
 import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
 
@@ -52,6 +53,7 @@ public final class OdinAnalysis implements Analysis {
 
     /**
      * Ctor.
+     *
      * @param xmir XMIR representation of the entire source code.
      */
     public OdinAnalysis(final Xmir xmir) {
@@ -63,9 +65,17 @@ public final class OdinAnalysis implements Analysis {
     public Iterable<String> errors(final String locator) throws Exception {
         final XML xml = this.xmir.repr(locator);
         final String str = this.getObjectsHierarchy(xml);
-        return this.analyzer.analyze(str).stream()
-            .map(OdinAnalysisErrorInterop::message)
-            .collect(Collectors.toList());
+        Iterable<String> result;
+        try {
+            result = this.analyzer.analyze(str).stream()
+                .map(OdinAnalysisErrorInterop::message)
+                .collect(Collectors.toList());
+        } catch (final UnsupportedDecoration ex) {
+            result = new ListOf<>(
+                String.format("Odin is not able to analyze the code, due to:%n%s", ex.getMessage())
+            );
+        }
+        return result;
     }
 
     /**
@@ -94,13 +104,15 @@ public final class OdinAnalysis implements Analysis {
     private String resolveObjectHierarchy(final XML xml) throws Exception {
         String result = xml.toString();
         for (final String decoratee : xml.xpath("o[@name='@']/@base")) {
-            final List<String> split = new ListOf<>(decoratee.split("\\."));
-            final String name = split.get(split.size() - 1);
-            result = String.format(
-                "%s%s",
-                this.xmir.repr(String.format("\\Phi.%s", name)),
-                result
-            );
+            if (decoratee.charAt(0) != '.') {
+                final List<String> split = new ListOf<>(decoratee.split("\\."));
+                final String name = split.get(split.size() - 1);
+                result = String.format(
+                    "%s%s",
+                    this.xmir.repr(String.format("\\Phi.%s", name)),
+                    result
+                );
+            }
         }
         return result;
     }

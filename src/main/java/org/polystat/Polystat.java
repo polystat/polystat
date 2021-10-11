@@ -49,7 +49,6 @@ public final class Polystat {
     /**
      * Ctor.
      * @param out The stream to print to
-     * @param locator Used to uniquely identify EO object
      */
     public Polystat(final PrintStream out) {
         this.stdout = out;
