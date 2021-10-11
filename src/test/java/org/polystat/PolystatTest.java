@@ -50,7 +50,7 @@ final class PolystatTest {
     @Test
     void saysHello() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        new Polystat(new PrintStream(out), "").exec();
+        new Polystat(new PrintStream(out)).exec();
         MatcherAssert.assertThat(
             out.toString(),
             Matchers.containsString("README")
@@ -69,7 +69,7 @@ final class PolystatTest {
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        new Polystat(new PrintStream(out), "\\Phi.foo").exec(
+        new Polystat(new PrintStream(out)).exec(
             sources.toAbsolutePath().toString(),
             temp.toAbsolutePath().toString()
         );

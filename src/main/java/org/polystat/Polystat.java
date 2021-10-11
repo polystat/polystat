@@ -47,19 +47,12 @@ public final class Polystat {
     private final PrintStream stdout;
 
     /**
-     * A special string which is used to
-     * uniquely identify the object subject to analysis.
-     */
-    private final String locator;
-
-    /**
      * Ctor.
      * @param out The stream to print to
      * @param locator Used to uniquely identify EO object
      */
-    public Polystat(final PrintStream out, final String locator) {
+    public Polystat(final PrintStream out) {
         this.stdout = out;
-        this.locator = locator;
     }
 
     /**
@@ -69,7 +62,7 @@ public final class Polystat {
      */
     public static void main(final String... args) throws Exception {
         Logger.info(Polystat.class, "Polystat (c) 2021");
-        new Polystat(System.out, "\\Phi.derived").exec(args);
+        new Polystat(System.out).exec(args);
     }
 
     /**
@@ -96,7 +89,7 @@ public final class Polystat {
             final Analysis[] analyses = new Analysis[]{reverses, odin, };
             for (final Analysis analysis : analyses) {
                 final List<String> errors = new ListOf<>(
-                    analysis.errors(this.locator)
+                    analysis.errors("\\Phi.foo")
                 );
                 Logger.info(
                     this, "%d errors found by %s",
