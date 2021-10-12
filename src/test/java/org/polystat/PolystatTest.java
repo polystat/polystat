@@ -58,10 +58,8 @@ final class PolystatTest {
     }
 
     @Test
-    void analyzesOneEolangProgram(
-        @TempDir final Path sources,
-        @TempDir final Path temp
-    ) throws Exception {
+    void analyzesOneEolangProgram(@TempDir final Path sources,
+        @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("foo.eo"),
             new TextOf(

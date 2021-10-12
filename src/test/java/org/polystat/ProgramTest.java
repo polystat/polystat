@@ -35,11 +35,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * Test case for {@link Xmir}.
+ * Test case for {@link ProgramTest}.
  *
  * @since 0.1
  */
-final class XmirTest {
+final class ProgramTest {
 
     @Test
     void interpretOneEolangProgram(@TempDir final Path sources,
