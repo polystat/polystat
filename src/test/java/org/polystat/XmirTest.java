@@ -50,9 +50,8 @@ final class XmirTest {
                 new ResourceOf("org/polystat/tests/div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
-        final EoSource src = new EoSource(sources, temp);
-        final Xmir program = new Xmir(src);
-        final XML foo = program.repr("\\Phi.foo");
+        final Program program = new Program(sources, temp);
+        final XML foo = program.apply("\\Phi.foo");
         MatcherAssert.assertThat(
             foo.xpath("@name").get(0),
             Matchers.equalTo("foo")

@@ -21,19 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package org.polystat;
+
+import com.jcabi.xml.XML;
+import org.cactoos.Func;
 
 /**
  * An interface every analysis method has to implement.
+ *
  * @since 0.2
  */
 public interface Analysis {
+
     /**
-     * Analyse the entity specified by locator
+     * Analyse the specified object in the provided XMIR
      * and return the list of errors found.
-     * @param locator Used to uniquely identify entity subject to analysis.
-     * @return List of errors.
+     * @param xmir The XMIR
+     * @param locator The locator of the object, for example "\\Phi.foo"
+     * @return List of exeptions
      * @throws Exception If fails
      */
-    Iterable<String> errors(String locator) throws Exception;
+    Iterable<String> errors(Func<String, XML> xmir,
+        String locator) throws Exception;
+
 }

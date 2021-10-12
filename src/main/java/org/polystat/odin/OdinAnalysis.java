@@ -26,9 +26,9 @@ package org.polystat.odin;
 import com.jcabi.xml.XML;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.cactoos.Func;
 import org.cactoos.list.ListOf;
 import org.polystat.Analysis;
-import org.polystat.Xmir;
 import org.polystat.odin.analysis.mutualrec.naive.exceptions.UnsupportedDecoration;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
 import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
@@ -47,24 +47,17 @@ public final class OdinAnalysis implements Analysis {
     private final EOOdinAnalyzer<String> analyzer;
 
     /**
-     * XMIR representation of the entire source code.
-     */
-    private final Xmir xmir;
-
-    /**
      * Ctor.
-     *
-     * @param xmir XMIR representation of the entire source code.
      */
-    public OdinAnalysis(final Xmir xmir) {
-        this.xmir = xmir;
+    public OdinAnalysis() {
         this.analyzer = new EOOdinAnalyzer.EOOdinXmirAnalyzer();
     }
 
     @Override
-    public Iterable<String> errors(final String locator) throws Exception {
-        final XML xml = this.xmir.repr(locator);
-        final String str = this.getObjectsHierarchy(xml);
+    public Iterable<String> errors(final Func<String, XML> xmir,
+        final String locator) throws Exception {
+        final XML xml = xmir.apply(locator);
+        final String str = getObjectsHierarchy(xmir, xml);
         Iterable<String> result;
         try {
             result = this.analyzer.analyze(str).stream()
@@ -81,15 +74,17 @@ public final class OdinAnalysis implements Analysis {
     /**
      * Resolves object hierarchy for the give object represented in XMIR and
      * returns a well-formed XML.
+     * @param xmir Function to retrieve XMIR by locator
      * @param xml XMIR of object to get hierarchy for
      * @return Well-formed XML containing objects that form a hierarchy in XMIR
      * @throws Exception on errors
      */
-    private String getObjectsHierarchy(final XML xml) throws Exception {
+    private static String getObjectsHierarchy(final Func<String, XML> xmir,
+        final XML xml) throws Exception {
         return String.format(
             "%s%n%s%n%s",
             "<objects>",
-            this.resolveObjectHierarchy(xml),
+            resolveObjectHierarchy(xmir, xml),
             "</objects>"
         );
     }
@@ -97,11 +92,13 @@ public final class OdinAnalysis implements Analysis {
     /**
      * Recursively resolves the decoratees for the given decorator object
      * represented as XMIR.
+     * @param xmir Function to retrieve XMIR by locator
      * @param xml XMIR that represents an object
      * @return Concatenated XML string containing the whole object hierarchy
      * @throws Exception on errors
      */
-    private String resolveObjectHierarchy(final XML xml) throws Exception {
+    private static String resolveObjectHierarchy(final Func<String, XML> xmir,
+        final XML xml) throws Exception {
         String result = xml.toString();
         for (final String decoratee : xml.xpath("o[@name='@']/@base")) {
             if (decoratee.charAt(0) != '.') {
@@ -109,7 +106,7 @@ public final class OdinAnalysis implements Analysis {
                 final String name = split.get(split.size() - 1);
                 result = String.format(
                     "%s%s",
-                    this.xmir.repr(String.format("\\Phi.%s", name)),
+                    xmir.apply(String.format("\\Phi.%s", name)),
                     result
                 );
             }

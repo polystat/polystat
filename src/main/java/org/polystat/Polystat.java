@@ -78,17 +78,16 @@ public final class Polystat {
      */
     public void exec(final String... args) throws Exception {
         if (args.length == 2) {
-            final EoSource source = new EoSource(
+            final Program program = new Program(
                 Paths.get(args[0]),
                 Paths.get(args[1])
             );
-            final Xmir xmir = new Xmir(source);
-            final Analysis reverses = new Reverses(xmir);
-            final Analysis odin = new OdinAnalysis(xmir);
+            final Analysis reverses = new Reverses();
+            final Analysis odin = new OdinAnalysis();
             final Analysis[] analyses = new Analysis[]{reverses, odin, };
             for (final Analysis analysis : analyses) {
                 final List<String> errors = new ListOf<>(
-                    analysis.errors("\\Phi.foo")
+                    analysis.errors(program, "\\Phi.foo")
                 );
                 Logger.info(
                     this, "%d errors found by %s",

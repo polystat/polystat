@@ -34,8 +34,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.polystat.EoSource;
-import org.polystat.Xmir;
+import org.polystat.Program;
 
 /**
  * Test case for {@link Reverses}.
@@ -45,22 +44,18 @@ import org.polystat.Xmir;
 final class ReversesTest {
 
     @Test
-    void findsBugsInSimpleXml(
-        @TempDir final Path sources,
-        @TempDir final Path temp
-    ) throws Exception {
+    void findsBugsInSimpleXml(@TempDir final Path sources,
+        @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("foo.eo"),
             new TextOf(
                 new ResourceOf("org/polystat/tests/div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
-        final Reverses reverses = new Reverses(
-            new Xmir(
-                new EoSource(sources, temp)
-            )
+        final Reverses reverses = new Reverses();
+        final Collection<String> bugs = reverses.errors(
+            new Program(sources, temp), "\\Phi.foo"
         );
-        final Collection<String> bugs = reverses.errors("\\Phi.foo");
         MatcherAssert.assertThat(
             bugs,
             // @checkstyle MagicNumber (1 line)
@@ -70,22 +65,18 @@ final class ReversesTest {
     }
 
     @Test
-    void findsNoBugsInSimpleXml(
-        @TempDir final Path sources,
-        @TempDir final Path temp
-    ) throws Exception {
+    void findsNoBugsInSimpleXml(@TempDir final Path sources,
+        @TempDir final Path temp) throws Exception {
         Files.write(
             sources.resolve("bar.eo"),
             new TextOf(
                 new ResourceOf("org/polystat/tests/no-div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
-        final Reverses reverses = new Reverses(
-            new Xmir(
-                new EoSource(sources, temp)
-            )
+        final Reverses reverses = new Reverses();
+        final Collection<String> bugs = reverses.errors(
+            new Program(sources, temp), "\\Phi.bar"
         );
-        final Collection<String> bugs = reverses.errors("\\Phi.bar");
         MatcherAssert.assertThat(bugs, Matchers.emptyIterable());
     }
 
