@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * Test case for {@link ProgramTest}.
+ * Test case for {@link Program}.
  *
  * @since 0.1
  */
