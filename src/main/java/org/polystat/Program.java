@@ -26,7 +26,6 @@ package org.polystat;
 
 import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import org.cactoos.Func;
@@ -74,10 +73,14 @@ public final class Program implements Func<String, XML> {
         final String[] parts = locator.split("\\.");
         final String name = parts[1];
         final Path xml = this.temp.resolve(String.format("%s.xml", name));
-        if (!Files.exists(xml)) {
+        final Path src = this.sources.resolve(String.format("%s.eo", name));
+        if (
+            !xml.toFile().exists()
+                || xml.toFile().lastModified() < src.toFile().lastModified()
+        ) {
             new Syntax(
                 name,
-                new InputOf(this.sources.resolve(String.format("%s.eo", name))),
+                new InputOf(src),
                 new OutputTo(xml)
             ).parse();
             new Xsline(
