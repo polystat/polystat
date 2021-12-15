@@ -30,8 +30,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import org.cactoos.Func;
 import org.cactoos.list.ListOf;
-import org.polystat.far.Reverses;
-import org.polystat.odin.OdinAnalysis;
 
 /**
  * Main entrance.
@@ -47,8 +45,8 @@ public final class Polystat {
      * Analyzers.
      */
     private static final Analysis[] ALL = {
-        new Reverses(),
-        new OdinAnalysis(),
+        new AnFaR(),
+        new AnOdin(),
     };
 
     /**
@@ -93,15 +91,21 @@ public final class Polystat {
             );
             for (final Analysis analysis : Polystat.ALL) {
                 final List<String> errors = new ListOf<>(
-                    analysis.errors(xmir, "\\Phi.foo")
+                    analysis.errors(xmir, "\\Phi.test")
                 );
                 Logger.info(
                     this, "%d errors found by %s",
                     errors.size(), analysis.getClass()
                 );
                 for (final String error : errors) {
-                    Logger.info(this, "Error: %s", error);
-                    this.stdout.printf("Error: %s%n", error);
+                    Logger.info(
+                        this, "%s: %s",
+                        analysis.getClass().getSimpleName(), error
+                    );
+                    this.stdout.printf(
+                        "%s: %s%n",
+                        analysis.getClass().getSimpleName(), error
+                    );
                 }
                 if (errors.isEmpty()) {
                     Logger.info(this, "No errors found");

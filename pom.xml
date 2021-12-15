@@ -61,17 +61,8 @@ SOFTWARE.
       <version>0.46</version>
     </dependency>
     <dependency>
-      <groupId>com.jcabi.incubator</groupId>
-      <artifactId>xembly</artifactId>
-      <version>0.25.0</version>
-    </dependency>
-    <dependency>
       <groupId>com.jcabi</groupId>
       <artifactId>jcabi-log</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.jcabi</groupId>
-      <artifactId>jcabi-matchers</artifactId>
     </dependency>
     <dependency>
       <groupId>com.jcabi</groupId>
@@ -83,6 +74,11 @@ SOFTWARE.
       <artifactId>annotations</artifactId>
       <version>3.0.1</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.polystat</groupId>
+      <artifactId>far</artifactId>
+      <version>0.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.polystat.odin</groupId>
