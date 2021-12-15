@@ -61,9 +61,9 @@ final class PolystatTest {
     void analyzesOneEolangProgram(@TempDir final Path sources,
         @TempDir final Path temp) throws Exception {
         Files.write(
-            sources.resolve("foo.eo"),
+            sources.resolve("test.eo"),
             new TextOf(
-                new ResourceOf("org/polystat/tests/div-by-zero.eo")
+                new ResourceOf("org/polystat/div-by-zero.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
         final ByteArrayOutputStream out = new ByteArrayOutputStream();

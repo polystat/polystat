@@ -1,7 +1,0 @@
-.add(\perp) -> {{\any \perp} {\perp \any}}
-.add(y) -> {{0 y}}
-.div(\perp) -> {{\any \perp} {\perp \any} {\any 0}}
-.div(y) -> {{y 1}}
-.eq(true) -> {{0 0} {17 17}}
-.eq(false) -> {{19 0} {0 19}}
-.if(\perp) -> {{true \perp \any} {false \any \perp}}

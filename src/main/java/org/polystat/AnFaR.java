@@ -21,11 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.polystat;
+
+import com.jcabi.xml.XML;
+import org.cactoos.Func;
+import org.polystat.far.FaR;
 
 /**
- * Package related to odin.
+ * Bridge to FaR analysis module.
  *
- * @since 0.3
- * @see <a href="https://github.com/polystat/odin">GitHub Org</a>
+ * @see <a href="https://github.com/polystat/far">GitHub</a>
+ * @since 0.4
  */
-package org.polystat.odin;
+public final class AnFaR implements Analysis {
+
+    @Override
+    public Iterable<String> errors(final Func<String, XML> xmir,
+        final String locator) throws Exception {
+        return new FaR().errors(xmir, locator);
+    }
+
+}
