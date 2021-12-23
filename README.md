@@ -31,7 +31,8 @@ $ java -jar polystat-*-jar-with-dependencies.jar src temp
 
 The `src/test.eo` file must contain the code in [EOLANG](https://www.eolang.org)
 with a single object named `test`.
-For example, try this simple program that has a "division by zero" bug:
+For example, try this simple program that has a 
+[division by zero](https://en.wikipedia.org/wiki/Division_by_zero) bug:
 
 ```
 [x] > test
