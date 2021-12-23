@@ -27,11 +27,12 @@ and then run (replace the asterisk with the
 $ java -jar polystat-*-jar-with-dependencies.jar src temp
 ```
 
-The `src/foo.eo` file must contain the code in [EOLANG](https://www.eolang.org).
+The `src/test.eo` file must contain the code in [EOLANG](https://www.eolang.org)
+with a single object named `test`.
 For example, try this simple program that has a "division by zero" bug:
 
 ```
-[x] > foo
+[x] > test
   div. > @
     42
     x
