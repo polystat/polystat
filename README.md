@@ -14,7 +14,9 @@
 [![Hits-of-Code](https://hitsofcode.com/github/polystat/polystat)](https://hitsofcode.com/view/github/polystat/polystat)
 ![Lines of code](https://img.shields.io/tokei/lines/github/polystat/polystat)
 
-This is an experimental polystat static analyzer.
+This is an experimental 
+[polyglot](https://en.wikipedia.org/wiki/Polyglot_%28computing%29) 
+[static analyzer](https://en.wikipedia.org/wiki/Static_program_analysis).
 
 Read the [White Paper](https://www.polystat.org/wp.pdf) first.
 
