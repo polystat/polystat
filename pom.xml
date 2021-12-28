@@ -56,7 +56,7 @@ SOFTWARE.
     <dependency>
       <groupId>org.eolang</groupId>
       <artifactId>eo-parser</artifactId>
-      <version>0.21.5</version>
+      <version>0.21.8</version>
     </dependency>
     <dependency>
       <groupId>org.cactoos</groupId>
@@ -77,7 +77,7 @@ SOFTWARE.
     <dependency>
       <groupId>org.polystat</groupId>
       <artifactId>far</artifactId>
-      <version>0.1.1</version>
+      <version>0.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.polystat.odin</groupId>
@@ -129,9 +129,9 @@ SOFTWARE.
                   <EO-Version>???</EO-Version>
                 </manifestEntries>
               </archive>
-              <descriptorRefs>
-                <descriptorRef>jar-with-dependencies</descriptorRef>
-              </descriptorRefs>
+              <descriptors>
+                <descriptor>src/jar-with-dependencies.xml</descriptor>
+              </descriptors>
             </configuration>
           </execution>
         </executions>
@@ -139,6 +139,7 @@ SOFTWARE.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <id>test-assembly</id>
@@ -152,7 +153,7 @@ SOFTWARE.
               <useMavenLogger>true</useMavenLogger>
               <arguments>
                 <argument>-jar</argument>
-                <argument>${build.finalName}-jar-with-dependencies.jar</argument>
+                <argument>${project.build.finalName}-jar-with-dependencies.jar</argument>
                 <argument>${project.basedir}/src/test/resources/org/polystat</argument>
                 <argument>${project.build.directory}/polystat-temp</argument>
               </arguments>
