@@ -51,11 +51,6 @@ import org.junit.jupiter.api.io.TempDir;
 final class PolystatTest {
 
     @Test
-    void publicEntrance() throws Exception {
-        Polystat.main();
-    }
-
-    @Test
     void printsVersion() throws Exception {
         MatcherAssert.assertThat(
             PolystatTest.exec("--version"),
@@ -80,7 +75,7 @@ final class PolystatTest {
         Files.write(
             sources.resolve("test.eo"),
             new TextOf(
-                new ResourceOf("org/polystat/div-by-zero.eo")
+                new ResourceOf("org/polystat/test.eo")
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
         MatcherAssert.assertThat(

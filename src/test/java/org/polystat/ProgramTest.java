@@ -97,7 +97,7 @@ final class ProgramTest {
     private void writeSourceFile(final Path dir) {
         this.writeFile(
             new TextOf(
-                new ResourceOf("org/polystat/div-by-zero.eo")
+                new ResourceOf("org/polystat/test.eo")
             ),
             dir.resolve("test.eo")
         );

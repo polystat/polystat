@@ -111,6 +111,7 @@ SOFTWARE.
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.3.0</version>
         <executions>
           <execution>
             <id>make-assembly</id>
@@ -119,7 +120,7 @@ SOFTWARE.
               <goal>single</goal>
             </goals>
             <configuration>
-              <mergeManifestMode>merge</mergeManifestMode>
+              <mergeManifestMode>mergewithoutmain</mergeManifestMode>
               <archive>
                 <manifest>
                   <mainClass>org.polystat.Polystat</mainClass>
@@ -128,6 +129,30 @@ SOFTWARE.
               <descriptorRefs>
                 <descriptorRef>jar-with-dependencies</descriptorRef>
               </descriptorRefs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>test-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <workingDirectory>${project.build.directory}</workingDirectory>
+              <useMavenLogger>true</useMavenLogger>
+              <arguments>
+                <argument>-jar</argument>
+                <argument>${build.finalName}-jar-with-dependencies.jar</argument>
+                <argument>${project.basedir}/src/test/resources/org/polystat</argument>
+                <argument>${project.build.directory}/polystat-temp</argument>
+              </arguments>
             </configuration>
           </execution>
         </executions>

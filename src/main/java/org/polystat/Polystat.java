@@ -119,10 +119,9 @@ public final class Polystat {
             opts.remove(0);
         }
         if (opts.size() != 2) {
-            Logger.error(
-                this, "Two directory names required as arguments, run with --help"
+            throw new IllegalArgumentException(
+                "Two directory names required as arguments, run with --help"
             );
-            return;
         }
         final Map<Analysis, List<String>> errors =
             Polystat.scan(Paths.get(opts.get(0)), Paths.get(opts.get(1)));
