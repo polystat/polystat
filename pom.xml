@@ -31,7 +31,7 @@ SOFTWARE.
   </parent>
   <groupId>org.polystat</groupId>
   <artifactId>polystat</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.3.2</version>
   <packaging>jar</packaging>
   <name>polystat</name>
   <description>Polyglot Static Analyzer</description>
