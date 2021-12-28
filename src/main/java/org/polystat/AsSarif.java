@@ -21,28 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package org.polystat;
 
-import com.jcabi.xml.XML;
-import org.cactoos.Func;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 
 /**
- * An interface every analysis method has to implement.
+ * Turn list of errors into a JSON report in SARIF format.
  *
- * @since 0.2
+ * @since 1.0
  */
-public interface Analysis {
+final class AsSarif implements Supplier<String> {
 
     /**
-     * Analyse the specified object in the provided XMIR
-     * and return the list of errors found.
-     * @param xmir The XMIR
-     * @param locator The locator of the object, for example "\\Phi.foo"
-     * @return List of exceptions
-     * @throws Exception If fails
+     * Errors.
      */
-    Iterable<String> errors(Func<String, XML> xmir,
-        String locator) throws Exception;
+    private final Map<Analysis, List<String>> errors;
 
+    /**
+     * Ctor.
+     * @param errs Errors
+     */
+    AsSarif(final Map<Analysis, List<String>> errs) {
+        this.errors = Collections.unmodifiableMap(errs);
+    }
+
+    @Override
+    public String get() {
+        final JsonArrayBuilder results = Json.createArrayBuilder();
+        for (final Map.Entry<Analysis, List<String>> ent : this.errors.entrySet()) {
+            for (final String error : ent.getValue()) {
+                results.add(
+                    Json.createObjectBuilder()
+                        .add("ruleId", ent.getKey().getClass().getSimpleName())
+                        .add("message", error)
+                );
+            }
+        }
+        return Json.createObjectBuilder().add("results", results.build()).build().toString();
+    }
 }

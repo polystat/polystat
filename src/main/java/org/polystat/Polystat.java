@@ -25,9 +25,19 @@ package org.polystat;
 
 import com.jcabi.log.Logger;
 import com.jcabi.xml.XML;
-import java.io.PrintStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 import org.cactoos.Func;
 import org.cactoos.list.ListOf;
 
@@ -38,6 +48,7 @@ import org.cactoos.list.ListOf;
  * @todo #1:1h Let's use some library for command line arguments parsing.
  *  The current implementation in this class is super primitive and must
  *  be replaced by something decent.
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class Polystat {
 
@@ -50,26 +61,12 @@ public final class Polystat {
     };
 
     /**
-     * The stream to print to.
-     */
-    private final PrintStream stdout;
-
-    /**
-     * Ctor.
-     * @param out The stream to print to
-     */
-    public Polystat(final PrintStream out) {
-        this.stdout = out;
-    }
-
-    /**
      * Main entrance for Java command line.
      * @param args The args
      * @throws Exception If fails
      */
     public static void main(final String... args) throws Exception {
-        Logger.info(Polystat.class, "Polystat (c) 2021");
-        new Polystat(System.out).exec(args);
+        new Polystat().exec(args);
     }
 
     /**
@@ -83,37 +80,99 @@ public final class Polystat {
      *  why added these "printf" instructions. Let's fix it, make sure
      *  Logger works in the JAR-with-dependencies, and remove this.stdout
      *  from this class at all.
+     * @checkstyle ExecutableStatementCountCheck (200 lines)
+     * @checkstyle ReturnCountCheck (200 lines)
      */
+    @SuppressWarnings("PMD.OnlyOneReturn")
     public void exec(final String... args) throws Exception {
-        if (args.length == 2) {
-            final Func<String, XML> xmir = new Program(
-                Paths.get(args[0]), Paths.get(args[1])
-            );
-            for (final Analysis analysis : Polystat.ALL) {
-                final List<String> errors = new ListOf<>(
-                    analysis.errors(xmir, "\\Phi.test")
-                );
-                Logger.info(
-                    this, "%d errors found by %s",
-                    errors.size(), analysis.getClass()
-                );
-                for (final String error : errors) {
-                    Logger.info(
-                        this, "%s: %s",
-                        analysis.getClass().getSimpleName(), error
-                    );
-                    this.stdout.printf(
-                        "%s: %s%n",
-                        analysis.getClass().getSimpleName(), error
-                    );
-                }
-                if (errors.isEmpty()) {
-                    Logger.info(this, "No errors found");
-                    this.stdout.println("No errors");
-                }
+        final List<String> opts = new ArrayList<>(args.length);
+        opts.addAll(Arrays.asList(args));
+        boolean sarif = false;
+        while (!opts.isEmpty()) {
+            final String opt = opts.get(0);
+            if ("--version".equals(opt)) {
+                Logger.info(this, Polystat.version());
+                return;
             }
+            if ("--help".equals(opt)) {
+                Logger.info(
+                    this,
+                    String.join(
+                        "\n",
+                        "Usage: java -jar polystat.jar [option...] <src> <temp>",
+                        "  src: Directory with .eo sources",
+                        "  tmp: Directory for temporary .xmir and other files",
+                        "  options:",
+                        "    --help     Print this documentation and exit",
+                        "    --version  Print the version of this JAR and exit",
+                        "    --sarif    Print JSON output in SARIF 2.0 format"
+                    )
+                );
+                return;
+            }
+            if ("--sarif".equals(opt)) {
+                sarif = true;
+            }
+            if (!opt.startsWith("--")) {
+                break;
+            }
+            opts.remove(0);
+        }
+        if (opts.size() != 2) {
+            Logger.error(
+                this, "Two directory names required as arguments, run with --help"
+            );
+            return;
+        }
+        final Map<Analysis, List<String>> errors =
+            Polystat.scan(Paths.get(opts.get(0)), Paths.get(opts.get(1)));
+        final Supplier<String> out;
+        if (sarif) {
+            out = new AsSarif(errors);
         } else {
-            this.stdout.println("Read our README in GitHub");
+            out = new AsConsole(errors);
+        }
+        Logger.info(this, "%s\n", out.get());
+    }
+
+    /**
+     * Scan.
+     * @param src Path with sources
+     * @param tmp Path with temp files
+     * @return Errors
+     * @throws Exception If fails
+     */
+    private static Map<Analysis, List<String>> scan(final Path src, final Path tmp)
+        throws Exception {
+        final Func<String, XML> xmir = new Program(src, tmp);
+        final Map<Analysis, List<String>> errors = new HashMap<>(Polystat.ALL.length);
+        for (final Analysis analysis : Polystat.ALL) {
+            errors.put(
+                analysis,
+                new ListOf<>(analysis.errors(xmir, "\\Phi.test"))
+            );
+        }
+        return errors;
+    }
+
+    /**
+     * Read the version from resources and prints it.
+     * @return Version as string
+     * @throws IOException If fails
+     */
+    private static String version() throws IOException {
+        try (BufferedReader input =
+            new BufferedReader(
+                new InputStreamReader(
+                    Objects.requireNonNull(
+                        Polystat.class.getResourceAsStream("version.txt")
+                    ),
+                    StandardCharsets.UTF_8
+                )
+            )
+        ) {
+            return input.lines().findFirst().get();
         }
     }
+
 }
