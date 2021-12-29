@@ -139,17 +139,19 @@ public final class Polystat {
      * @param src Path with sources
      * @param tmp Path with temp files
      * @return Errors
-     * @throws Exception If fails
      */
-    private static Map<Analysis, List<String>> scan(final Path src, final Path tmp)
-        throws Exception {
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
+    private static Map<Analysis, List<String>> scan(final Path src, final Path tmp) {
         final Func<String, XML> xmir = new Program(src, tmp);
         final Map<Analysis, List<String>> errors = new HashMap<>(Polystat.ALL.length);
         for (final Analysis analysis : Polystat.ALL) {
-            errors.put(
-                analysis,
-                new ListOf<>(analysis.errors(xmir, "\\Phi.test"))
-            );
+            try {
+                final List<String> found = new ListOf<>(analysis.errors(xmir, "\\Phi.test"));
+                errors.put(analysis, found);
+            // @checkstyle IllegalCatchCheck (1 line)
+            } catch (final Exception ex) {
+                Logger.warn(Polystat.class, "%[exception]s", ex);
+            }
         }
         return errors;
     }
