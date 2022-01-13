@@ -37,6 +37,7 @@ SOFTWARE.
   <description>Polyglot Static Analyzer</description>
   <properties>
     <odin.version>0.1.4</odin.version>
+    <eo.version>0.21.8</eo.version>
   </properties>
   <dependencies>
     <dependency>
@@ -56,7 +57,7 @@ SOFTWARE.
     <dependency>
       <groupId>org.eolang</groupId>
       <artifactId>eo-parser</artifactId>
-      <version>0.21.8</version>
+      <version>${eo.version}</version>
     </dependency>
     <dependency>
       <groupId>org.cactoos</groupId>
@@ -90,6 +91,15 @@ SOFTWARE.
       <version>${odin.version}</version>
     </dependency>
     <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+      <version>4.6.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jcabi</groupId>
+      <artifactId>jcabi-manifests</artifactId>
+    </dependency>
+    <dependency>
       <groupId>javax.json</groupId>
       <artifactId>javax.json-api</artifactId>
     </dependency>
@@ -100,6 +110,22 @@ SOFTWARE.
   </dependencies>
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>info.picocli</groupId>
+              <artifactId>picocli-codegen</artifactId>
+              <version>4.6.2</version>
+            </path>
+          </annotationProcessorPaths>
+          <compilerArgs>
+            <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
       <plugin>
         <!-- @see https://issues.sonatype.org/browse/OSSRH-70730 -->
         <groupId>org.sonatype.plugins</groupId>
@@ -126,7 +152,8 @@ SOFTWARE.
                   <mainClass>org.polystat.Polystat</mainClass>
                 </manifest>
                 <manifestEntries>
-                  <EO-Version>???</EO-Version>
+                  <EO-Version>${eo.version}</EO-Version>
+                  <Polystat-Version>${project.version}</Polystat-Version>
                 </manifestEntries>
               </archive>
               <descriptors>

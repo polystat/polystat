@@ -24,22 +24,17 @@
 package org.polystat;
 
 import com.jcabi.log.Logger;
+import com.jcabi.manifests.Manifests;
 import com.jcabi.xml.XML;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import org.cactoos.Func;
 import org.cactoos.list.ListOf;
+import picocli.CommandLine;
 
 /**
  * Main entrance.
@@ -48,9 +43,23 @@ import org.cactoos.list.ListOf;
  * @todo #1:1h Let's use some library for command line arguments parsing.
  *  The current implementation in this class is super primitive and must
  *  be replaced by something decent.
+ * @todo #1:1h For some reason, the Logger.info() doesn't print anything
+ *  to the console when the JAR is run via command line. It does print
+ *  during testing, but doesn't show anything when being run as
+ *  a JAR-with-dependencies. I didn't manage to find the reason, that's
+ *  why added these "printf" instructions. Let's fix it, make sure
+ *  Logger works in the JAR-with-dependencies, and remove this.stdout
+ *  from this class at all.
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-public final class Polystat {
+@CommandLine.Command(
+    name = "polystat",
+    helpCommand = true,
+    description = "Read our README in GitHub",
+    mixinStandardHelpOptions = true,
+    versionProvider = Polystat.Version.class
+)
+public final class Polystat implements Callable<Integer> {
 
     /**
      * Analyzers.
@@ -61,77 +70,56 @@ public final class Polystat {
     };
 
     /**
+     * Source directory.
+     */
+    @CommandLine.Parameters(
+        index = "0",
+        description = "The directory with EO files."
+    )
+    private Path source;
+
+    /**
+     * Output directoty.
+     */
+    @CommandLine.Parameters(
+        index = "1",
+        description = "The directory with .XML files and maybe other temp."
+    )
+    private Path temp;
+
+    /**
+     * Output directoty.
+     */
+    @CommandLine.Option(
+        names = "--sarif",
+        description = "Print JSON output in SARIF 2.0 format"
+    )
+    private boolean sarif;
+
+    /**
      * Main entrance for Java command line.
      * @param args The args
      * @throws Exception If fails
      */
+    @SuppressWarnings("PMD.DoNotCallSystemExit")
     public static void main(final String... args) throws Exception {
-        new Polystat().exec(args);
+        System.exit(
+            new CommandLine(new Polystat()).execute(args)
+        );
     }
 
-    /**
-     * Run it.
-     * @param args The args
-     * @throws Exception If fails
-     * @todo #1:1h For some reason, the Logger.info() doesn't print anything
-     *  to the console when the JAR is run via command line. It does print
-     *  during testing, but doesn't show anything when being run as
-     *  a JAR-with-dependencies. I didn't manage to find the reason, that's
-     *  why added these "printf" instructions. Let's fix it, make sure
-     *  Logger works in the JAR-with-dependencies, and remove this.stdout
-     *  from this class at all.
-     * @checkstyle ExecutableStatementCountCheck (200 lines)
-     * @checkstyle ReturnCountCheck (200 lines)
-     */
-    @SuppressWarnings("PMD.OnlyOneReturn")
-    public void exec(final String... args) throws Exception {
-        final List<String> opts = new ArrayList<>(args.length);
-        opts.addAll(Arrays.asList(args));
-        boolean sarif = false;
-        while (!opts.isEmpty()) {
-            final String opt = opts.get(0);
-            if ("--version".equals(opt)) {
-                Logger.info(this, Polystat.version());
-                return;
-            }
-            if ("--help".equals(opt)) {
-                Logger.info(
-                    this,
-                    String.join(
-                        "\n",
-                        "Usage: java -jar polystat.jar [option...] <src> <temp>",
-                        "  src: Directory with .eo sources",
-                        "  tmp: Directory for temporary .xmir and other files",
-                        "  options:",
-                        "    --help     Print this documentation and exit",
-                        "    --version  Print the version of this JAR and exit",
-                        "    --sarif    Print JSON output in SARIF 2.0 format"
-                    )
-                );
-                return;
-            }
-            if ("--sarif".equals(opt)) {
-                sarif = true;
-            }
-            if (!opt.startsWith("--")) {
-                break;
-            }
-            opts.remove(0);
-        }
-        if (opts.size() != 2) {
-            throw new IllegalArgumentException(
-                "Two directory names required as arguments, run with --help"
-            );
-        }
+    @Override
+    public Integer call() throws Exception {
         final Map<Analysis, List<String>> errors =
-            Polystat.scan(Paths.get(opts.get(0)), Paths.get(opts.get(1)));
+            Polystat.scan(this.source, this.temp);
         final Supplier<String> out;
-        if (sarif) {
+        if (this.sarif) {
             out = new AsSarif(errors);
         } else {
             out = new AsConsole(errors);
         }
         Logger.info(this, "%s\n", out.get());
+        return 0;
     }
 
     /**
@@ -157,23 +145,16 @@ public final class Polystat {
     }
 
     /**
-     * Read the version from resources and prints it.
-     * @return Version as string
-     * @throws IOException If fails
+     * Version.
+     * @since 1.0
      */
-    private static String version() throws IOException {
-        try (BufferedReader input =
-            new BufferedReader(
-                new InputStreamReader(
-                    Objects.requireNonNull(
-                        Polystat.class.getResourceAsStream("version.txt")
-                    ),
-                    StandardCharsets.UTF_8
-                )
-            )
-        ) {
-            return input.lines().findFirst().get();
+    static final class Version implements CommandLine.IVersionProvider {
+        @Override
+        public String[] getVersion() throws Exception {
+            return new String[]{
+                Manifests.read("Polystat-Version"),
+                Manifests.read("EO-Version"),
+            };
         }
     }
-
 }

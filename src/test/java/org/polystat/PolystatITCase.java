@@ -29,8 +29,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import org.cactoos.io.InputOf;
 import org.cactoos.io.OutputTo;
 import org.cactoos.io.ResourceOf;
@@ -48,12 +48,20 @@ import org.junit.jupiter.api.io.TempDir;
  * @since 0.1
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-final class PolystatTest {
+final class PolystatITCase {
+
+    @Test
+    void saysHello() throws Exception {
+        MatcherAssert.assertThat(
+            PolystatITCase.exec(),
+            Matchers.containsString("README")
+        );
+    }
 
     @Test
     void printsVersion() throws Exception {
         MatcherAssert.assertThat(
-            PolystatTest.exec("--version"),
+            PolystatITCase.exec("--version"),
             Matchers.allOf(
                 Matchers.containsString("."),
                 Matchers.not(Matchers.containsString(" "))
@@ -64,14 +72,16 @@ final class PolystatTest {
     @Test
     void printsHelp() throws Exception {
         MatcherAssert.assertThat(
-            PolystatTest.exec("--help"),
+            PolystatITCase.exec("--help"),
             Matchers.containsString("Usage: ")
         );
     }
 
     @Test
-    void analyzesOneEolangProgram(@TempDir final Path sources,
-        @TempDir final Path temp) throws Exception {
+    void analyzesOneEolangProgram(
+        @TempDir final Path sources,
+        @TempDir final Path temp
+    ) throws Exception {
         Files.write(
             sources.resolve("test.eo"),
             new TextOf(
@@ -79,7 +89,7 @@ final class PolystatTest {
             ).asString().getBytes(StandardCharsets.UTF_8)
         );
         MatcherAssert.assertThat(
-            PolystatTest.exec(
+            PolystatITCase.exec(
                 "--sarif",
                 sources.toAbsolutePath().toString(),
                 temp.toAbsolutePath().toString()
@@ -89,22 +99,23 @@ final class PolystatTest {
     }
 
     /**
-     * Execute it.
-     * @param cmds Opts
-     * @return Output
-     * @throws Exception If fails
+     * Execute Polystat.
+     * @param cmds Command line args.
+     * @return Stdout.
+     * @throws Exception If fails.
      */
     private static String exec(final String... cmds) throws Exception {
-        final Collection<String> args = new LinkedList<>();
+        final List<String> args = new LinkedList<>();
         args.add("java");
         args.add("-Dfile.encoding=utf-8");
         args.add("-cp");
         args.add(System.getProperty("java.class.path"));
         args.add(Polystat.class.getCanonicalName());
         args.addAll(Arrays.asList(cmds));
-        final Process proc = new ProcessBuilder().command(
-            args.toArray(new String[0])
-        ).redirectErrorStream(true).start();
+        final Process proc = new ProcessBuilder()
+            .command(args)
+            .redirectErrorStream(true)
+            .start();
         final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
         try (VerboseProcess vproc = new VerboseProcess(proc)) {
             new LengthOf(
