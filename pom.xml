@@ -36,7 +36,7 @@ SOFTWARE.
   <name>polystat</name>
   <description>Polyglot Static Analyzer</description>
   <properties>
-    <odin.version>0.1.4</odin.version>
+    <odin.version>0.2.1</odin.version>
     <eo.version>0.21.8</eo.version>
   </properties>
   <dependencies>
