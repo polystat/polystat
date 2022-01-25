@@ -27,9 +27,9 @@ import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.xml.XML;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import org.cactoos.Func;
@@ -110,7 +110,7 @@ public final class Polystat implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        final Map<Analysis, List<String>> errors =
+        final Iterable<Result> errors =
             Polystat.scan(this.source, this.temp);
         final Supplier<String> out;
         if (this.sarif) {
@@ -129,16 +129,16 @@ public final class Polystat implements Callable<Integer> {
      * @return Errors
      */
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
-    private static Map<Analysis, List<String>> scan(final Path src, final Path tmp) {
+    private static Iterable<Result> scan(final Path src, final Path tmp) {
         final Func<String, XML> xmir = new Program(src, tmp);
-        final Map<Analysis, List<String>> errors = new HashMap<>(Polystat.ALL.length);
+        final Collection<Result> errors = new ArrayList<>(Polystat.ALL.length);
         for (final Analysis analysis : Polystat.ALL) {
             try {
                 final List<String> found = new ListOf<>(analysis.errors(xmir, "\\Phi.test"));
-                errors.put(analysis, found);
+                errors.add(new Result.Completed(analysis.getClass(), found));
             // @checkstyle IllegalCatchCheck (1 line)
             } catch (final Exception ex) {
-                Logger.warn(Polystat.class, "%[exception]s", ex);
+                errors.add(new Result.Failed(analysis.getClass(), ex));
             }
         }
         return errors;

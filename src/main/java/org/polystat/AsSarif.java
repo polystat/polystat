@@ -23,16 +23,15 @@
  */
 package org.polystat;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 
 /**
  * Turn list of errors into a JSON report in SARIF format.
  *
+ * <a href=https://docs.oasis-open.org/sarif/sarif/v2.0/csprd01/sarif-v2.0-csprd01.html></a>
  * @since 1.0
  */
 final class AsSarif implements Supplier<String> {
@@ -40,26 +39,34 @@ final class AsSarif implements Supplier<String> {
     /**
      * Errors.
      */
-    private final Map<Analysis, List<String>> errors;
+    private final Iterable<Result> errors;
 
     /**
      * Ctor.
      * @param errs Errors
      */
-    AsSarif(final Map<Analysis, List<String>> errs) {
-        this.errors = Collections.unmodifiableMap(errs);
+    AsSarif(final Iterable<Result> errs) {
+        this.errors = errs;
     }
 
     @Override
     public String get() {
         final JsonArrayBuilder results = Json.createArrayBuilder();
-        for (final Map.Entry<Analysis, List<String>> ent : this.errors.entrySet()) {
-            for (final String error : ent.getValue()) {
+        for (final Result ent : this.errors) {
+            final JsonObjectBuilder builder = Json.createObjectBuilder();
+            builder .add("ruleId", ent.analysis().getSimpleName());
+            if (ent.failure().isPresent()) {
                 results.add(
-                    Json.createObjectBuilder()
-                        .add("ruleId", ent.getKey().getClass().getSimpleName())
-                        .add("message", error)
+                    builder
+                        .add("exception", ent.failure().toString())
                 );
+            } else {
+                for (final String error : ent) {
+                    results.add(
+                        builder
+                            .add("message", error)
+                    );
+                }
             }
         }
         return Json.createObjectBuilder().add("results", results.build()).build().toString();

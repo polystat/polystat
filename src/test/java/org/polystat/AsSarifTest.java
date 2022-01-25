@@ -21,54 +21,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package org.polystat;
 
-import com.jcabi.log.Logger;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Supplier;
+import org.cactoos.iterable.IterableOf;
+import org.cactoos.list.ListOf;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
 
 /**
- * Turn list of errors into a console report.
+ * Test for {@link AsSarif}.
  *
  * @since 1.0
  */
-final class AsConsole implements Supplier<String> {
+final class AsSarifTest {
 
-    /**
-     * Errors.
-     */
-    private final Iterable<Result> errors;
-
-    /**
-     * Ctor.
-     * @param errs Errors
-     */
-    AsConsole(final Iterable<Result> errs) {
-        this.errors = errs;
+    @Test
+    void addsResults() {
+        final List<String> errors = new ListOf<>("x", "y", "z");
+        MatcherAssert.assertThat(
+            new AsSarif(
+                new IterableOf<>(
+                    new Result.Completed(
+                        Analysis.class,
+                        errors
+                    )
+                )
+            ).get(),
+            Matchers.stringContainsInOrder(
+                errors
+            )
+        );
     }
 
-    @Override
-    public String get() {
-        final List<String> lines = new LinkedList<>();
-        for (final Result ent : this.errors) {
-            if (ent.failure().isPresent()) {
-                Logger.warn(Polystat.class, "%[exception]s", ent.failure().get());
-            } else {
-                for (final String error : ent) {
-                    lines.add(
-                        String.format(
-                            "RESULT BY %s:\n\t%s",
-                            ent.analysis().getSimpleName(),
-                            error.replace("\n", "\n\t")
-                        )
-                    );
-                }
-            }
-        }
-        if (lines.isEmpty()) {
-            lines.add("No errors found");
-        }
-        return String.join("\n", lines);
+    @Test
+    void addsExceptions() {
+        final String msg = "OK";
+        MatcherAssert.assertThat(
+            new AsSarif(
+                new IterableOf<>(
+                    new Result.Failed(
+                        Analysis.class,
+                        new UnsupportedOperationException(msg)
+                    )
+                )
+            ).get(),
+            Matchers.stringContainsInOrder(
+                "exception",
+                msg
+            )
+        );
     }
 }
