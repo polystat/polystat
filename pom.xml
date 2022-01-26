@@ -35,6 +35,50 @@ SOFTWARE.
   <packaging>jar</packaging>
   <name>polystat</name>
   <description>Polyglot Static Analyzer</description>
+  <organization>
+    <name>Polystat</name>
+    <url>https://www.polystat.org</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>MIT</name>
+      <url>https://github.com/polystat/polystat/blob/master/LICENSE.txt</url>
+      <distribution>site</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>1</id>
+      <name>Yegor Bugayenko</name>
+      <email>yegor256@gmail.com</email>
+      <organization>yegor256.com</organization>
+      <organizationUrl>https://www.yegor256.com</organizationUrl>
+      <roles>
+        <role>Architect</role>
+        <role>Developer</role>
+      </roles>
+      <timezone>+3</timezone>
+    </developer>
+  </developers>
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/polystat/polystat/issues</url>
+  </issueManagement>
+  <scm>
+    <connection>scm:git:git@github.com:polystat/polystat.git</connection>
+    <developerConnection>scm:git:git@github.com:polystat/polystat.git</developerConnection>
+    <url>https://github.com/polystat/polystat</url>
+  </scm>
+  <ciManagement>
+    <system>rultor</system>
+    <url>https://www.rultor.com/s/polystat</url>
+  </ciManagement>
+  <distributionManagement>
+    <site>
+      <id>github-pages</id>
+      <url>https://github.com/polystat/polystat</url>
+    </site>
+  </distributionManagement>
   <properties>
     <odin.version>0.2.1</odin.version>
     <eo.version>0.21.8</eo.version>
