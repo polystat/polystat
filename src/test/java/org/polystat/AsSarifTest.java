@@ -89,7 +89,7 @@ final class AsSarifTest {
                 )
             ).get(),
             Matchers.stringContainsInOrder(
-                new Repeated<>(3, "ruleId")
+                new Repeated<>(errors.size(), "ruleId")
             )
         );
     }
