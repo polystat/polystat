@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2020-2021 Polystat.org
+ * Copyright (c) 2020-2022 Polystat.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,14 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.polystat.odin;
+package org.polystat;
 
 import com.jcabi.xml.XML;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.cactoos.Func;
 import org.cactoos.list.ListOf;
-import org.polystat.Analysis;
 import org.polystat.odin.analysis.mutualrec.naive.exceptions.UnsupportedDecoration;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
 import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
@@ -39,19 +38,7 @@ import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
  * @see <a href="https://github.com/polystat/odin">Github</a>
  * @since 0.3
  */
-public final class OdinAnalysis implements Analysis {
-
-    /**
-     * Odin analyzer that performs analysis.
-     */
-    private final EOOdinAnalyzer<String> analyzer;
-
-    /**
-     * Ctor.
-     */
-    public OdinAnalysis() {
-        this.analyzer = new EOOdinAnalyzer.EOOdinXmirAnalyzer();
-    }
+public final class AnOdin implements Analysis {
 
     @Override
     public Iterable<String> errors(final Func<String, XML> xmir,
@@ -60,7 +47,8 @@ public final class OdinAnalysis implements Analysis {
         final String str = getObjectsHierarchy(xmir, xml);
         Iterable<String> result;
         try {
-            result = this.analyzer.analyze(str).stream()
+            result = new EOOdinAnalyzer.EOOdinXmirAnalyzer()
+                .analyze(str).stream()
                 .map(OdinAnalysisErrorInterop::message)
                 .collect(Collectors.toList());
         } catch (final UnsupportedDecoration ex) {

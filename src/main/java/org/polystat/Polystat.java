@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2020-2021 Polystat.org
+ * Copyright (c) 2020-2022 Polystat.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,17 @@
 package org.polystat;
 
 import com.jcabi.log.Logger;
+import com.jcabi.manifests.Manifests;
 import com.jcabi.xml.XML;
-import java.io.PrintStream;
-import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 import org.cactoos.Func;
 import org.cactoos.list.ListOf;
-import org.polystat.far.Reverses;
-import org.polystat.odin.OdinAnalysis;
+import picocli.CommandLine;
 
 /**
  * Main entrance.
@@ -40,76 +43,118 @@ import org.polystat.odin.OdinAnalysis;
  * @todo #1:1h Let's use some library for command line arguments parsing.
  *  The current implementation in this class is super primitive and must
  *  be replaced by something decent.
+ * @todo #1:1h For some reason, the Logger.info() doesn't print anything
+ *  to the console when the JAR is run via command line. It does print
+ *  during testing, but doesn't show anything when being run as
+ *  a JAR-with-dependencies. I didn't manage to find the reason, that's
+ *  why added these "printf" instructions. Let's fix it, make sure
+ *  Logger works in the JAR-with-dependencies, and remove this.stdout
+ *  from this class at all.
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-public final class Polystat {
+@CommandLine.Command(
+    name = "polystat",
+    helpCommand = true,
+    description = "Read our README in GitHub",
+    mixinStandardHelpOptions = true,
+    versionProvider = Polystat.Version.class
+)
+public final class Polystat implements Callable<Integer> {
 
     /**
      * Analyzers.
      */
     private static final Analysis[] ALL = {
-        new Reverses(),
-        new OdinAnalysis(),
+        new AnFaR(),
+        new AnOdin(),
     };
 
     /**
-     * The stream to print to.
+     * Source directory.
      */
-    private final PrintStream stdout;
+    @CommandLine.Parameters(
+        index = "0",
+        description = "The directory with EO files."
+    )
+    private Path source;
 
     /**
-     * Ctor.
-     * @param out The stream to print to
+     * Output directoty.
      */
-    public Polystat(final PrintStream out) {
-        this.stdout = out;
-    }
+    @CommandLine.Parameters(
+        index = "1",
+        description = "The directory with .XML files and maybe other temp."
+    )
+    private Path temp;
+
+    /**
+     * Output directoty.
+     */
+    @CommandLine.Option(
+        names = "--sarif",
+        description = "Print JSON output in SARIF 2.0 format"
+    )
+    private boolean sarif;
 
     /**
      * Main entrance for Java command line.
      * @param args The args
      * @throws Exception If fails
      */
+    @SuppressWarnings("PMD.DoNotCallSystemExit")
     public static void main(final String... args) throws Exception {
-        Logger.info(Polystat.class, "Polystat (c) 2021");
-        new Polystat(System.out).exec(args);
+        System.exit(
+            new CommandLine(new Polystat()).execute(args)
+        );
+    }
+
+    @Override
+    public Integer call() throws Exception {
+        final Iterable<Result> errors =
+            Polystat.scan(this.source, this.temp);
+        final Supplier<String> out;
+        if (this.sarif) {
+            out = new AsSarif(errors);
+        } else {
+            out = new AsConsole(errors);
+        }
+        Logger.info(this, "%s\n", out.get());
+        return 0;
     }
 
     /**
-     * Run it.
-     * @param args The args
-     * @throws Exception If fails
-     * @todo #1:1h For some reason, the Logger.info() doesn't print anything
-     *  to the console when the JAR is run via command line. It does print
-     *  during testing, but doesn't show anything when being run as
-     *  a JAR-with-dependencies. I didn't manage to find the reason, that's
-     *  why added these "printf" instructions. Let's fix it, make sure
-     *  Logger works in the JAR-with-dependencies, and remove this.stdout
-     *  from this class at all.
+     * Scan.
+     * @param src Path with sources
+     * @param tmp Path with temp files
+     * @return Errors
      */
-    public void exec(final String... args) throws Exception {
-        if (args.length == 2) {
-            final Func<String, XML> xmir = new Program(
-                Paths.get(args[0]), Paths.get(args[1])
-            );
-            for (final Analysis analysis : Polystat.ALL) {
-                final List<String> errors = new ListOf<>(
-                    analysis.errors(xmir, "\\Phi.foo")
-                );
-                Logger.info(
-                    this, "%d errors found by %s",
-                    errors.size(), analysis.getClass()
-                );
-                for (final String error : errors) {
-                    Logger.info(this, "Error: %s", error);
-                    this.stdout.printf("Error: %s%n", error);
-                }
-                if (errors.isEmpty()) {
-                    Logger.info(this, "No errors found");
-                    this.stdout.println("No errors");
-                }
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
+    private static Iterable<Result> scan(final Path src, final Path tmp) {
+        final Func<String, XML> xmir = new Program(src, tmp);
+        final Collection<Result> errors = new ArrayList<>(Polystat.ALL.length);
+        for (final Analysis analysis : Polystat.ALL) {
+            try {
+                final List<String> found = new ListOf<>(analysis.errors(xmir, "\\Phi.test"));
+                errors.add(new Result.Completed(analysis.getClass(), found));
+            // @checkstyle IllegalCatchCheck (1 line)
+            } catch (final Exception ex) {
+                errors.add(new Result.Failed(analysis.getClass(), ex));
             }
-        } else {
-            this.stdout.println("Read our README in GitHub");
+        }
+        return errors;
+    }
+
+    /**
+     * Version.
+     * @since 1.0
+     */
+    static final class Version implements CommandLine.IVersionProvider {
+        @Override
+        public String[] getVersion() throws Exception {
+            return new String[]{
+                Manifests.read("Polystat-Version"),
+                Manifests.read("EO-Version"),
+            };
         }
     }
 }

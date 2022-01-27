@@ -2,7 +2,7 @@
 <!--
 The MIT License (MIT)
 
-Copyright (c) 2020-2021 Polystat.org
+Copyright (c) 2020-2022 Polystat.org
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@ SOFTWARE.
   <parent>
     <groupId>com.jcabi</groupId>
     <artifactId>parent</artifactId>
-    <version>0.56.0</version>
+    <version>0.57.0</version>
   </parent>
   <groupId>org.polystat</groupId>
   <artifactId>polystat</artifactId>
@@ -35,15 +35,59 @@ SOFTWARE.
   <packaging>jar</packaging>
   <name>polystat</name>
   <description>Polyglot Static Analyzer</description>
+  <organization>
+    <name>Polystat</name>
+    <url>https://www.polystat.org</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>MIT</name>
+      <url>https://github.com/polystat/polystat/blob/master/LICENSE.txt</url>
+      <distribution>site</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>1</id>
+      <name>Yegor Bugayenko</name>
+      <email>yegor256@gmail.com</email>
+      <organization>yegor256.com</organization>
+      <organizationUrl>https://www.yegor256.com</organizationUrl>
+      <roles>
+        <role>Architect</role>
+        <role>Developer</role>
+      </roles>
+      <timezone>+3</timezone>
+    </developer>
+  </developers>
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/polystat/polystat/issues</url>
+  </issueManagement>
+  <scm>
+    <connection>scm:git:git@github.com:polystat/polystat.git</connection>
+    <developerConnection>scm:git:git@github.com:polystat/polystat.git</developerConnection>
+    <url>https://github.com/polystat/polystat</url>
+  </scm>
+  <ciManagement>
+    <system>rultor</system>
+    <url>https://www.rultor.com/s/polystat</url>
+  </ciManagement>
+  <distributionManagement>
+    <site>
+      <id>github-pages</id>
+      <url>https://github.com/polystat/polystat</url>
+    </site>
+  </distributionManagement>
   <properties>
-    <eolang.version>0.11.0</eolang.version>
-    <odin.version>0.1.4</odin.version>
+    <odin.version>0.2.1</odin.version>
+    <eo.version>0.21.8</eo.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.eolang</groupId>
       <artifactId>eo-parser</artifactId>
-      <version>${eolang.version}</version>
+      <version>${eo.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -56,33 +100,29 @@ SOFTWARE.
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>com.jcabi</groupId>
+      <artifactId>jcabi-log</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.cactoos</groupId>
       <artifactId>cactoos</artifactId>
       <version>0.46</version>
     </dependency>
     <dependency>
-      <groupId>com.jcabi.incubator</groupId>
-      <artifactId>xembly</artifactId>
-      <version>0.25.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.jcabi</groupId>
-      <artifactId>jcabi-log</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.jcabi</groupId>
-      <artifactId>jcabi-matchers</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.jcabi</groupId>
       <artifactId>jcabi-xml</artifactId>
-      <version>0.23.0</version>
+      <version>0.23.2</version>
     </dependency>
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
       <artifactId>annotations</artifactId>
       <version>3.0.1</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.polystat</groupId>
+      <artifactId>far</artifactId>
+      <version>0.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.polystat.odin</groupId>
@@ -94,19 +134,54 @@ SOFTWARE.
       <artifactId>analysis_2.13</artifactId>
       <version>${odin.version}</version>
     </dependency>
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+      <version>4.6.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jcabi</groupId>
+      <artifactId>jcabi-manifests</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.json</groupId>
+      <artifactId>javax.json-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.json</artifactId>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>info.picocli</groupId>
+              <artifactId>picocli-codegen</artifactId>
+              <version>4.6.2</version>
+            </path>
+          </annotationProcessorPaths>
+          <compilerArgs>
+            <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
         <!-- @see https://issues.sonatype.org/browse/OSSRH-70730 -->
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.8</version>
         <configuration>
           <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.3.0</version>
         <executions>
           <execution>
             <id>make-assembly</id>
@@ -117,14 +192,58 @@ SOFTWARE.
             <configuration>
               <mergeManifestMode>merge</mergeManifestMode>
               <archive>
-                <manifest>
-                  <mainClass>org.polystat.Polystat</mainClass>
-                </manifest>
+                <manifestEntries>
+                  <Main-Class>org.polystat.Polystat</Main-Class>
+                  <Polystat-Version>${project.version}</Polystat-Version>
+                </manifestEntries>
               </archive>
-              <descriptorRefs>
-                <descriptorRef>jar-with-dependencies</descriptorRef>
-              </descriptorRefs>
+              <descriptors>
+                <descriptor>src/jar-with-dependencies.xml</descriptor>
+              </descriptors>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>test-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <workingDirectory>${project.build.directory}</workingDirectory>
+              <useMavenLogger>true</useMavenLogger>
+              <outputFile>${project.build.directory}/exec.log</outputFile>
+              <arguments>
+                <argument>-jar</argument>
+                <argument>${project.build.finalName}-jar-with-dependencies.jar</argument>
+                <argument>${project.basedir}/src/test/resources/org/polystat</argument>
+                <argument>${project.build.directory}/polystat-temp</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-verifier-plugin</artifactId>
+        <version>1.1</version>
+        <configuration>
+          <verificationFile>src/test/verifier/verifications-test.xml</verificationFile>
+        </configuration>
+        <executions>
+          <execution>
+            <id>main</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>verify</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
@@ -143,47 +262,6 @@ SOFTWARE.
                 <exclude>duplicatefinder:.*</exclude>
               </excludes>
             </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>jacoco</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.5</version>
-            <configuration>
-              <output>file</output>
-            </configuration>
-            <executions>
-              <execution>
-                <id>jacoco-initialize</id>
-                <goals>
-                  <goal>prepare-agent</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>jacoco-initialize-integration</id>
-                <goals>
-                  <goal>prepare-agent-integration</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>jacoco-report</id>
-                <goals>
-                  <goal>report</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>jacoco-report-integration</id>
-                <goals>
-                  <goal>report-integration</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>

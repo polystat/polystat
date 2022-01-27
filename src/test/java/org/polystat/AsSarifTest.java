@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2020-2021 Polystat.org
+ * Copyright (c) 2020-2022 Polystat.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,52 +21,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.polystat.far;
 
-import com.jcabi.matchers.XhtmlMatchers;
-import org.cactoos.io.ResourceOf;
-import org.cactoos.text.TextOf;
-import org.cactoos.text.UncheckedText;
+package org.polystat;
+
+import java.util.List;
+import org.cactoos.iterable.IterableOf;
+import org.cactoos.list.ListOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test case for {@link Calc}.
+ * Test for {@link AsSarif}.
  *
- * @since 0.1
+ * @since 1.0
  */
-final class CalcTest {
+final class AsSarifTest {
 
     @Test
-    void buildsSimpleRulesXsl() {
+    void addsResults() {
+        final List<String> errors = new ListOf<>("x", "y", "z");
         MatcherAssert.assertThat(
-            XhtmlMatchers.xhtml(new Calc("add(y) -> {{y 0}}").xsl()),
-            Matchers.allOf(
-                XhtmlMatchers.hasXPath("//xsl:stylesheet"),
-                XhtmlMatchers.hasXPath("//xsl:function[@name='ps:calc']"),
-                XhtmlMatchers.hasXPath("//xsl:when[@test=\"$y = '\\any'\"]"),
-                XhtmlMatchers.hasXPath("//xsl:when[@test=\"$func = 'add'\"]")
+            new AsSarif(
+                new IterableOf<>(
+                    new Result.Completed(
+                        Analysis.class,
+                        errors
+                    )
+                )
+            ).get(),
+            Matchers.stringContainsInOrder(
+                errors
             )
         );
     }
 
     @Test
-    void buildsRealRulesXsl() {
+    void addsExceptions() {
+        final String msg = "OK";
         MatcherAssert.assertThat(
-            XhtmlMatchers.xhtml(
-                new Calc(
-                    new UncheckedText(
-                        new TextOf(
-                            new ResourceOf(
-                                "org/polystat/far/rules.txt"
-                            )
-                        )
-                    ).asString().trim()
-                ).xsl()
-            ),
-            XhtmlMatchers.hasXPath("//xsl:choose[count(xsl:when)=7]")
+            new AsSarif(
+                new IterableOf<>(
+                    new Result.Failed(
+                        Analysis.class,
+                        new UnsupportedOperationException(msg)
+                    )
+                )
+            ).get(),
+            Matchers.stringContainsInOrder(
+                "exception",
+                msg
+            )
         );
     }
-
 }

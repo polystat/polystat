@@ -2,7 +2,7 @@
 <!--
 The MIT License (MIT)
 
-Copyright (c) 2020-2021 Polystat.org
+Copyright (c) 2020-2022 Polystat.org
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,19 +22,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="cleanup-perps" version="2.0">
-  <!--
-  This XSL deletes all <input> elements, which have at least
-  one variable with \perp value. It's obvious, that such a
-  situation is impossible: \perp can't come in as a value.
-  -->
-  <xsl:strip-space elements="*"/>
-  <xsl:template match="input[a[@x = '\perp']]">
-    <!-- just delete it -->
-  </xsl:template>
-  <xsl:template match="node()|@*">
-    <xsl:copy>
-      <xsl:apply-templates select="node()|@*"/>
-    </xsl:copy>
-  </xsl:template>
-</xsl:stylesheet>
+<verifications xmlns="https://maven.apache.org/verifications/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/verifications/1.0.0 https://maven.apache.org/xsd/verifications-1.0.0.xsd">
+  <files>
+    <file>
+      <location>target/exec.log</location>
+      <contains>RESULT BY AnFaR</contains>
+    </file>
+  </files>
+</verifications>

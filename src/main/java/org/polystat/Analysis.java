@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2020-2021 Polystat.org
+ * Copyright (c) 2020-2022 Polystat.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ public interface Analysis {
      * and return the list of errors found.
      * @param xmir The XMIR
      * @param locator The locator of the object, for example "\\Phi.foo"
-     * @return List of exeptions
+     * @return List of exceptions
      * @throws Exception If fails
      */
     Iterable<String> errors(Func<String, XML> xmir,

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2020-2021 Polystat.org
+ * Copyright (c) 2020-2022 Polystat.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -83,10 +83,10 @@ final class ProgramTest {
      */
     private void assertOutput(final Path sources, final Path temp) throws Exception {
         final Program program = new Program(sources, temp);
-        final XML foo = program.apply("\\Phi.foo");
+        final XML test = program.apply("\\Phi.test");
         MatcherAssert.assertThat(
-            foo.xpath("@name").get(0),
-            Matchers.equalTo("foo")
+            test.xpath("@name").get(0),
+            Matchers.equalTo("test")
         );
     }
 
@@ -97,9 +97,9 @@ final class ProgramTest {
     private void writeSourceFile(final Path dir) {
         this.writeFile(
             new TextOf(
-                new ResourceOf("org/polystat/tests/div-by-zero.eo")
+                new ResourceOf("org/polystat/test.eo")
             ),
-            dir.resolve("foo.eo")
+            dir.resolve("test.eo")
         );
     }
 }
