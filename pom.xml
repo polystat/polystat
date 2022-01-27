@@ -41,6 +41,11 @@ SOFTWARE.
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.eolang</groupId>
+      <artifactId>eo-parser</artifactId>
+      <version>${eolang.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <scope>runtime</scope>
@@ -49,11 +54,6 @@ SOFTWARE.
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eolang</groupId>
-      <artifactId>eo-parser</artifactId>
-      <version>${eolang.version}</version>
     </dependency>
     <dependency>
       <groupId>org.cactoos</groupId>
@@ -120,9 +120,6 @@ SOFTWARE.
                 <manifest>
                   <mainClass>org.polystat.Polystat</mainClass>
                 </manifest>
-                <manifestEntries>
-                  <EO-Version>${eolang.version}</EO-Version>
-                </manifestEntries>
               </archive>
               <descriptorRefs>
                 <descriptorRef>jar-with-dependencies</descriptorRef>
