@@ -26,6 +26,7 @@ package org.polystat;
 
 import java.util.List;
 import org.cactoos.iterable.IterableOf;
+import org.cactoos.iterable.Repeated;
 import org.cactoos.list.ListOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -74,4 +75,23 @@ final class AsSarifTest {
             )
         );
     }
+
+    @Test
+    void addsResultsWithRuleId() {
+        final List<String> errors = new ListOf<>("a", "b", "c");
+        MatcherAssert.assertThat(
+            new AsSarif(
+                new IterableOf<>(
+                    new Result.Completed(
+                        Analysis.class,
+                        errors
+                    )
+                )
+            ).get(),
+            Matchers.stringContainsInOrder(
+                new Repeated<>(3, "ruleId")
+            )
+        );
+    }
+
 }

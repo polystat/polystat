@@ -53,17 +53,17 @@ final class AsSarif implements Supplier<String> {
     public String get() {
         final JsonArrayBuilder results = Json.createArrayBuilder();
         for (final Result ent : this.errors) {
-            final JsonObjectBuilder builder = Json.createObjectBuilder();
-            builder .add("ruleId", ent.analysis().getSimpleName());
             if (ent.failure().isPresent()) {
                 results.add(
-                    builder
+                    Json.createObjectBuilder()
+                        .add("ruleId", ent.analysis().getSimpleName())
                         .add("exception", ent.failure().toString())
                 );
             } else {
                 for (final String error : ent) {
                     results.add(
-                        builder
+                        Json.createObjectBuilder()
+                            .add("ruleId", ent.analysis().getSimpleName())
                             .add("message", error)
                     );
                 }
