@@ -26,7 +26,7 @@ package org.polystat;
 import java.util.function.Supplier;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import javax.json.JsonObject;
 
 /**
  * Turn list of errors into a JSON report in SARIF format.
@@ -52,23 +52,37 @@ final class AsSarif implements Supplier<String> {
     @Override
     public String get() {
         final JsonArrayBuilder results = Json.createArrayBuilder();
-        for (final Result ent : this.errors) {
-            final JsonObjectBuilder builder = Json.createObjectBuilder();
-            builder .add("ruleId", ent.analysis().getSimpleName());
-            if (ent.failure().isPresent()) {
+        for (final Result res : this.errors) {
+            if (res.failure().isPresent()) {
                 results.add(
-                    builder
-                        .add("exception", ent.failure().toString())
+                    this.asJson(res.analysis(), "exception", res.failure().toString())
                 );
             } else {
-                for (final String error : ent) {
-                    results.add(
-                        builder
-                            .add("message", error)
-                    );
+                for (final String error : res) {
+                    results.add(this.asJson(res.analysis(), "message", error));
                 }
             }
         }
-        return Json.createObjectBuilder().add("results", results.build()).build().toString();
+        return Json
+            .createObjectBuilder()
+            .add("results", results.build()).build().toString();
+    }
+
+    /**
+     * Convert to Json.
+     * @param type Analysis type.
+     * @param field Field.
+     * @param value Vlue.
+     * @return Json object.
+     */
+    private static JsonObject asJson(
+        final Class<? extends Analysis> type,
+        final String field,
+        final String value
+    ) {
+        return Json.createObjectBuilder()
+            .add("ruleId", type.getSimpleName())
+            .add(field, value)
+            .build();
     }
 }
