@@ -80,7 +80,7 @@ SOFTWARE.
     </site>
   </distributionManagement>
   <properties>
-    <odin.version>0.3.0</odin.version>
+    <odin.version>0.3.2</odin.version>
     <eo.version>0.21.8</eo.version>
   </properties>
   <dependencies>
@@ -127,11 +127,6 @@ SOFTWARE.
     <dependency>
       <groupId>org.polystat.odin</groupId>
       <artifactId>interop_2.13</artifactId>
-      <version>${odin.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.polystat.odin</groupId>
-      <artifactId>analysis_2.13</artifactId>
       <version>${odin.version}</version>
     </dependency>
     <dependency>

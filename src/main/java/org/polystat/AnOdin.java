@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.cactoos.Func;
 import org.cactoos.list.ListOf;
-import org.polystat.odin.analysis.mutualrec.naive.exceptions.UnsupportedDecoration;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
 import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
 
@@ -41,6 +40,7 @@ import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
 public final class AnOdin implements Analysis {
 
     @Override
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public Iterable<String> errors(final Func<String, XML> xmir,
         final String locator) throws Exception {
         final XML xml = xmir.apply(locator);
@@ -51,7 +51,8 @@ public final class AnOdin implements Analysis {
                 .analyze(str).stream()
                 .map(OdinAnalysisErrorInterop::message)
                 .collect(Collectors.toList());
-        } catch (final UnsupportedDecoration ex) {
+        // @checkstyle IllegalCatchCheck (1 line)
+        } catch (final Exception ex) {
             result = new ListOf<>(
                 String.format("Odin is not able to analyze the code, due to:%n%s", ex.getMessage())
             );
