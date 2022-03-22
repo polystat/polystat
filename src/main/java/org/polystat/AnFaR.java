@@ -23,6 +23,7 @@
  */
 package org.polystat;
 
+import org.cactoos.list.ListOf;
 import com.jcabi.xml.XML;
 import org.cactoos.Func;
 import org.polystat.far.FaR;
@@ -36,9 +37,14 @@ import org.polystat.far.FaR;
 public final class AnFaR implements Analysis {
 
     @Override
-    public Iterable<String> errors(final Func<String, XML> xmir,
-        final String locator) throws Exception {
-        return new FaR().errors(xmir, locator);
+    public Iterable<Result> errors(final Func<String, XML> xmir,
+        final String locator) {
+        try {
+            Iterable<String> errors = new FaR().errors(xmir, locator);
+            return new ListOf<>(new Result.Completed(AnFaR.class, errors));
+        } catch (final Exception e) {
+            return new ListOf<>(new Result.Failed(AnFaR.class, e));
+        }
     }
 
 }

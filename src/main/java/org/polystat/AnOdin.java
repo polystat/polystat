@@ -41,7 +41,7 @@ public final class AnOdin implements Analysis {
 
     @Override
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
-    public Iterable<String> errors(final Func<String, XML> xmir,
+    public Iterable<Result> errors(final Func<String, XML> xmir,
         final String locator) throws Exception {
         final XML xml = xmir.apply(locator);
         final String str = getObjectsHierarchy(xmir, xml);
@@ -51,13 +51,11 @@ public final class AnOdin implements Analysis {
                 .analyze(str).stream()
                 .map(OdinAnalysisErrorInterop::message)
                 .collect(Collectors.toList());
+            return new ListOf<>(new Result.Completed(AnOdin.class, result));
         // @checkstyle IllegalCatchCheck (1 line)
         } catch (final Exception ex) {
-            result = new ListOf<>(
-                String.format("Odin is not able to analyze the code, due to:%n%s", ex.getMessage())
-            );
+            return new ListOf<>(new Result.Failed(AnOdin.class, ex));
         }
-        return result;
     }
 
     /**
