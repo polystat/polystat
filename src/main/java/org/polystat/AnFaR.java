@@ -23,9 +23,9 @@
  */
 package org.polystat;
 
-import org.cactoos.list.ListOf;
 import com.jcabi.xml.XML;
 import org.cactoos.Func;
+import org.cactoos.list.ListOf;
 import org.polystat.far.FaR;
 
 /**
@@ -37,14 +37,18 @@ import org.polystat.far.FaR;
 public final class AnFaR implements Analysis {
 
     @Override
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public Iterable<Result> errors(final Func<String, XML> xmir,
         final String locator) {
+        Result result;
         try {
-            Iterable<String> errors = new FaR().errors(xmir, locator);
-            return new ListOf<>(new Result.Completed(AnFaR.class, errors));
-        } catch (final Exception e) {
-            return new ListOf<>(new Result.Failed(AnFaR.class, e));
+            final Iterable<String> errors = new FaR().errors(xmir, locator);
+            result = new Result.Completed(AnFaR.class, errors);
+        // @checkstyle IllegalCatchCheck (1 line)
+        } catch (final Exception ex) {
+            result = new Result.Failed(AnFaR.class, ex);
         }
+        return new ListOf<Result>(result);
     }
 
 }

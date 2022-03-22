@@ -45,17 +45,18 @@ public final class AnOdin implements Analysis {
         final String locator) throws Exception {
         final XML xml = xmir.apply(locator);
         final String str = getObjectsHierarchy(xmir, xml);
-        Iterable<String> result;
+        Result result;
         try {
-            result = new EOOdinAnalyzer.EOOdinXmirAnalyzer()
+            final Iterable<String> errors = new EOOdinAnalyzer.EOOdinXmirAnalyzer()
                 .analyze(str).stream()
                 .map(OdinAnalysisErrorInterop::message)
                 .collect(Collectors.toList());
-            return new ListOf<>(new Result.Completed(AnOdin.class, result));
+            result = new Result.Completed(AnOdin.class, errors);
         // @checkstyle IllegalCatchCheck (1 line)
         } catch (final Exception ex) {
-            return new ListOf<>(new Result.Failed(AnOdin.class, ex));
+            result = new Result.Failed(AnOdin.class, ex);
         }
+        return new ListOf<Result>(result);
     }
 
     /**
