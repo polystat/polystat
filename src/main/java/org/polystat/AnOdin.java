@@ -29,7 +29,8 @@ import java.util.stream.Collectors;
 import org.cactoos.Func;
 import org.cactoos.list.ListOf;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
-import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
+import org.polystat.odin.interop.java.OdinAnalysisResultInterop;
+import java.util.Arrays;
 
 /**
  * The implementation of analysis via odin (object dependency inspector).
@@ -46,18 +47,37 @@ public final class AnOdin implements Analysis {
         final XML xml = xmir.apply(locator);
         final String str = getObjectsHierarchy(xmir, xml);
         Iterable<String> result;
-        try {
-            result = new EOOdinAnalyzer.EOOdinXmirAnalyzer()
+        result = new EOOdinAnalyzer.EOOdinXmirAnalyzer()
                 .analyze(str).stream()
-                .map(OdinAnalysisErrorInterop::message)
+                .flatMap(res -> extractResults(res).stream())
                 .collect(Collectors.toList());
-        // @checkstyle IllegalCatchCheck (1 line)
-        } catch (final Exception ex) {
-            result = new ListOf<>(
-                String.format("Odin is not able to analyze the code, due to:%n%s", ex.getMessage())
+        return result;
+    }
+
+    private static List<String> extractResults(OdinAnalysisResultInterop e) {
+        if (e.analyzerFailure().isPresent()) {
+            return Arrays.asList(
+                String.format(
+                    "Odin analyzer \"%s\" is not able to analyze the code, due to:\n\t%s",
+                    e.analysisName(),
+                    e.analyzerFailure().get()
+                )
+            );       
+        } else if (e.detectedDefects().isPresent()) {
+            return Arrays.asList(
+                String.format(
+                    "Odin analyzer \"%s\" found the following error(s):\n\t%s",
+                    e.analysisName(),
+                    e.detectedDefects().get()
+                )
             );
         }
-        return result;
+        return Arrays.asList(
+            String.format(
+                "Odin analyzer \"%s\" found no problems.",
+                e.analysisName()
+            )
+        );
     }
 
     /**
