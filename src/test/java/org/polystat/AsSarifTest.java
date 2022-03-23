@@ -47,7 +47,8 @@ final class AsSarifTest {
                 new IterableOf<>(
                     new Result.Completed(
                         Analysis.class,
-                        errors
+                        errors,
+                        "SAMPLE_TEXT"
                     )
                 )
             ).get(),
@@ -65,7 +66,8 @@ final class AsSarifTest {
                 new IterableOf<>(
                     new Result.Failed(
                         Analysis.class,
-                        new UnsupportedOperationException(msg)
+                        new UnsupportedOperationException(msg),
+                        "SAMPLE_TEXT"
                     )
                 )
             ).get(),
@@ -84,7 +86,8 @@ final class AsSarifTest {
                 new IterableOf<>(
                     new Result.Completed(
                         Analysis.class,
-                        errors
+                        errors,
+                        "SAMPLE_TEXT"
                     )
                 )
             ).get(),

@@ -53,13 +53,13 @@ final class AsConsole implements Supplier<String> {
         final List<String> lines = new LinkedList<>();
         for (final Result ent : this.errors) {
             if (ent.failure().isPresent()) {
-                Logger.warn(Polystat.class, "%[exception]s", ent.failure().get());
+                Logger.warn(Polystat.class, "%s", ent.failure().get().getMessage());
             } else {
                 for (final String error : ent) {
                     lines.add(
                         String.format(
                             "RESULT BY %s:\n\t%s",
-                            ent.analysis().getSimpleName(),
+                            ent.analysis().getSimpleName() + ": " + ent.ruleId(), 
                             error.replace("\n", "\n\t")
                         )
                     );

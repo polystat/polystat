@@ -36,7 +36,7 @@ import org.polystat.far.FaR;
  */
 public final class AnFaR implements Analysis {
 
-    private final String ruleId = "FaR: Division by zero";
+    private final String ruleId = "Division by zero";
 
     @Override
     @SuppressWarnings("PMD.AvoidCatchingGenericException")

@@ -45,7 +45,7 @@ public final class AnOdin implements Analysis {
         final String locator) throws Exception {
         final XML xml = xmir.apply(locator);
         final String str = getObjectsHierarchy(xmir, xml);
-        Iterable<Result> result = new EOOdinAnalyzer.EOOdinXmirAnalyzer()
+        final Iterable<Result> result = new EOOdinAnalyzer.EOOdinXmirAnalyzer()
                 .analyze(str).stream()
                 .map(res -> extractResults(res))
                 .collect(Collectors.toList());
@@ -53,12 +53,16 @@ public final class AnOdin implements Analysis {
     }
 
     private static Result extractResults(OdinAnalysisResultInterop e) {
+        Result result;
         if (e.analyzerFailure().isPresent()) {
-            return new Result.Failed(AnOdin.class, e.analyzerFailure().get(), e.ruleId());      
+            result = new Result.Failed(AnOdin.class, e.analyzerFailure().get(), e.ruleId());      
         } else if (e.detectedDefect().isPresent()) {
-            return new Result.Completed(AnOdin.class, new ListOf<>(e.detectedDefect().get()), e.ruleId());
+            result = new Result.Completed(AnOdin.class, new ListOf<>(e.detectedDefect().get()), e.ruleId());
         }
-        return new Result.Completed(AnOdin.class, new ListOf<>(), e.ruleId());
+        else {
+            result = new Result.Completed(AnOdin.class, new ListOf<>(), e.ruleId());
+        }
+        return result;
     }
 
     /**
