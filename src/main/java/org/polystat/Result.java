@@ -41,10 +41,16 @@ public interface Result extends Iterable<String> {
     Class<? extends Analysis> analysis();
 
     /**
+     * Rule id.
+     * @return Id of a rule executed in the analysis
+     */
+    String ruleId();
+
+    /**
      * Failure if occurred.
      * @return Present if analysis failed.
      */
-    Optional<? extends Exception> failure();
+    Optional<? extends Throwable> failure();
 
     /**
      * Completed analysis result.
@@ -64,16 +70,23 @@ public interface Result extends Iterable<String> {
         private final Iterable<String> errors;
 
         /**
+         * Rule id.
+         */
+        private final String ruleId;
+
+        /**
          * Ctor.
          * @param type Type.
          * @param errors Errors.
          */
         public Completed(
             final Class<? extends Analysis> type,
-            final Iterable<String> errors
+            final Iterable<String> errors,
+            final String ruleId
         ) {
             this.type = type;
             this.errors = errors;
+            this.ruleId = ruleId;
         }
 
         @Override
@@ -82,13 +95,18 @@ public interface Result extends Iterable<String> {
         }
 
         @Override
-        public Optional<? extends Exception> failure() {
+        public Optional<? extends Throwable> failure() {
             return Optional.empty();
         }
 
         @Override
         public Iterator<String> iterator() {
             return this.errors.iterator();
+        }
+
+        @Override
+        public String ruleId() {
+            return this.ruleId;
         }
     }
 
@@ -107,16 +125,22 @@ public interface Result extends Iterable<String> {
         /**
          * Failure.
          */
-        private final Exception error;
+        private final Throwable error;
+        
+        /**
+         * Rule id.
+         */
+        private final String ruleId;
 
         /**
          * Ctor.
          * @param type Analysis.
          * @param error Exception.
          */
-        public Failed(final Class<? extends Analysis> type, final Exception error) {
+        public Failed(final Class<? extends Analysis> type, final Throwable error, final String ruleId) {
             this.type = type;
             this.error = error;
+            this.ruleId = ruleId;
         }
 
         @Override
@@ -125,13 +149,18 @@ public interface Result extends Iterable<String> {
         }
 
         @Override
-        public Optional<? extends Exception> failure() {
+        public Optional<? extends Throwable> failure() {
             return Optional.of(this.error);
         }
 
         @Override
         public Iterator<String> iterator() {
             throw new IllegalStateException(this.error);
+        }
+
+        @Override
+        public String ruleId() {
+            return this.ruleId;
         }
     }
 }

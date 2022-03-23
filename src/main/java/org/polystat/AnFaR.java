@@ -25,6 +25,7 @@ package org.polystat;
 
 import com.jcabi.xml.XML;
 import org.cactoos.Func;
+import org.cactoos.list.ListOf;
 import org.polystat.far.FaR;
 
 /**
@@ -35,10 +36,21 @@ import org.polystat.far.FaR;
  */
 public final class AnFaR implements Analysis {
 
+    private final String ruleId = "FaR: Division by zero";
+
     @Override
-    public Iterable<String> errors(final Func<String, XML> xmir,
-        final String locator) throws Exception {
-        return new FaR().errors(xmir, locator);
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
+    public Iterable<Result> errors(final Func<String, XML> xmir,
+        final String locator) {
+        Result result;
+        try {
+            final Iterable<String> errors = new FaR().errors(xmir, locator);
+            result = new Result.Completed(AnFaR.class, errors, ruleId);
+        // @checkstyle IllegalCatchCheck (1 line)
+        } catch (final Exception ex) {
+            result = new Result.Failed(AnFaR.class, ex, ruleId);
+        }
+        return new ListOf<Result>(result);
     }
 
 }

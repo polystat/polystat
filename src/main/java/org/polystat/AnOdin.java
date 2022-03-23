@@ -30,7 +30,6 @@ import org.cactoos.Func;
 import org.cactoos.list.ListOf;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
 import org.polystat.odin.interop.java.OdinAnalysisResultInterop;
-import java.util.Arrays;
 
 /**
  * The implementation of analysis via odin (object dependency inspector).
@@ -42,42 +41,24 @@ public final class AnOdin implements Analysis {
 
     @Override
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
-    public Iterable<String> errors(final Func<String, XML> xmir,
+    public Iterable<Result> errors(final Func<String, XML> xmir,
         final String locator) throws Exception {
         final XML xml = xmir.apply(locator);
         final String str = getObjectsHierarchy(xmir, xml);
-        Iterable<String> result;
-        result = new EOOdinAnalyzer.EOOdinXmirAnalyzer()
+        Iterable<Result> result = new EOOdinAnalyzer.EOOdinXmirAnalyzer()
                 .analyze(str).stream()
-                .flatMap(res -> extractResults(res).stream())
+                .map(res -> extractResults(res))
                 .collect(Collectors.toList());
         return result;
     }
 
-    private static List<String> extractResults(OdinAnalysisResultInterop e) {
+    private static Result extractResults(OdinAnalysisResultInterop e) {
         if (e.analyzerFailure().isPresent()) {
-            return Arrays.asList(
-                String.format(
-                    "Odin analyzer \"%s\" is not able to analyze the code, due to:\n\t%s",
-                    e.analysisName(),
-                    e.analyzerFailure().get()
-                )
-            );       
-        } else if (e.detectedDefects().isPresent()) {
-            return Arrays.asList(
-                String.format(
-                    "Odin analyzer \"%s\" found the following error(s):\n\t%s",
-                    e.analysisName(),
-                    e.detectedDefects().get()
-                )
-            );
+            return new Result.Failed(AnOdin.class, e.analyzerFailure().get(), e.ruleId());      
+        } else if (e.detectedDefect().isPresent()) {
+            return new Result.Completed(AnOdin.class, new ListOf<>(e.detectedDefect().get()), e.ruleId());
         }
-        return Arrays.asList(
-            String.format(
-                "Odin analyzer \"%s\" found no problems.",
-                e.analysisName()
-            )
-        );
+        return new Result.Completed(AnOdin.class, new ListOf<>(), e.ruleId());
     }
 
     /**
