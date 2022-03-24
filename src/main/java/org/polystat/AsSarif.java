@@ -23,7 +23,6 @@
  */
 package org.polystat;
 
-
 import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.function.Supplier;
@@ -36,9 +35,7 @@ import javax.json.JsonObjectBuilder;
 /**
  * Turn list of errors into a JSON report in SARIF format.
  *
- * <a
- * href=https://docs.oasis-open.org/sarif/sarif/v2.0/csprd01/sarif-v2.0-csprd01.html></a>
- * 
+ * <a href=https://docs.oasis-open.org/sarif/sarif/v2.0/csprd01/sarif-v2.0-csprd01.html></a> 
  * @since 1.0
  */
 final class AsSarif implements Supplier<String> {
@@ -63,6 +60,12 @@ final class AsSarif implements Supplier<String> {
     }
 
     // I couldn't find a better existing function for this
+    /**
+     * Joins an iterable of strings with a delimiter.
+     * @param delim delimiter
+     * @param strings iterable of strings
+     * @return strings joined with a delimiter
+     */
     private static String joinStrings(String delim, Iterable<String> strings) {
         final StringJoiner result = new StringJoiner(delim);
         for (String str: strings) {
@@ -80,9 +83,9 @@ final class AsSarif implements Supplier<String> {
      */
     private static JsonObject sarifLogObject(final JsonArray runs) {
         return Json.createObjectBuilder()
-                .add("version", SARIF_VERSION)
-                .add("runs", runs)
-                .build();
+            .add("version", SARIF_VERSION)
+            .add("runs", runs)
+            .build();
     }
 
 
@@ -111,16 +114,16 @@ final class AsSarif implements Supplier<String> {
      * @return JSON object tool
      */
     private static JsonObject toolObject(Iterable<Result> results) {
-        JsonObjectBuilder driver = Json.createObjectBuilder()
+        final JsonObjectBuilder driver = Json.createObjectBuilder()
             .add("name", "Polystat");
-        JsonArrayBuilder rulesArr = Json.createArrayBuilder();
+        final JsonArrayBuilder rulesArr = Json.createArrayBuilder();
 
         for (final Result res : results) {
             final JsonObject ruleObj = ruleObject(res);
             rulesArr.add(ruleObj);
         }
         driver.add("rules", rulesArr);
-        JsonObject tool = Json.createObjectBuilder()
+        final JsonObject tool = Json.createObjectBuilder()
             .add("driver", driver)
             .build();
         return tool;
@@ -150,7 +153,7 @@ final class AsSarif implements Supplier<String> {
      * @return JSON object result
      */
     private static Optional<JsonObject> resultObject(Result res) {
-        Optional<JsonObject> result;
+        final Optional<JsonObject> result;
         if (!res.failure().isPresent()) {
             final JsonObject ruleObj = ruleObject(res);
             final JsonObjectBuilder resultObj = Json.createObjectBuilder();
@@ -177,7 +180,7 @@ final class AsSarif implements Supplier<String> {
      * @return JSON array of result objects
      */
     private static JsonArray resultsArray(Iterable<Result> results) {
-        JsonArrayBuilder resultsArr = Json.createArrayBuilder();
+        final JsonArrayBuilder resultsArr = Json.createArrayBuilder();
         for (final Result res : results) {
             final Optional<JsonObject> resultObj = resultObject(res);
             if (resultObj.isPresent()) {
@@ -194,6 +197,7 @@ final class AsSarif implements Supplier<String> {
      * @return JSON object notification
      */
     private static JsonObject notificationObject(Result res) {
+        // TODO: add required property message
         final JsonObjectBuilder notificationObj = Json.createObjectBuilder();
         final JsonObject associatedRule = ruleObject(res);
         if (res.failure().isPresent()) {
@@ -230,7 +234,7 @@ final class AsSarif implements Supplier<String> {
      * @return JSON array of invocation objects
      */
     private static JsonArray invocationsArray(Iterable<Result> results) {
-        JsonArrayBuilder invocationsArr = Json.createArrayBuilder();
+        final JsonArrayBuilder invocationsArr = Json.createArrayBuilder();
         for (final Result res : results) {
             final JsonObjectBuilder invocationObj = Json.createObjectBuilder();
             final Boolean executionSuccessful = !res.failure().isPresent();

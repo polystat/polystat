@@ -46,21 +46,37 @@ public final class AnOdin implements Analysis {
         final XML xml = xmir.apply(locator);
         final String str = getObjectsHierarchy(xmir, xml);
         final Iterable<Result> result = new EOOdinAnalyzer.EOOdinXmirAnalyzer()
-                .analyze(str).stream()
-                .map(res -> extractResults(res))
-                .collect(Collectors.toList());
+            .analyze(str).stream()
+            .map(res -> extractResults(res))
+            .collect(Collectors.toList());
         return result;
     }
 
-    private static Result extractResults(OdinAnalysisResultInterop e) {
-        Result result;
-        if (e.analyzerFailure().isPresent()) {
-            result = new Result.Failed(AnOdin.class, e.analyzerFailure().get(), e.ruleId());      
-        } else if (e.detectedDefect().isPresent()) {
-            result = new Result.Completed(AnOdin.class, new ListOf<>(e.detectedDefect().get()), e.ruleId());
-        }
-        else {
-            result = new Result.Completed(AnOdin.class, new ListOf<>(), e.ruleId());
+    /**
+     * Converts OdinAnalysisResultInterop to org.polystat.Result.
+     * @param res Odin result object
+     * @return Polystat result object
+     */
+    private static Result extractResults(final OdinAnalysisResultInterop res) {
+        final Result result;
+        if (res.analyzerFailure().isPresent()) {
+            result = new Result.Failed(
+                AnOdin.class,
+                res.analyzerFailure().get(),
+                res.ruleId()
+            );
+        } else if (res.detectedDefect().isPresent()) {
+            result = new Result.Completed(
+                AnOdin.class,
+                new ListOf<>(res.detectedDefect().get()),
+                res.ruleId()
+            );
+        } else {
+            result = new Result.Completed(
+                AnOdin.class,
+                new ListOf<>(),
+                res.ruleId()
+            );
         }
         return result;
     }

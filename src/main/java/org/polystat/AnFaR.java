@@ -36,8 +36,6 @@ import org.polystat.far.FaR;
  */
 public final class AnFaR implements Analysis {
 
-    private final String ruleId = "Division by zero";
-
     @Override
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public Iterable<Result> errors(final Func<String, XML> xmir,
@@ -45,12 +43,17 @@ public final class AnFaR implements Analysis {
         Result result;
         try {
             final Iterable<String> errors = new FaR().errors(xmir, locator);
-            result = new Result.Completed(AnFaR.class, errors, ruleId);
+            result = new Result.Completed(AnFaR.class, errors, AnFaR.RULE_ID);
         // @checkstyle IllegalCatchCheck (1 line)
         } catch (final Exception ex) {
-            result = new Result.Failed(AnFaR.class, ex, ruleId);
+            result = new Result.Failed(AnFaR.class, ex, AnFaR.RULE_ID);
         }
         return new ListOf<Result>(result);
     }
+
+    /**
+     * A rule id for AnFaR analysis.
+     */
+    private static final String RULE_ID = "Division by zero";
 
 }

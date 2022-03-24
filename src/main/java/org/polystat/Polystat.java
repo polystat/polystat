@@ -136,7 +136,13 @@ public final class Polystat implements Callable<Integer> {
                 errors.addAll(new ListOf<>(analysis.errors(xmir, "\\Phi.test")));
             // @checkstyle IllegalCatchCheck (1 line)
             } catch (final Exception ex) {
-                errors.add(new Result.Failed(analysis.getClass(), ex, analysis.getClass().getName()));
+                errors.add(
+                    new Result.Failed(
+                        analysis.getClass(),
+                        ex,
+                        analysis.getClass().getName()
+                    )
+                );
             }
         }
         return errors;
