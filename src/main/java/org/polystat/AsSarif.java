@@ -134,24 +134,36 @@ final class AsSarif implements Supplier<String> {
         return resultsArr.build();
     }
 
+    private static JsonObject notification(Result res) {
+        final JsonObjectBuilder notificationObj = Json.createObjectBuilder();
+        final JsonObject associatedRule = extractRuleObj(res);
+        if (res.failure().isPresent()) {
+            final Throwable exception = res.failure().get();
+            final JsonObject exceptionObj = Json.createObjectBuilder()
+                .add("kind", exception.getClass().getName())
+                .add("message", exception.getMessage())
+                .build();
+            notificationObj.add("exception", exceptionObj);
+            notificationObj.add("level", "error");
+        }
+        notificationObj.add("associatedRule", associatedRule);
+        return notificationObj.build();
+    }
+
+    private static JsonArray toolExecutionNotifications(final Result res) {
+        final JsonArrayBuilder toolExecutionNotificationsArr = Json.createArrayBuilder();
+        final JsonObject notificationObj = notification(res); 
+        toolExecutionNotificationsArr.add(notificationObj);
+        return toolExecutionNotificationsArr.build();
+    }
+
     private static JsonArray invocations(Iterable<Result> results) {
         JsonArrayBuilder invocationsArr = Json.createArrayBuilder();
         for (final Result res : results) {
             final JsonObjectBuilder invocationObj = Json.createObjectBuilder();
             final Boolean executionSuccessful = !res.failure().isPresent();
-            if (res.failure().isPresent()) {
-                final JsonArrayBuilder toolExecutionNotificationsArr = Json.createArrayBuilder();
-                final JsonObjectBuilder notificationObj = Json.createObjectBuilder();
-                final Throwable exception = res.failure().get();
-                final JsonObject exceptionObj = Json.createObjectBuilder()
-                    .add("kind", exception.getClass().getName())
-                    .add("message", exception.getMessage())
-                    .build();
-                notificationObj.add("exception", exceptionObj);
-                notificationObj.add("level", "error");
-                toolExecutionNotificationsArr.add(notificationObj);
-                invocationObj.add("toolExecutionNotifications", toolExecutionNotificationsArr);
-            }
+            final JsonArray toolExecutionNotificationsArr = toolExecutionNotifications(res);
+            invocationObj.add("toolExecutionNotifications", toolExecutionNotificationsArr);
             invocationObj.add("executionSuccessful", executionSuccessful);
             invocationsArr.add(invocationObj);
         }
