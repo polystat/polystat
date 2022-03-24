@@ -26,6 +26,8 @@ package org.polystat;
 import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.xml.XML;
+
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -81,9 +83,10 @@ public final class Polystat implements Callable<Integer> {
     /**
      * Output directoty.
      */
-    @CommandLine.Parameters(
-        index = "1",
-        description = "The directory with .XML files and maybe other temp."
+    @CommandLine.Option(
+        names = "--tmp",
+        description = "The directory with .XML files and maybe other temp." +
+         "If not specified, defaults to a temporary directory."
     )
     private Path temp;
 
@@ -110,8 +113,9 @@ public final class Polystat implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+        final Path tmpDir = this.temp == null ? Files.createTempDirectory("polystat_tmp") : this.temp;
         final Iterable<Result> errors =
-            Polystat.scan(this.source, this.temp);
+            Polystat.scan(this.source, tmpDir);
         final Supplier<String> out;
         if (this.sarif) {
             out = new AsSarif(errors);
