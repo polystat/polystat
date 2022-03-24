@@ -24,6 +24,7 @@
 package org.polystat;
 
 
+import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.function.Supplier;
 import javax.json.Json;
@@ -61,14 +62,38 @@ final class AsSarif implements Supplier<String> {
         this.errors = errs;
     }
 
-    private static JsonObject sarifLog(final JsonArray runs) {
+    // I couldn't find a better existing function for this
+    private static String joinStrings(String delim, Iterable<String> strings) {
+        final StringJoiner result = new StringJoiner(delim);
+        for (String str: strings) {
+            result.add(str);
+        }
+        return result.toString();
+    }
+    
+
+    /**
+     * Constructs sarifLog object
+     * <a href=https://docs.oasis-open.org/sarif/sarif/v2.0/csprd02/sarif-v2.0-csprd02.html#_Toc10127669></a>
+     * @param runs JSON array of run objects
+     * @return sarifLog JSON object
+     */
+    private static JsonObject sarifLogObject(final JsonArray runs) {
         return Json.createObjectBuilder()
                 .add("version", SARIF_VERSION)
                 .add("runs", runs)
                 .build();
     }
 
-    private static JsonObject extractRuleObj(Result res) {
+
+    /**
+     * Generates a reportingDescriptor object containing a single id field
+     * which corresponds to ruleId.
+     * <a href=https://docs.oasis-open.org/sarif/sarif/v2.0/csprd02/sarif-v2.0-csprd02.html#_Toc10128027></a>
+     * @param res Polystat result 
+     * @return JSON object reportingDescriptor 
+     */
+    private static JsonObject ruleObject(Result res) {
         final String ruleId = String.join(
                 "/", 
                 "Polystat",
@@ -79,13 +104,19 @@ final class AsSarif implements Supplier<String> {
         return ruleObj;
     }
 
-    private static JsonObject tool(Iterable<Result> results) {
+    /**
+     * Generates a tool object 
+     * <a href=https://docs.oasis-open.org/sarif/sarif/v2.0/csprd02/sarif-v2.0-csprd02.html#_Toc10127720></a>
+     * @param results Polystat results
+     * @return JSON object tool
+     */
+    private static JsonObject toolObject(Iterable<Result> results) {
         JsonObjectBuilder driver = Json.createObjectBuilder()
             .add("name", "Polystat");
         JsonArrayBuilder rulesArr = Json.createArrayBuilder();
 
         for (final Result res : results) {
-            final JsonObject ruleObj = extractRuleObj(res);
+            final JsonObject ruleObj = ruleObject(res);
             rulesArr.add(ruleObj);
         }
         driver.add("rules", rulesArr);
@@ -95,7 +126,16 @@ final class AsSarif implements Supplier<String> {
         return tool;
     }
 
-    private static JsonObject runObj(final JsonObject tool, final JsonArray results, final JsonArray invocations) {
+    
+    /**
+     * Generates a run object
+     * <a href=https://docs.oasis-open.org/sarif/sarif/v2.0/csprd02/sarif-v2.0-csprd02.html#_Toc10127681></a>
+     * @param tool tool JSON object
+     * @param results results JSON array
+     * @param invocations invocations JSON array
+     * @return JSON object run
+     */
+    private static JsonObject runObject(final JsonObject tool, final JsonArray results, final JsonArray invocations) {
         return Json.createObjectBuilder()
             .add("tool", tool)
             .add("results", results)
@@ -103,40 +143,59 @@ final class AsSarif implements Supplier<String> {
             .build();
     }
 
-    // I couldn't find a better existing function for this
-    private static String joinStrings(String delim, Iterable<String> strings) {
-        final StringJoiner result = new StringJoiner(delim);
-        for (String str: strings) {
-            result.add(str);
+    /**
+     * Generates a result object 
+     * <a href=https://docs.oasis-open.org/sarif/sarif/v2.0/csprd02/sarif-v2.0-csprd02.html#_Toc10127829></a>
+     * @param res a Polystat result object
+     * @return JSON object result
+     */
+    private static Optional<JsonObject> resultObject(Result res) {
+        Optional<JsonObject> result;
+        if (!res.failure().isPresent()) {
+            final JsonObject ruleObj = ruleObject(res);
+            final JsonObjectBuilder resultObj = Json.createObjectBuilder();
+            final String kind = res.iterator().hasNext() ? "fail" : "pass";
+            final String level = res.iterator().hasNext() ? "error" : "none";
+            final String messageText = res.iterator().hasNext() ? joinStrings("\n", res): "No errors were found.";
+            final JsonObject messageObj = Json.createObjectBuilder().add("text", messageText).build();
+            resultObj.add("rule", ruleObj);
+            resultObj.add("level", level);
+            resultObj.add("kind", kind);   
+            resultObj.add("message", messageObj); 
+            result = Optional.of(resultObj.build());
+        } else {
+            result = Optional.empty();
+            // if the analyzer run failed, don't generate the result object
         }
-        return result.toString();
+        return result;
     }
 
-    private static JsonArray results(Iterable<Result> results) {
+    /**
+     * Generates a results property of a run object 
+     * <a href=https://docs.oasis-open.org/sarif/sarif/v2.0/csprd02/sarif-v2.0-csprd02.html#_Toc10127698></a>
+     * @param results Iterable of Polystat results
+     * @return JSON array of result objects
+     */
+    private static JsonArray resultsArray(Iterable<Result> results) {
         JsonArrayBuilder resultsArr = Json.createArrayBuilder();
         for (final Result res : results) {
-            final JsonObjectBuilder resultObj = Json.createObjectBuilder();
-            if (!res.failure().isPresent()) {
-                final JsonObject ruleObj = extractRuleObj(res);
-                final String kind = res.iterator().hasNext() ? "fail" : "pass";
-                final String level = res.iterator().hasNext() ? "error" : "none";
-                final String messageText = res.iterator().hasNext() ? joinStrings("\n", res): "No errors were found.";
-                final JsonObject messageObj = Json.createObjectBuilder().add("text", messageText).build();
-                resultObj.add("rule", ruleObj);
-                resultObj.add("level", level);
-                resultObj.add("kind", kind);   
-                resultObj.add("message", messageObj); 
-                resultsArr.add(resultObj);
-            } else {
-                // if the analyzer run failed, don't include it into results
+            final Optional<JsonObject> resultObj = resultObject(res);
+            if (resultObj.isPresent()) {
+                resultsArr.add(resultObj.get());
             }
         }
         return resultsArr.build();
     }
 
-    private static JsonObject notification(Result res) {
+
+    /** Generates a notification object 
+     * <a href=https://docs.oasis-open.org/sarif/sarif/v2.0/csprd02/sarif-v2.0-csprd02.html#_Toc10128085></a>
+     * @param res Polystat result object
+     * @return JSON object notification
+     */
+    private static JsonObject notificationObject(Result res) {
         final JsonObjectBuilder notificationObj = Json.createObjectBuilder();
-        final JsonObject associatedRule = extractRuleObj(res);
+        final JsonObject associatedRule = ruleObject(res);
         if (res.failure().isPresent()) {
             final Throwable exception = res.failure().get();
             final JsonObject exceptionObj = Json.createObjectBuilder()
@@ -150,19 +209,32 @@ final class AsSarif implements Supplier<String> {
         return notificationObj.build();
     }
 
-    private static JsonArray toolExecutionNotifications(final Result res) {
+    /** Generates the toolExecutionNotifications property of invocation object,
+     *  which is an array of notification objects.
+     * <a href=https://docs.oasis-open.org/sarif/sarif/v2.0/csprd02/sarif-v2.0-csprd02.html#_Toc10127779></a>
+     * @param res Polystat result object
+     * @return JSON array of notification objects
+     */
+    private static JsonArray toolExecutionNotificationsArray(final Result res) {
         final JsonArrayBuilder toolExecutionNotificationsArr = Json.createArrayBuilder();
-        final JsonObject notificationObj = notification(res); 
+        final JsonObject notificationObj = notificationObject(res); 
         toolExecutionNotificationsArr.add(notificationObj);
         return toolExecutionNotificationsArr.build();
     }
 
-    private static JsonArray invocations(Iterable<Result> results) {
+    /**
+     * Generates the invocations property of a run object,
+     * which is an array of invocation objects.
+     * <a href=https://docs.oasis-open.org/sarif/sarif/v2.0/csprd02/sarif-v2.0-csprd02.html#_Toc10127686></a>
+     * @param results Iterable of Polystat result objects
+     * @return JSON array of invocation objects
+     */
+    private static JsonArray invocationsArray(Iterable<Result> results) {
         JsonArrayBuilder invocationsArr = Json.createArrayBuilder();
         for (final Result res : results) {
             final JsonObjectBuilder invocationObj = Json.createObjectBuilder();
             final Boolean executionSuccessful = !res.failure().isPresent();
-            final JsonArray toolExecutionNotificationsArr = toolExecutionNotifications(res);
+            final JsonArray toolExecutionNotificationsArr = toolExecutionNotificationsArray(res);
             invocationObj.add("toolExecutionNotifications", toolExecutionNotificationsArr);
             invocationObj.add("executionSuccessful", executionSuccessful);
             invocationsArr.add(invocationObj);
@@ -174,9 +246,9 @@ final class AsSarif implements Supplier<String> {
     @Override
     public String get() {
         final JsonArray runs = Json.createArrayBuilder().add(
-            runObj(tool(errors), results(errors), invocations(errors))
+            runObject(toolObject(errors), resultsArray(errors), invocationsArray(errors))
         ).build();
-        return sarifLog(runs).toString();
+        return sarifLogObject(runs).toString();
     }
 
 }
