@@ -24,7 +24,6 @@
 
 package org.polystat;
 
-
 import com.jcabi.manifests.Manifests;
 import java.util.List;
 import org.cactoos.iterable.IterableOf;
@@ -32,8 +31,8 @@ import org.cactoos.iterable.Repeated;
 import org.cactoos.list.ListOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link AsSarif}.
@@ -42,11 +41,15 @@ import org.junit.jupiter.api.BeforeAll;
  */
 final class AsSarifTest {
 
+    /**
+     * Sample value for a ruleId argument.
+     */
+    private static final String SAMPLE_RULEID = "SAMPLE_RULEID";
+
     @BeforeAll
     static void addPolystatVersion() {
         Manifests.DEFAULT.put("Polystat-Version", "1.0-SNAPSHOT");
     }
-
 
     @Test
     void addsResults() {
@@ -57,7 +60,7 @@ final class AsSarifTest {
                     new Result.Completed(
                         Analysis.class,
                         errors,
-                        "SAMPLE_RULEID"
+                        AsSarifTest.SAMPLE_RULEID
                     )
                 )
             ).get(),
@@ -76,7 +79,7 @@ final class AsSarifTest {
                     new Result.Failed(
                         Analysis.class,
                         new UnsupportedOperationException(msg),
-                        "SAMPLE_RULEID"
+                        AsSarifTest.SAMPLE_RULEID
                     )
                 )
             ).get(),
@@ -96,12 +99,12 @@ final class AsSarifTest {
                     new Result.Completed(
                         Analysis.class,
                         errors,
-                        "SAMPLE_RULEID"
+                        AsSarifTest.SAMPLE_RULEID
                     )
                 )
             ).get(),
             Matchers.stringContainsInOrder(
-                new Repeated<>(errors.size(), "SAMPLE_RULEID")
+                new Repeated<>(errors.size(), AsSarifTest.SAMPLE_RULEID)
             )
         );
     }

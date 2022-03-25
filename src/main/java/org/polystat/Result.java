@@ -70,23 +70,24 @@ public interface Result extends Iterable<String> {
         private final Iterable<String> errors;
 
         /**
-         * Rule id.
+         * ID of the rule that was run.
          */
-        private final String ruleId;
+        private final String ruleid;
 
         /**
          * Ctor.
          * @param type Type.
          * @param errors Errors.
+         * @param ruleid ID of the rule that was run.
          */
         public Completed(
             final Class<? extends Analysis> type,
             final Iterable<String> errors,
-            final String ruleId
+            final String ruleid
         ) {
             this.type = type;
             this.errors = errors;
-            this.ruleId = ruleId;
+            this.ruleid = ruleid;
         }
 
         @Override
@@ -106,7 +107,7 @@ public interface Result extends Iterable<String> {
 
         @Override
         public String ruleId() {
-            return this.ruleId;
+            return this.ruleid;
         }
     }
 
@@ -126,21 +127,26 @@ public interface Result extends Iterable<String> {
          * Failure.
          */
         private final Throwable error;
-        
+
         /**
          * Rule id.
          */
-        private final String ruleId;
+        private final String ruleid;
 
         /**
          * Ctor.
          * @param type Analysis.
          * @param error Exception.
+         * @param ruleid ID of the rule that was run.
          */
-        public Failed(final Class<? extends Analysis> type, final Throwable error, final String ruleId) {
+        public Failed(
+            final Class<? extends Analysis> type,
+            final Throwable error,
+            final String ruleid
+        ) {
             this.type = type;
             this.error = error;
-            this.ruleId = ruleId;
+            this.ruleid = ruleid;
         }
 
         @Override
@@ -160,7 +166,7 @@ public interface Result extends Iterable<String> {
 
         @Override
         public String ruleId() {
-            return this.ruleId;
+            return this.ruleid;
         }
     }
 }
