@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -jar target/polystat-*-jar-with-dependencies.jar sandbox target
+java -jar target/polystat-*-jar-with-dependencies.jar sandbox
