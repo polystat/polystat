@@ -29,6 +29,7 @@ import org.cactoos.Text;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.io.TeeInput;
 import org.cactoos.scalar.LengthOf;
+import org.cactoos.scalar.Unchecked;
 import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -72,7 +73,7 @@ final class ProgramTest {
      * @param file File.
      */
     private void writeFile(final Text data, final Path file) {
-        new LengthOf(new TeeInput(data, file)).longValue();
+        new Unchecked<>(new LengthOf(new TeeInput(data, file))).value();
     }
 
     /**

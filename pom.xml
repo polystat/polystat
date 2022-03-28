@@ -81,7 +81,7 @@ SOFTWARE.
   </distributionManagement>
   <properties>
     <odin.version>0.3.3</odin.version>
-    <eo.version>0.21.8</eo.version>
+    <eo.version>0.22.2</eo.version>
   </properties>
   <dependencies>
     <dependency>
@@ -106,7 +106,7 @@ SOFTWARE.
     <dependency>
       <groupId>org.cactoos</groupId>
       <artifactId>cactoos</artifactId>
-      <version>0.46</version>
+      <version>0.50</version>
     </dependency>
     <dependency>
       <groupId>com.jcabi</groupId>
@@ -122,7 +122,7 @@ SOFTWARE.
     <dependency>
       <groupId>org.polystat</groupId>
       <artifactId>far</artifactId>
-      <version>0.1.2</version>
+      <version>0.2.0</version>
     </dependency>
     <dependency>
       <groupId>org.polystat.odin</groupId>
@@ -150,7 +150,6 @@ SOFTWARE.
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <annotationProcessorPaths>
@@ -227,7 +226,6 @@ SOFTWARE.
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-verifier-plugin</artifactId>
         <version>1.1</version>
         <configuration>

@@ -74,7 +74,7 @@ public final class Polystat implements Callable<Integer> {
      */
     @CommandLine.Parameters(
         index = "0",
-        description = "The directory with EO files."
+        description = "The directory with EO files"
     )
     private Path source;
 
@@ -100,10 +100,9 @@ public final class Polystat implements Callable<Integer> {
     /**
      * Main entrance for Java command line.
      * @param args The args
-     * @throws Exception If fails
      */
     @SuppressWarnings("PMD.DoNotCallSystemExit")
-    public static void main(final String... args) throws Exception {
+    public static void main(final String... args) {
         System.exit(
             new CommandLine(new Polystat()).execute(args)
         );
@@ -162,7 +161,7 @@ public final class Polystat implements Callable<Integer> {
      */
     static final class Version implements CommandLine.IVersionProvider {
         @Override
-        public String[] getVersion() throws Exception {
+        public String[] getVersion() {
             return new String[]{
                 Manifests.read("Polystat-Version"),
                 Manifests.read("EO-Version"),
