@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import org.cactoos.Func;
 import org.cactoos.list.ListOf;
 import org.polystat.odin.interop.java.EOOdinAnalyzer;
-import org.polystat.odin.interop.java.OdinAnalysisErrorInterop;
+import org.polystat.odin.interop.java.OdinAnalysisResultInterop;
 
 /**
  * The implementation of analysis via odin (object dependency inspector).
@@ -41,20 +41,41 @@ public final class AnOdin implements Analysis {
 
     @Override
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
-    public Iterable<String> errors(final Func<String, XML> xmir,
+    public Iterable<Result> errors(final Func<String, XML> xmir,
         final String locator) throws Exception {
         final XML xml = xmir.apply(locator);
         final String str = getObjectsHierarchy(xmir, xml);
-        Iterable<String> result;
-        try {
-            result = new EOOdinAnalyzer.EOOdinXmirAnalyzer()
-                .analyze(str).stream()
-                .map(OdinAnalysisErrorInterop::message)
-                .collect(Collectors.toList());
-        // @checkstyle IllegalCatchCheck (1 line)
-        } catch (final Exception ex) {
-            result = new ListOf<>(
-                String.format("Odin is not able to analyze the code, due to:%n%s", ex.getMessage())
+        final Iterable<Result> result = new EOOdinAnalyzer.EOOdinXmirAnalyzer()
+            .analyze(str).stream()
+            .map(res -> extractResults(res))
+            .collect(Collectors.toList());
+        return result;
+    }
+
+    /**
+     * Converts OdinAnalysisResultInterop to org.polystat.Result.
+     * @param res Odin result object
+     * @return Polystat result object
+     */
+    private static Result extractResults(final OdinAnalysisResultInterop res) {
+        final Result result;
+        if (res.analyzerFailure().isPresent()) {
+            result = new Result.Failed(
+                AnOdin.class,
+                res.analyzerFailure().get(),
+                res.ruleId()
+            );
+        } else if (res.detectedDefect().isPresent()) {
+            result = new Result.Completed(
+                AnOdin.class,
+                new ListOf<>(res.detectedDefect().get()),
+                res.ruleId()
+            );
+        } else {
+            result = new Result.Completed(
+                AnOdin.class,
+                new ListOf<>(),
+                res.ruleId()
             );
         }
         return result;

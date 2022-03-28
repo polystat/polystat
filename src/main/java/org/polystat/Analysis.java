@@ -42,7 +42,7 @@ public interface Analysis {
      * @return List of exceptions
      * @throws Exception If fails
      */
-    Iterable<String> errors(Func<String, XML> xmir,
+    Iterable<Result> errors(Func<String, XML> xmir,
         String locator) throws Exception;
 
 }

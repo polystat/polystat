@@ -80,7 +80,7 @@ SOFTWARE.
     </site>
   </distributionManagement>
   <properties>
-    <odin.version>0.3.2</odin.version>
+    <odin.version>0.3.3</odin.version>
     <eo.version>0.21.8</eo.version>
   </properties>
   <dependencies>

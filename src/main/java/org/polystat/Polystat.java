@@ -30,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import org.cactoos.Func;
@@ -142,11 +141,16 @@ public final class Polystat implements Callable<Integer> {
         final Collection<Result> errors = new ArrayList<>(Polystat.ALL.length);
         for (final Analysis analysis : Polystat.ALL) {
             try {
-                final List<String> found = new ListOf<>(analysis.errors(xmir, "\\Phi.test"));
-                errors.add(new Result.Completed(analysis.getClass(), found));
+                errors.addAll(new ListOf<>(analysis.errors(xmir, "\\Phi.test")));
             // @checkstyle IllegalCatchCheck (1 line)
             } catch (final Exception ex) {
-                errors.add(new Result.Failed(analysis.getClass(), ex));
+                errors.add(
+                    new Result.Failed(
+                        analysis.getClass(),
+                        ex,
+                        analysis.getClass().getName()
+                    )
+                );
             }
         }
         return errors;
