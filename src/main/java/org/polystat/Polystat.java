@@ -28,12 +28,17 @@ import com.jcabi.manifests.Manifests;
 import com.jcabi.xml.XML;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import org.cactoos.Func;
+import org.cactoos.io.OutputTo;
+import org.cactoos.io.Stdin;
+import org.cactoos.io.TeeInput;
 import org.cactoos.list.ListOf;
+import org.cactoos.scalar.LengthOf;
 import picocli.CommandLine;
 
 /**
@@ -70,21 +75,20 @@ public final class Polystat implements Callable<Integer> {
     };
 
     /**
-     * Source directory.
+     * Source directory. If not specified, defaults to reading code from standard output.
      */
-    @CommandLine.Parameters(
-        index = "0",
-        description = "The directory with EO files"
+    @CommandLine.Option(
+        names = "--files",
+        description = "The directory with EO files."
     )
     private Path source;
 
     /**
-     * Output directoty.
+     * Output directoty. If not specified, defaults to a temporary directory.
      */
     @CommandLine.Option(
         names = "--tmp",
-        // @checkstyle LineLengthCheck (1 line)
-        description = "The directory with .XML files and maybe other temp. If not specified, defaults to a temporary directory."
+        description = "The directory with .XML files and maybe other temp."
     )
     private Path temp;
 
@@ -116,8 +120,14 @@ public final class Polystat implements Callable<Integer> {
         } else {
             tempdir = this.temp;
         }
+        final Path sources;
+        if (this.source == null) {
+            sources = readCodeFromStdin();
+        } else {
+            sources = this.source;
+        }
         final Iterable<Result> errors =
-            Polystat.scan(this.source, tempdir);
+            Polystat.scan(sources, tempdir);
         final Supplier<String> out;
         if (this.sarif) {
             out = new AsSarif(errors);
@@ -153,6 +163,27 @@ public final class Polystat implements Callable<Integer> {
             }
         }
         return errors;
+    }
+
+    /**
+     * Reads the EO code from standard input,
+     * creates a temporary directory and
+     * writes the code to a new file in this directory called "test.eo".
+     * @return Path object of the temporary directory with test.eo file.
+     * @throws Exception When IO fails.
+     */
+    private static Path readCodeFromStdin() throws Exception {
+        final Path tmpdir = Files.createTempDirectory("polystat_stdin");
+        final String name = "test.eo";
+        final Path fullpath = tmpdir.resolve(Paths.get(name));
+        final Path tmpfile = Files.createFile(fullpath);
+        new LengthOf(
+            new TeeInput(
+                new Stdin(),
+                new OutputTo(tmpfile)
+            )
+        ).value();
+        return tmpdir;
     }
 
     /**
