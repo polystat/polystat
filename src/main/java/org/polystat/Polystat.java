@@ -75,7 +75,7 @@ public final class Polystat implements Callable<Integer> {
     };
 
     /**
-     * Source directory. If not specified, defaults to reading code from standard output.
+     * Source directory. If not specified, defaults to reading code from standard input.
      */
     @CommandLine.Option(
         names = "--files",
@@ -169,7 +169,7 @@ public final class Polystat implements Callable<Integer> {
      * Reads the EO code from standard input,
      * creates a temporary directory and
      * writes the code to a new file in this directory called "test.eo".
-     * @return Path object of the temporary directory with test.eo file.
+     * @return Path object of "{tmpdir}/test.eo" files.
      * @throws Exception When IO fails.
      */
     private static Path readCodeFromStdin() throws Exception {
