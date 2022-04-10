@@ -217,6 +217,7 @@ SOFTWARE.
               <arguments>
                 <argument>-jar</argument>
                 <argument>${project.build.finalName}-jar-with-dependencies.jar</argument>
+                <argument>--files</argument>
                 <argument>${project.basedir}/src/test/resources/org/polystat</argument>
                 <argument>--tmp</argument>
                 <argument>${project.build.directory}/polystat-temp</argument>
