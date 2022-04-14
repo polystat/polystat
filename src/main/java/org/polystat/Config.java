@@ -28,7 +28,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
@@ -36,7 +38,7 @@ import javax.annotation.Nullable;
  * Stores configuration for Polystat.
  * @since 1.0
  */
-public class Config {
+public final class Config implements Iterable<Entry<String, String>> {
 
     /**
      * Mapping between config options and their values.
@@ -57,6 +59,11 @@ public class Config {
      */
     public Config(final Path path) {
         this(parseConfig(path));
+    }
+
+    @Override
+    public Iterator<Entry<String, String>> iterator() {
+        return this.values.entrySet().iterator();
     }
 
     /**
@@ -84,7 +91,7 @@ public class Config {
                     final String[] parts = line.trim().split(" ", 2);
                     if (parts.length == 2) {
                         result.put(parts[0], parts[1]);
-                    } else if (parts.length == 1) {
+                    } else if (parts.length == 1 && parts[0].length() != 0) {
                         result.put(parts[0], "true");
                     }
                 }
