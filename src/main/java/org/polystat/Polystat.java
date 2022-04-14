@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import org.cactoos.Func;
 import org.cactoos.io.OutputTo;
 import org.cactoos.io.Stdin;
@@ -40,6 +41,8 @@ import org.cactoos.io.TeeInput;
 import org.cactoos.list.ListOf;
 import org.cactoos.scalar.LengthOf;
 import picocli.CommandLine;
+import picocli.CommandLine.Model.ArgSpec;
+import picocli.CommandLine.Model.OptionSpec;
 
 /**
  * Main entrance.
@@ -62,7 +65,8 @@ import picocli.CommandLine;
     helpCommand = true,
     description = "Read our README in GitHub",
     mixinStandardHelpOptions = true,
-    versionProvider = Polystat.Version.class
+    versionProvider = Polystat.Version.class,
+    defaultValueProvider = Polystat.ConfigProvider.class
 )
 public final class Polystat implements Callable<Integer> {
 
@@ -197,6 +201,33 @@ public final class Polystat implements Callable<Integer> {
                 Manifests.read("Polystat-Version"),
                 Manifests.read("EO-Version"),
             };
+        }
+    }
+
+    /**
+     * Used to provide values for cmdline options via a config file '.polystat'.
+     * @since 1.0
+     */
+    static final class ConfigProvider implements CommandLine.IDefaultValueProvider {
+
+        /**
+         * Configuration for Polystat.
+         */
+        private final Config config = new Config(Paths.get(".polystat"));
+
+        @Override
+        @Nullable
+        public String defaultValue(final ArgSpec arg) throws Exception {
+            final String result;
+            if (arg.isOption()) {
+                final OptionSpec opt = (OptionSpec) arg;
+                final String key = opt.longestName();
+                final String value = this.config.get(key);
+                result = value;
+            } else {
+                result = null;
+            }
+            return result;
         }
     }
 }
