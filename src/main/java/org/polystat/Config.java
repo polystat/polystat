@@ -81,7 +81,8 @@ public final class Config implements Iterable<Entry<String, String>> {
      * @param path Path to ".polystat" file.
      * @return A map with successfully parsed options. If an error occurs, return an empty Map.
      * @todo #56:1h The current implementation is very prone to errors and
-     *  should be replaced with a more robust solution.
+     *  should be replaced with a more robust solution. I couldn't find a library
+     *  that does this kind of parsing better.
      */
     private static Map<String, String> parseConfig(final Path path) {
         final Map<String, String> result = new HashMap<>();
