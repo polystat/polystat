@@ -91,6 +91,8 @@ public final class Config implements Iterable<Entry<String, String>> {
                 line -> {
                     final String[] parts = line.trim().split(" ", 2);
                     if (parts.length == 2) {
+                        
+                    Logger.warn(Config.class, String.join(" ", parts));
                         result.put(parts[0], parts[1]);
                     } else if (parts.length == 1 && parts[0].length() != 0) {
                         result.put(parts[0], "true");

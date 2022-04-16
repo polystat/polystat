@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
@@ -41,6 +42,7 @@ import org.cactoos.io.TeeInput;
 import org.cactoos.list.ListOf;
 import org.cactoos.scalar.LengthOf;
 import picocli.CommandLine;
+import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Model.ArgSpec;
 import picocli.CommandLine.Model.OptionSpec;
 
@@ -77,6 +79,18 @@ public final class Polystat implements Callable<Integer> {
         new AnFaR(),
         new AnOdin(),
     };
+
+
+    @ArgGroup(exclusive = true)
+    IncludeExclude ie;
+
+    static class IncludeExclude {
+        @CommandLine.Option(names = "--exclude", split=",", required = true) 
+        Collection<String> exclude;
+
+        @CommandLine.Option(names = "--include", split=",", required = true) 
+        Collection<String> include;
+    }
 
     /**
      * Source directory. If not specified, defaults to reading code from standard input.
@@ -138,6 +152,11 @@ public final class Polystat implements Callable<Integer> {
         } else {
             out = new AsConsole(errors);
         }
+
+        System.out.println(ie);
+        System.out.println(ie.include);
+        System.out.println(ie.exclude);
+
         Logger.info(this, "%s\n", out.get());
         return 0;
     }
