@@ -29,9 +29,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.List;
 import org.cactoos.list.ListOf;
 
 /**
@@ -73,13 +73,13 @@ public final class Config implements Iterable<String> {
      */
     private static List<String> parseConfig(final Path path) {
         List<String> result;
-        try(Stream<String> st = Files.lines(path, StandardCharsets.UTF_8)) {
+        try (Stream<String> st = Files.lines(path, StandardCharsets.UTF_8)) {
             result = st.flatMap(line -> new ListOf<String>(line.trim().split("\\s+")).stream())
             .filter(s -> !s.isEmpty())
             .collect(Collectors.toList());
-        } catch (IOException e) {
+        } catch (final IOException ex) {
             result = new LinkedList<>();
         }
-        return result;    
+        return result;
     }
 }

@@ -26,21 +26,14 @@ package org.polystat;
 import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.xml.XML;
-
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.Nullable;
 import org.cactoos.Func;
 import org.cactoos.io.OutputTo;
 import org.cactoos.io.Stdin;
@@ -49,8 +42,6 @@ import org.cactoos.list.ListOf;
 import org.cactoos.scalar.LengthOf;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
-import picocli.CommandLine.Model.ArgSpec;
-import picocli.CommandLine.Model.OptionSpec;
 
 /**
  * Main entrance.
@@ -85,17 +76,11 @@ public final class Polystat implements Callable<Integer> {
         new AnOdin(),
     };
 
-
+    /**
+     * Either "include" list or "exclude" list.
+     */
     @ArgGroup(exclusive = true)
-    private IncludeExclude ie;
-
-    private static class IncludeExclude {
-        @CommandLine.Option(names = "--exclude", split=",", required = true) 
-        Collection<String> exclude;
-
-        @CommandLine.Option(names = "--include", split=",", required = true) 
-        Collection<String> include;
-    }
+    private IncludeExclude inex;
 
     /**
      * Source directory. If not specified, defaults to reading code from standard input.
@@ -125,38 +110,24 @@ public final class Polystat implements Callable<Integer> {
     private boolean sarif;
 
     /**
-     * Overrides the options of {@code this} with theinitialized options of other.
-     * @param other Configs which will override this.
-     */
-    void overrideBy(final Polystat other) {
-        this.sarif = other.sarif;
-        if (other.temp != null) {
-            this.temp = other.temp;
-        }
-        if (other.source != null) {
-            this.source = other.source;
-        }
-        if (other.ie != null) {
-            this.ie = other.ie;
-        }
-    }
-
-    /**
      * Main entrance for Java command line.
-     * @param args The args
+     * @param cmdargs The args from the command line.
      */
-    @SuppressWarnings("PMD.DoNotCallSystemExit")
-    public static void main(final String... cmdlineArgs) {
-        final String[] configArgs =new ListOf<String>(new Config(Paths.get(".polystat"))).toArray(new String[0]);
+    @SuppressWarnings({"PMD.DoNotCallSystemExit", "PMD.AvoidCatchingGenericException"})
+    public static void main(final String... cmdargs) {
+        final String[] confargs = new ListOf<String>(
+            new Config(Paths.get(".polystat"))
+        ).toArray(new String[0]);
         final Polystat config = new Polystat();
         final Polystat cmdline = new Polystat();
-        new CommandLine(config).parseArgs(configArgs);
-        new CommandLine(cmdline).parseArgs(cmdlineArgs);
+        new CommandLine(config).parseArgs(confargs);
+        new CommandLine(cmdline).parseArgs(cmdargs);
         config.overrideBy(cmdline);
         try {
             System.exit(config.call());
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+        // @checkstyle IllegalCatchCheck (1 line)
+        } catch (final Exception ex) {
+            Logger.warn(Polystat.class, ex.getMessage());
         }
     }
 
@@ -182,9 +153,25 @@ public final class Polystat implements Callable<Integer> {
         } else {
             out = new AsConsole(errors);
         }
-
         Logger.info(this, "%s\n", out.get());
         return 0;
+    }
+
+    /**
+     * Overrides the options of {@code this} with theinitialized options of other.
+     * @param other Configs which will override this.
+     */
+    void overrideBy(final Polystat other) {
+        this.sarif = other.sarif;
+        if (other.temp != null) {
+            this.temp = other.temp;
+        }
+        if (other.source != null) {
+            this.source = other.source;
+        }
+        if (other.inex != null) {
+            this.inex = other.inex;
+        }
     }
 
     /**
@@ -211,30 +198,27 @@ public final class Polystat implements Callable<Integer> {
                 );
             }
         }
-        final Collection<Result> filteredResults; 
-        if (this.ie == null) {
-            // no filtering is necessary
-            filteredResults = errors;
-        } else if (this.ie.exclude == null) {
-            // leave only those results that
-            // came from rules in "include" list
-            filteredResults = errors.stream().filter(
-                e -> ie.include.stream()
+        final Collection<Result> filtered;
+        if (this.inex == null) {
+            filtered = errors;
+        } else if (this.inex.exclude == null) {
+            filtered = errors.stream().filter(
+                e ->
+                    this.inex.includeList().stream()
                         .filter(rule -> e.ruleId().equals(rule))
                         .findAny()
                         .isPresent()
             ).collect(Collectors.toList());
         } else {
-            // exclude the results that 
-            // came from the rules from the "exclude" list
-            filteredResults = errors.stream().filter(
-                e -> ie.exclude.stream()
+            filtered = errors.stream().filter(
+                e ->
+                    this.inex.excludeList().stream()
                         .filter(rule -> !e.ruleId().equals(rule))
                         .findAny()
                         .isPresent()
             ).collect(Collectors.toList());
         }
-        return filteredResults;
+        return filtered;
     }
 
     /**
@@ -271,4 +255,39 @@ public final class Polystat implements Callable<Integer> {
             };
         }
     }
+
+    /**
+     * Mutually exclusive arguments --exclude and --exclude.
+     * @since 1.0
+     */
+    private static final class IncludeExclude {
+        /**
+         * These rules will be excluded from the output.
+         */
+        @CommandLine.Option(names = "--exclude", split = ",", required = true)
+        private Collection<String> exclude;
+
+        /**
+         * Only these rules will be included in the output.
+         */
+        @CommandLine.Option(names = "--include", split = ",", required = true)
+        private Collection<String> include;
+
+        /**
+         * Returns exclude list.
+         * @return Exclude list.
+         */
+        public Collection<String> excludeList() {
+            return this.exclude;
+        }
+
+        /**
+         * Returns include list.
+         * @return Include list.
+         */
+        public Collection<String> includeList() {
+            return this.include;
+        }
+    }
+
 }

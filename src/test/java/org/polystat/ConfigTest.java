@@ -50,7 +50,10 @@ final class ConfigTest {
         final Path file = tmp.resolve(ConfigTest.CONFIG_FILENAME);
         Files.write(file, "--files sandbox\n--tmp tmp\n--sarif\n".getBytes(StandardCharsets.UTF_8));
         final Config config = new Config(file);
-        Assertions.assertEquals(new ListOf<>(config), new ListOf<>("--files", "sandbox", "--tmp", "tmp", "--sarif"));
+        Assertions.assertEquals(
+            new ListOf<>("--files", "sandbox", "--tmp", "tmp", "--sarif"),
+            new ListOf<>(config)
+        );
     }
 
     @Test
@@ -58,7 +61,10 @@ final class ConfigTest {
         final Path file = tmp.resolve(ConfigTest.CONFIG_FILENAME);
         Files.write(file, "\n\n\n\n--includeRules a b c d".getBytes(StandardCharsets.UTF_8));
         final Config config = new Config(file);
-        Assertions.assertEquals(new ListOf<>(config), new ListOf<>("--includeRules", "a", "b", "c", "d"));
+        Assertions.assertEquals(
+            new ListOf<>("--includeRules", "a", "b", "c", "d"),
+            new ListOf<>(config)
+        );
     }
 
     @Test
