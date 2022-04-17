@@ -39,7 +39,7 @@ public final class AnFaR implements Analysis {
     /**
      * A rule id for AnFaR analysis.
      */
-    private static final String RULE_ID = "Division by zero";
+    private static final String RULE_ID = "DIV0";
 
     @Override
     @SuppressWarnings("PMD.AvoidCatchingGenericException")

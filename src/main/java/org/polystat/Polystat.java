@@ -26,14 +26,20 @@ package org.polystat;
 import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.xml.XML;
+
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.annotation.Nullable;
 import org.cactoos.Func;
 import org.cactoos.io.OutputTo;
@@ -67,8 +73,7 @@ import picocli.CommandLine.Model.OptionSpec;
     helpCommand = true,
     description = "Read our README in GitHub",
     mixinStandardHelpOptions = true,
-    versionProvider = Polystat.Version.class,
-    defaultValueProvider = Polystat.ConfigProvider.class
+    versionProvider = Polystat.Version.class
 )
 public final class Polystat implements Callable<Integer> {
 
@@ -82,9 +87,9 @@ public final class Polystat implements Callable<Integer> {
 
 
     @ArgGroup(exclusive = true)
-    IncludeExclude ie;
+    private IncludeExclude ie;
 
-    static class IncludeExclude {
+    private static class IncludeExclude {
         @CommandLine.Option(names = "--exclude", split=",", required = true) 
         Collection<String> exclude;
 
@@ -120,14 +125,39 @@ public final class Polystat implements Callable<Integer> {
     private boolean sarif;
 
     /**
+     * Overrides the options of {@code this} with theinitialized options of other.
+     * @param other Configs which will override this.
+     */
+    void overrideBy(final Polystat other) {
+        this.sarif = other.sarif;
+        if (other.temp != null) {
+            this.temp = other.temp;
+        }
+        if (other.source != null) {
+            this.source = other.source;
+        }
+        if (other.ie != null) {
+            this.ie = other.ie;
+        }
+    }
+
+    /**
      * Main entrance for Java command line.
      * @param args The args
      */
     @SuppressWarnings("PMD.DoNotCallSystemExit")
-    public static void main(final String... args) {
-        System.exit(
-            new CommandLine(new Polystat()).execute(args)
-        );
+    public static void main(final String... cmdlineArgs) {
+        final String[] configArgs =new ListOf<String>(new Config(Paths.get(".polystat"))).toArray(new String[0]);
+        final Polystat config = new Polystat();
+        final Polystat cmdline = new Polystat();
+        new CommandLine(config).parseArgs(configArgs);
+        new CommandLine(cmdline).parseArgs(cmdlineArgs);
+        config.overrideBy(cmdline);
+        try {
+            System.exit(config.call());
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     @Override
@@ -145,17 +175,13 @@ public final class Polystat implements Callable<Integer> {
             sources = this.source;
         }
         final Iterable<Result> errors =
-            Polystat.scan(sources, tempdir);
+            this.scan(sources, tempdir);
         final Supplier<String> out;
         if (this.sarif) {
             out = new AsSarif(errors);
         } else {
             out = new AsConsole(errors);
         }
-
-        System.out.println(ie);
-        System.out.println(ie.include);
-        System.out.println(ie.exclude);
 
         Logger.info(this, "%s\n", out.get());
         return 0;
@@ -168,7 +194,7 @@ public final class Polystat implements Callable<Integer> {
      * @return Errors
      */
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
-    private static Iterable<Result> scan(final Path src, final Path tmp) {
+    private Iterable<Result> scan(final Path src, final Path tmp) {
         final Func<String, XML> xmir = new Program(src, tmp);
         final Collection<Result> errors = new ArrayList<>(Polystat.ALL.length);
         for (final Analysis analysis : Polystat.ALL) {
@@ -185,7 +211,30 @@ public final class Polystat implements Callable<Integer> {
                 );
             }
         }
-        return errors;
+        final Collection<Result> filteredResults; 
+        if (this.ie == null) {
+            // no filtering is necessary
+            filteredResults = errors;
+        } else if (this.ie.exclude == null) {
+            // leave only those results that
+            // came from rules in "include" list
+            filteredResults = errors.stream().filter(
+                e -> ie.include.stream()
+                        .filter(rule -> e.ruleId().equals(rule))
+                        .findAny()
+                        .isPresent()
+            ).collect(Collectors.toList());
+        } else {
+            // exclude the results that 
+            // came from the rules from the "exclude" list
+            filteredResults = errors.stream().filter(
+                e -> ie.exclude.stream()
+                        .filter(rule -> !e.ruleId().equals(rule))
+                        .findAny()
+                        .isPresent()
+            ).collect(Collectors.toList());
+        }
+        return filteredResults;
     }
 
     /**
@@ -220,33 +269,6 @@ public final class Polystat implements Callable<Integer> {
                 Manifests.read("Polystat-Version"),
                 Manifests.read("EO-Version"),
             };
-        }
-    }
-
-    /**
-     * Used to provide values for cmdline options via a config file '.polystat'.
-     * @since 1.0
-     */
-    static final class ConfigProvider implements CommandLine.IDefaultValueProvider {
-
-        /**
-         * Configuration for Polystat.
-         */
-        private final Config config = new Config(Paths.get(".polystat"));
-
-        @Override
-        @Nullable
-        public String defaultValue(final ArgSpec arg) throws Exception {
-            final String result;
-            if (arg.isOption()) {
-                final OptionSpec opt = (OptionSpec) arg;
-                final String key = opt.longestName();
-                final String value = this.config.get(key);
-                result = value;
-            } else {
-                result = null;
-            }
-            return result;
         }
     }
 }

@@ -23,34 +23,34 @@
  */
 package org.polystat;
 
-import com.jcabi.log.Logger;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
+import java.util.List;
+import org.cactoos.list.ListOf;
 
 /**
- * Stores configuration for Polystat.
+ * Stores command line options from Polystat.
  * @since 1.0
  */
-public final class Config implements Iterable<Entry<String, String>> {
+public final class Config implements Iterable<String> {
 
     /**
      * Mapping between config options and their values.
      */
-    private final Map<String, String> values;
+    private final List<String> args;
 
     /**
      * Ctor.
      * @param config Map with the config options and their values.
      */
-    public Config(final Map<String, String> config) {
-        this.values = config;
+    public Config(final List<String> config) {
+        this.args = config;
     }
 
     /**
@@ -62,52 +62,24 @@ public final class Config implements Iterable<Entry<String, String>> {
     }
 
     @Override
-    public Iterator<Entry<String, String>> iterator() {
-        return this.values.entrySet().iterator();
-    }
-
-    /**
-     * Returns the value of the config option if present.
-     * @param key Config option.
-     * @return The value of the config option or {@code null}.
-     */
-    @Nullable
-    public String get(final String key) {
-        return this.values.get(key);
+    public Iterator<String> iterator() {
+        return this.args.iterator();
     }
 
     /**
      * Reads command-line arguments from the ".polystat" file.
      * @param path Path to ".polystat" file.
-     * @return A map with successfully parsed options. If an error occurs, return an empty Map.
-     * @todo #56:1h The current implementation is very prone to errors and
-     *  should be replaced with a more robust solution. I couldn't find a library
-     *  that does this kind of parsing better.
+     * @return A list with successfully parsed options. If an error occurs, return an empty list.
      */
-    private static Map<String, String> parseConfig(final Path path) {
-        final Map<String, String> result = new HashMap<>();
-        try (Stream<String> st = Files.lines(path)) {
-            st.forEachOrdered(
-                line -> {
-                    final String[] parts = line.trim().split(" ", 2);
-                    if (parts.length == 2) {
-                        
-                    Logger.warn(Config.class, String.join(" ", parts));
-                        result.put(parts[0], parts[1]);
-                    } else if (parts.length == 1 && parts[0].length() != 0) {
-                        result.put(parts[0], "true");
-                    }
-                }
-            );
-        } catch (final IOException ex) {
-            Logger.warn(
-                Polystat.class,
-                String.format(
-                    "Could not read config file %s. Using options from command line...",
-                    path.toString()
-                )
-            );
+    private static List<String> parseConfig(final Path path) {
+        List<String> result;
+        try(Stream<String> st = Files.lines(path, StandardCharsets.UTF_8)) {
+            result = st.flatMap(line -> new ListOf<String>(line.trim().split("\\s+")).stream())
+            .filter(s -> !s.isEmpty())
+            .collect(Collectors.toList());
+        } catch (IOException e) {
+            result = new LinkedList<>();
         }
-        return result;
+        return result;    
     }
 }

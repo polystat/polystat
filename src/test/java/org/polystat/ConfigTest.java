@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import org.cactoos.list.ListOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -49,10 +50,7 @@ final class ConfigTest {
         final Path file = tmp.resolve(ConfigTest.CONFIG_FILENAME);
         Files.write(file, "--files sandbox\n--tmp tmp\n--sarif\n".getBytes(StandardCharsets.UTF_8));
         final Config config = new Config(file);
-        MatcherAssert.assertThat(config.get("--files"), Matchers.equalTo("sandbox"));
-        MatcherAssert.assertThat(config.get("--tmp"), Matchers.equalTo("tmp"));
-        MatcherAssert.assertThat(config.get("--sarif"), Matchers.equalTo("true"));
-        MatcherAssert.assertThat(config.get("null"), Matchers.nullValue());
+        Assertions.assertEquals(new ListOf<>(config), new ListOf<>("--files", "sandbox", "--tmp", "tmp", "--sarif"));
     }
 
     @Test
@@ -60,8 +58,7 @@ final class ConfigTest {
         final Path file = tmp.resolve(ConfigTest.CONFIG_FILENAME);
         Files.write(file, "\n\n\n\n--includeRules a b c d".getBytes(StandardCharsets.UTF_8));
         final Config config = new Config(file);
-        MatcherAssert.assertThat(new ListOf<>(config), Matchers.hasSize(1));
-        MatcherAssert.assertThat(config.get("--includeRules"), Matchers.equalTo("a b c d"));
+        Assertions.assertEquals(new ListOf<>(config), new ListOf<>("--includeRules", "a", "b", "c", "d"));
     }
 
     @Test
