@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -115,20 +116,12 @@ public final class Polystat implements Callable<Integer> {
      */
     @SuppressWarnings({"PMD.DoNotCallSystemExit", "PMD.AvoidCatchingGenericException"})
     public static void main(final String... cmdargs) {
-        final String[] confargs = new ListOf<String>(
+        final List<String> confargs = new ListOf<>(
             new Config(Paths.get(".polystat"))
-        ).toArray(new String[0]);
-        final Polystat config = new Polystat();
-        final Polystat cmdline = new Polystat();
-        new CommandLine(config).parseArgs(confargs);
-        new CommandLine(cmdline).parseArgs(cmdargs);
-        config.overrideBy(cmdline);
-        try {
-            System.exit(config.call());
-        // @checkstyle IllegalCatchCheck (1 line)
-        } catch (final Exception ex) {
-            Logger.warn(Polystat.class, ex.getMessage());
-        }
+        );
+        confargs.addAll(new ListOf<>(cmdargs));
+        final String[] args = confargs.toArray(new String[0]);
+        new CommandLine(new Polystat()).execute(args);
     }
 
     @Override
@@ -155,23 +148,6 @@ public final class Polystat implements Callable<Integer> {
         }
         Logger.info(this, "%s\n", out.get());
         return 0;
-    }
-
-    /**
-     * Overrides the options of {@code this} with theinitialized options of other.
-     * @param other Configs which will override this.
-     */
-    void overrideBy(final Polystat other) {
-        this.sarif = other.sarif;
-        if (other.temp != null) {
-            this.temp = other.temp;
-        }
-        if (other.source != null) {
-            this.source = other.source;
-        }
-        if (other.inex != null) {
-            this.inex = other.inex;
-        }
     }
 
     /**
