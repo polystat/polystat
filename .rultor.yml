@@ -1,7 +1,7 @@
 assets:
-  settings.xml: yegor256/home#assets/polystat/settings.xml
-  pubring.gpg: yegor256/home#assets/pubring.gpg
-  secring.gpg: yegor256/home#assets/secring.gpg
+  settings.xml: yegor256/polystat-secrets#settings.xml
+  pubring.gpg: yegor256/polystat-secrets#pubring.gpg
+  secring.gpg: yegor256/polystat-secrets#secring.gpg
 install: |
   pdd --file=/dev/null
 merge:
