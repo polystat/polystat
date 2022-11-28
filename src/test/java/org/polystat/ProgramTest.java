@@ -95,7 +95,7 @@ final class ProgramTest {
             "org/polystat/test.eo",
             "org/polystat/five.eo"
         );
-        for (String src : sources) {
+        for (final String src : sources) {
             this.writeFile(
                 new TextOf(
                     new ResourceOf(src)
