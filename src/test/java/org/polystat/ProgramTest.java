@@ -25,6 +25,7 @@ package org.polystat;
 
 import com.jcabi.xml.XML;
 import java.nio.file.Path;
+import java.util.Arrays;
 import org.cactoos.Text;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.io.TeeInput;
@@ -45,26 +46,20 @@ import org.junit.jupiter.api.io.TempDir;
 final class ProgramTest {
 
     @Test
-    void interpretOneEolangProgram(
-        @TempDir final Path sources,
-        @TempDir final Path temp
-    ) throws Exception {
-        this.writeSourceFile(sources);
-        this.assertOutput(sources, temp);
+    void interpretOneEolangProgram(@TempDir final Path temp) throws Exception {
+        this.writeSources(temp);
+        this.assertOutput(temp, temp);
     }
 
     @Test
-    void recompilesIfExpired(
-        @TempDir final Path sources,
-        @TempDir final Path temp
-    ) throws Exception {
-        this.writeSourceFile(sources);
+    void recompilesIfExpired(@TempDir final Path temp) throws Exception {
+        this.writeSources(temp);
         final Path xml = temp.resolve("foo.xml");
         this.writeFile(new TextOf("INVALID"), xml);
         Assertions.assertTrue(
             xml.toFile().setLastModified(0L)
         );
-        this.assertOutput(sources, temp);
+        this.assertOutput(temp, temp);
     }
 
     /**
@@ -84,10 +79,10 @@ final class ProgramTest {
      */
     private void assertOutput(final Path sources, final Path temp) throws Exception {
         final Program program = new Program(sources, temp);
-        final XML test = program.apply("\\Phi.test");
+        final XML test = program.apply("\\Phi.test.fv");
         MatcherAssert.assertThat(
             test.xpath("@name").get(0),
-            Matchers.equalTo("test")
+            Matchers.equalTo("fv")
         );
     }
 
@@ -95,12 +90,18 @@ final class ProgramTest {
      * Write source code.
      * @param dir Output dir.
      */
-    private void writeSourceFile(final Path dir) {
-        this.writeFile(
-            new TextOf(
-                new ResourceOf("org/polystat/test.eo")
-            ),
-            dir.resolve("test.eo")
+    private void writeSources(final Path dir) {
+        final Iterable<String> sources = Arrays.asList(
+            "org/polystat/test.eo",
+            "org/polystat/five.eo"
         );
+        for (String src : sources) {
+            this.writeFile(
+                new TextOf(
+                    new ResourceOf(src)
+                ),
+                dir.resolve(src.split("/")[2])
+            );
+        }
     }
 }

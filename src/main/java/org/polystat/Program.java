@@ -40,10 +40,6 @@ import org.eolang.parser.Xsline;
  * by their object locators.
  *
  * @since 1.0
- * @todo #1:1h The current implementation is very primitive and doesn't
- *  support the case of fetching an object with a locator longer
- *  than just something inside \Phi. Try to make an object with children
- *  and fetch a child.
  * @checkstyle AbbreviationAsWordInNameCheck (5 lines)
  */
 public final class Program implements Func<String, XML> {
