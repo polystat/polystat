@@ -67,7 +67,7 @@ final class AsConsole implements Supplier<String> {
             }
         }
         if (lines.isEmpty()) {
-            lines.add("No errors found");
+            lines.add("No errors found by Polystat analyzers");
         }
         return String.join("\n", lines);
     }
