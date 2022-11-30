@@ -51,13 +51,6 @@ import picocli.CommandLine.ArgGroup;
  * @todo #1:1h Let's use some library for command line arguments parsing.
  *  The current implementation in this class is super primitive and must
  *  be replaced by something decent.
- * @todo #1:1h For some reason, the Logger.info() doesn't print anything
- *  to the console when the JAR is run via command line. It does print
- *  during testing, but doesn't show anything when being run as
- *  a JAR-with-dependencies. I didn't manage to find the reason, that's
- *  why added these "printf" instructions. Let's fix it, make sure
- *  Logger works in the JAR-with-dependencies, and remove this.stdout
- *  from this class at all.
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @CommandLine.Command(
