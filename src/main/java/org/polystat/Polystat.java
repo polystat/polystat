@@ -154,21 +154,23 @@ public final class Polystat implements Callable<Integer> {
     private Iterable<Result> scan(final Path src, final Path tmp) {
         final Func<String, XML> xmir = new Program(src, tmp);
         final Collection<Result> errors = new ArrayList<>(Polystat.ALL.length);
+        final String extension = ".eo";
         for (final Analysis analysis : Polystat.ALL) {
             try {
-                for (String filename : Objects.requireNonNull(src.toFile().list())) {
-                    if (filename.endsWith(".eo")) {
-                        filename = filename.split(".eo")[0];
-                        errors.addAll(new ListOf<>(analysis.errors(xmir, "\\Phi." + filename)));
-                        // @checkstyle IllegalCatchCheck (1 line)
+                for (final String filename : Objects.requireNonNull(src.toFile().list())) {
+                    if (filename.endsWith(extension)) {
+                        final String name = filename.split(extension)[0];
+                        final String locator = String.format("\\Phi.%s", name);
+                        final List<Result> result = new ListOf<>(analysis.errors(xmir, locator));
+                        errors.addAll(result);
                     }
                 }
+            // @checkstyle IllegalCatchCheck (1 line)
             } catch (final Exception ex) {
-                // ToDo: We should avoid catching exceptions like that, especially in CLI applications
-                Class<? extends Analysis> clazz = analysis.getClass();
-                String clazzName = clazz.getName();
-                Result.Failed res = new Result.Failed(clazz, ex, clazzName);
-                errors.add(res);
+                final Class<? extends Analysis> clazz = analysis.getClass();
+                final String clazzname = clazz.getName();
+                final Result.Failed result = new Result.Failed(clazz, ex, clazzname);
+                errors.add(result);
             }
         }
         final Collection<Result> filtered;
@@ -176,11 +178,11 @@ public final class Polystat implements Callable<Integer> {
             filtered = errors;
         } else if (this.inex.exclude == null) {
             filtered = errors.stream().filter(
-                    e -> this.inex.includeList().stream().anyMatch(rule -> e.ruleId().equals(rule))
+                e -> this.inex.includeList().stream().anyMatch(rule -> e.ruleId().equals(rule))
             ).collect(Collectors.toList());
         } else {
             filtered = errors.stream().filter(
-                    e -> this.inex.excludeList().stream().anyMatch(rule -> !e.ruleId().equals(rule))
+                e -> this.inex.excludeList().stream().anyMatch(rule -> !e.ruleId().equals(rule))
             ).collect(Collectors.toList());
         }
         return filtered;
