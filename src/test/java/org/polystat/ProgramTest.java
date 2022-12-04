@@ -24,6 +24,7 @@
 package org.polystat;
 
 import com.jcabi.xml.XML;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import org.cactoos.Text;
@@ -44,6 +45,10 @@ import org.junit.jupiter.api.io.TempDir;
  * @since 0.1
  */
 final class ProgramTest {
+    /**
+     * The locator.
+     */
+    private static final String LOCATOR = "\\Phi.test.fv";
 
     @Test
     void interpretOneEolangProgram(@TempDir final Path temp) throws Exception {
@@ -60,6 +65,24 @@ final class ProgramTest {
             xml.toFile().setLastModified(0L)
         );
         this.assertOutput(temp, temp);
+    }
+
+    @Test
+    void deleteResultIfProgramRemoved(@TempDir final Path temp) throws Exception {
+        this.writeSources(temp);
+        this.assertOutput(temp, temp);
+        final Path src = temp.resolve("test.eo");
+        final boolean deleted = src.toFile().delete();
+        Assertions.assertTrue(deleted);
+        final Program program = new Program(temp, temp);
+        boolean fails = false;
+        try {
+            program.apply(ProgramTest.LOCATOR);
+        } catch (final UncheckedIOException exception) {
+            fails = true;
+        }
+        Assertions.assertTrue(fails);
+        Assertions.assertFalse(temp.resolve("test.xml").toFile().exists());
     }
 
     /**
@@ -79,7 +102,7 @@ final class ProgramTest {
      */
     private void assertOutput(final Path sources, final Path temp) throws Exception {
         final Program program = new Program(sources, temp);
-        final XML test = program.apply("\\Phi.test.fv");
+        final XML test = program.apply(ProgramTest.LOCATOR);
         MatcherAssert.assertThat(
             test.xpath("@name").get(0),
             Matchers.equalTo("fv")
