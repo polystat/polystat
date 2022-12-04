@@ -1,0 +1,14 @@
++package org.polystat
+
++alias org.polystat.five
+
+[c d] > test
+  add. > @
+    div. c d
+    div.
+      div. d c
+      div.
+        fv
+        c
+
+  five > fv

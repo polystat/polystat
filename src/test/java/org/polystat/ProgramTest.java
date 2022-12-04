@@ -50,6 +50,11 @@ final class ProgramTest {
      */
     private static final String LOCATOR = "\\Phi.test.fv";
 
+    /**
+     * The test EO file.
+     */
+    private static final String TEST_EO = "test.eo";
+
     @Test
     void interpretOneEolangProgram(@TempDir final Path temp) throws Exception {
         this.writeSources(temp);
@@ -71,7 +76,7 @@ final class ProgramTest {
     void deleteResultIfProgramRemoved(@TempDir final Path temp) throws Exception {
         this.writeSources(temp);
         this.assertOutput(temp, temp);
-        final Path src = temp.resolve("test.eo");
+        final Path src = temp.resolve(ProgramTest.TEST_EO);
         final boolean deleted = src.toFile().delete();
         Assertions.assertTrue(deleted);
         final Program program = new Program(temp, temp);
@@ -83,6 +88,20 @@ final class ProgramTest {
         }
         Assertions.assertTrue(fails);
         Assertions.assertFalse(temp.resolve("test.xml").toFile().exists());
+    }
+
+    @Test
+    void recompileIfProgramChanged(@TempDir final Path temp) throws Exception {
+        this.writeSources(temp);
+        this.assertOutput(temp, temp);
+        final Path src = temp.resolve(ProgramTest.TEST_EO);
+        this.writeFile(
+            new TextOf(
+                new ResourceOf("org/polystat/modified.eo")
+            ),
+            src
+        );
+        this.assertOutput(temp, temp);
     }
 
     /**
