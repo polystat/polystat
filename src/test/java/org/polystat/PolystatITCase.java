@@ -47,7 +47,9 @@ import org.junit.jupiter.api.io.TempDir;
  * Test case for {@link Polystat}.
  *
  * @since 0.1
- * @todo #63:1h/DEV Almost all PolystatITCase tests are broken and don't start inside mvn jobs.
+ * @todo #63:1h/DEV Almost all PolystatITCase tests are broken and don't start inside maven jobs.
+ *  These tests affirm that end-2-end usage is working, thus we should enable it and make
+ *  sure everything is working properly.
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 final class PolystatITCase {
