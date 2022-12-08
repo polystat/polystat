@@ -47,7 +47,7 @@ import org.junit.jupiter.api.io.TempDir;
  * Test case for {@link Polystat}.
  *
  * @since 0.1
- * @todo Almost all tests here are broken and don't start inside mvn jobs.
+ * @todo #63:1h/DEV Almost all PolystatITCase tests are broken and don't start inside mvn jobs.
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 final class PolystatITCase {
