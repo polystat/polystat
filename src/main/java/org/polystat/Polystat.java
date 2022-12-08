@@ -26,13 +26,13 @@ package org.polystat;
 import com.jcabi.log.Logger;
 import com.jcabi.manifests.Manifests;
 import com.jcabi.xml.XML;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -132,6 +132,11 @@ public final class Polystat implements Callable<Integer> {
         } else {
             sources = this.source;
         }
+        if (sources.toFile().list() == null) {
+            throw new IOException(
+                String.format("Provided directory doesn't have any files: %s", sources)
+            );
+        }
         final Iterable<Result> errors =
             this.scan(sources, tempdir);
         final Supplier<String> out;
@@ -157,19 +162,21 @@ public final class Polystat implements Callable<Integer> {
         final String extension = ".eo";
         for (final Analysis analysis : Polystat.ALL) {
             try {
-                for (final String filename : Objects.requireNonNull(src.toFile().list())) {
-                    if (filename.endsWith(extension)) {
-                        final String name = filename.split(extension)[0];
-                        final String locator = String.format("\\Phi.%s", name);
-                        final List<Result> result = new ListOf<>(analysis.errors(xmir, locator));
-                        errors.addAll(result);
+                for (final String file : src.toFile().list()) {
+                    if (file.endsWith(extension)) {
+                        final String filename = file.split(extension)[0];
+                        errors.addAll(
+                            new ListOf<>(
+                                analysis.errors(xmir, String.format("\\Phi.%s", filename))
+                            )
+                        );
                     }
                 }
             // @checkstyle IllegalCatchCheck (1 line)
             } catch (final Exception ex) {
-                final Class<? extends Analysis> clazz = analysis.getClass();
-                final String clazzname = clazz.getName();
-                final Result.Failed result = new Result.Failed(clazz, ex, clazzname);
+                final Result.Failed result = new Result.Failed(
+                    analysis.getClass(), ex, analysis.getClass().getName()
+                );
                 errors.add(result);
             }
         }

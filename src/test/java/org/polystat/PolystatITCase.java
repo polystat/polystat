@@ -35,6 +35,7 @@ import org.cactoos.io.InputOf;
 import org.cactoos.io.OutputTo;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.io.TeeInput;
+import org.cactoos.list.ListOf;
 import org.cactoos.scalar.LengthOf;
 import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
@@ -46,9 +47,19 @@ import org.junit.jupiter.api.io.TempDir;
  * Test case for {@link Polystat}.
  *
  * @since 0.1
+ * @todo Almost all tests here are broken and don't start inside mvn jobs.
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 final class PolystatITCase {
+    /**
+     * Directory of resource EO files.
+    */
+    private static final String DIR = "org/polystat/";
+
+    /**
+     * List of resource EO files.
+     */
+    private final List<String> files = new ListOf<>("test.eo", "five.eo");
 
     @Test
     void saysHello() throws Exception {
@@ -82,12 +93,8 @@ final class PolystatITCase {
         @TempDir final Path sources,
         @TempDir final Path temp
     ) throws Exception {
-        Files.write(
-            sources.resolve("test.eo"),
-            new TextOf(
-                new ResourceOf("org/polystat/test.eo")
-            ).asString().getBytes(StandardCharsets.UTF_8)
-        );
+        final String file = this.files.get(0);
+        writeFile(sources, file, this.DIR + file);
         MatcherAssert.assertThat(
             PolystatITCase.exec(
                 "--sarif",
@@ -95,6 +102,21 @@ final class PolystatITCase {
                 temp.toAbsolutePath().toString()
             ),
             Matchers.containsString("\\perp")
+        );
+    }
+
+    @Test
+    void analyzesMultipleEolangPrograms(
+        @TempDir final Path temp,
+        @TempDir final Path sources
+    ) throws Exception {
+        for (final String file : this.files) {
+            writeFile(sources, file, this.DIR + file);
+        }
+        exec("--files", sources.toString(), "--tmp", temp.toString());
+        MatcherAssert.assertThat(
+            sources.toFile().list().length,
+            Matchers.equalTo(temp.toFile().list().length)
         );
     }
 
@@ -129,4 +151,23 @@ final class PolystatITCase {
             .replaceFirst("Picked up .*\n", "");
     }
 
+    /**
+     * Write resource contents to a new file under the given path.
+     * @param path Directory path for a new file.
+     * @param name Name of a new file.
+     * @param resource Relative path of a resource to be copied.
+     * @throws Exception IOException - write operation failed, Exception - copying failed.
+    */
+    private static void writeFile(
+        final Path path,
+        final String name,
+        final String resource
+    ) throws Exception {
+        Files.write(
+            path.resolve(name),
+            new TextOf(
+                new ResourceOf(resource)
+            ).asString().getBytes(StandardCharsets.UTF_8)
+        );
+    }
 }
