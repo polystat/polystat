@@ -26,7 +26,6 @@ package org.polystat;
 import com.jcabi.log.VerboseProcess;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -37,7 +36,6 @@ import org.cactoos.io.ResourceOf;
 import org.cactoos.io.TeeInput;
 import org.cactoos.list.ListOf;
 import org.cactoos.scalar.LengthOf;
-import org.cactoos.text.TextOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -165,11 +163,12 @@ final class PolystatITCase {
         final String name,
         final String resource
     ) throws Exception {
-        Files.write(
-            path.resolve(name),
-            new TextOf(
-                new ResourceOf(resource)
-            ).asString().getBytes(StandardCharsets.UTF_8)
-        );
+        final Path target = path.resolve(name);
+        new LengthOf(
+            new TeeInput(
+                new ResourceOf(resource),
+                new OutputTo(target)
+            )
+        ).value();
     }
 }
