@@ -14,7 +14,7 @@ jobs:
           packages: ffcode href-ul huawei fmtcount trimspaces catchfile catchfile transparent textpos fvextra xstring framed environ titlesec
       - run: mkdir white-paper/pdf
       - run: cp white-paper/wp.pdf white-paper/pdf
-      - uses: JamesIves/github-pages-deploy-action@4.1.4
+      - uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
           branch: gh-pages
           folder: white-paper/pdf
