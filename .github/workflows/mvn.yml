@@ -15,7 +15,7 @@ jobs:
         os: [windows-latest, ubuntu-latest, macos-latest]
         java: [11, 17]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -31,10 +31,10 @@ jobs:
   xcop-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: g4s8/xcop-action@master
   pdd-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: g4s8/pdd-action@master
