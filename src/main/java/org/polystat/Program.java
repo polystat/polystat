@@ -70,6 +70,9 @@ public final class Program implements Func<String, XML> {
         final String name = parts[1];
         final Path xml = this.temp.resolve(String.format("%s.xml", name));
         final Path src = this.sources.resolve(String.format("%s.eo", name));
+        if (!src.toFile().exists() && xml.toFile().exists()) {
+            xml.toFile().delete();
+        }
         if (
             !xml.toFile().exists()
                 || xml.toFile().lastModified() < src.toFile().lastModified()
