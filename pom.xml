@@ -168,7 +168,7 @@ SOFTWARE.
         <!-- @see https://issues.sonatype.org/browse/OSSRH-70730 -->
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.8</version>
+        <version>1.7.0</version>
         <configuration>
           <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
         </configuration>
