@@ -21,11 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.polystat;
+
+import com.jcabi.manifests.Manifests;
+import picocli.CommandLine;
 
 /**
- * Polystat main package.
- * @since 0.1
- * @see <a href="https://www.polystat.org">project site www.polystat.org</a>
- * @see <a href="https://github.com/polystat">GitHub Org</a>
+ * Versions of Polystat and EO, as the command line prints them.
+ * @since 1.0
  */
-package org.polystat;
+final class Version implements CommandLine.IVersionProvider {
+
+    /**
+     * Ctor.
+     */
+    Version() {
+        // nothing
+    }
+
+    @Override
+    public String[] getVersion() {
+        return new String[]{
+            Manifests.read("Polystat-Version"),
+            Manifests.read("EO-Version"),
+        };
+    }
+}

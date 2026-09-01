@@ -36,7 +36,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link AsSarif}.
- *
  * @since 1.0
  */
 final class AsSarifTest {
@@ -108,5 +107,4 @@ final class AsSarifTest {
             )
         );
     }
-
 }

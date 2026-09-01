@@ -29,9 +29,9 @@ import org.cactoos.Func;
 
 /**
  * An interface every analysis method has to implement.
- *
  * @since 0.2
  */
+@FunctionalInterface
 public interface Analysis {
 
     /**
@@ -44,5 +44,4 @@ public interface Analysis {
      */
     Iterable<Result> errors(Func<String, XML> xmir,
         String locator) throws Exception;
-
 }

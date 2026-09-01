@@ -23,51 +23,50 @@
  */
 package org.polystat;
 
-import com.jcabi.log.Logger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
+import java.util.Collection;
+import picocli.CommandLine;
 
 /**
- * Turn list of errors into a console report.
+ * Mutually exclusive arguments --include and --exclude.
  * @since 1.0
  */
-final class AsConsole implements Supplier<String> {
+final class IncludeExclude {
 
     /**
-     * Errors.
+     * These rules will be excluded from the output.
      */
-    private final Iterable<Result> errors;
+    @CommandLine.Option(names = "--exclude", split = ",", required = true)
+    private Collection<String> exclude;
+
+    /**
+     * Only these rules will be included in the output.
+     */
+    @CommandLine.Option(names = "--include", split = ",", required = true)
+    private Collection<String> include;
 
     /**
      * Ctor.
-     * @param errs Errors
      */
-    AsConsole(final Iterable<Result> errs) {
-        this.errors = errs;
+    IncludeExclude() {
+        // nothing
     }
 
-    @Override
-    public String get() {
-        final List<String> lines = new ArrayList<>(0);
-        for (final Result ent : this.errors) {
-            if (ent.failure().isPresent()) {
-                Logger.warn(Polystat.class, "%[exception]s", ent.failure().get());
-            } else {
-                for (final String error : ent) {
-                    lines.add(
-                        String.format(
-                            "RESULT BY %s:%n\t%s",
-                            ent.analysis().getSimpleName(),
-                            error.replaceAll("\\R", String.format("%n\t"))
-                        )
-                    );
-                }
-            }
+    /**
+     * Must this result reach the output?
+     * @param res The result of one analysis
+     * @return TRUE if the rule of the result is not filtered out
+     */
+    boolean allows(final Result res) {
+        final boolean allows;
+        if (this.exclude == null) {
+            allows = this.include.stream().anyMatch(
+                rule -> res.ruleId().equals(rule)
+            );
+        } else {
+            allows = this.exclude.stream().anyMatch(
+                rule -> !res.ruleId().equals(rule)
+            );
         }
-        if (lines.isEmpty()) {
-            lines.add("No errors found by Polystat analyzers");
-        }
-        return String.join(System.lineSeparator(), lines);
+        return allows;
     }
 }

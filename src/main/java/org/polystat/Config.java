@@ -27,12 +27,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.cactoos.list.ListOf;
 
 /**
  * Stores command line options from Polystat.
@@ -41,24 +41,29 @@ import org.cactoos.list.ListOf;
 public final class Config implements Iterable<String> {
 
     /**
+     * Boundary between two arguments on the same line.
+     */
+    private static final Pattern SPACES = Pattern.compile("\\s+");
+
+    /**
      * Mapping between config options and their values.
      */
     private final List<String> args;
 
     /**
      * Ctor.
-     * @param config Map with the config options and their values.
+     * @param path Path to the file to read configs from
      */
-    public Config(final List<String> config) {
-        this.args = config;
+    public Config(final Path path) {
+        this(Config.parsed(path));
     }
 
     /**
      * Ctor.
-     * @param path Path to the file to read configs from.
+     * @param config Map with the config options and their values
      */
-    public Config(final Path path) {
-        this(parseConfig(path));
+    public Config(final List<String> config) {
+        this.args = config;
     }
 
     @Override
@@ -66,19 +71,15 @@ public final class Config implements Iterable<String> {
         return this.args.iterator();
     }
 
-    /**
-     * Reads command-line arguments from the ".polystat" file.
-     * @param path Path to ".polystat" file.
-     * @return A list with successfully parsed options. If an error occurs, return an empty list.
-     */
-    private static List<String> parseConfig(final Path path) {
+    private static List<String> parsed(final Path path) {
         List<String> result;
-        try (Stream<String> st = Files.lines(path, StandardCharsets.UTF_8)) {
-            result = st.flatMap(line -> new ListOf<String>(line.trim().split("\\s+")).stream())
-            .filter(s -> !s.isEmpty())
-            .collect(Collectors.toList());
+        try (Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8)) {
+            result = lines
+                .flatMap(line -> Config.SPACES.splitAsStream(line.trim()))
+                .filter(arg -> !arg.isEmpty())
+                .collect(Collectors.toList());
         } catch (final IOException ex) {
-            result = new LinkedList<>();
+            result = new ArrayList<>(0);
         }
         return result;
     }

@@ -24,7 +24,6 @@
 package org.polystat;
 
 import com.jcabi.log.Logger;
-import com.jcabi.manifests.Manifests;
 import com.jcabi.xml.XML;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,19 +46,17 @@ import picocli.CommandLine.ArgGroup;
 
 /**
  * Main entrance.
- *
  * @since 1.0
  * @todo #1:1h Let's use some library for command line arguments parsing.
  *  The current implementation in this class is super primitive and must
  *  be replaced by something decent.
- * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @CommandLine.Command(
     name = "polystat",
     helpCommand = true,
     description = "Read our README in GitHub",
     mixinStandardHelpOptions = true,
-    versionProvider = Polystat.Version.class
+    versionProvider = Version.class
 )
 public final class Polystat implements Callable<Integer> {
 
@@ -105,17 +102,24 @@ public final class Polystat implements Callable<Integer> {
     private boolean sarif;
 
     /**
-     * Main entrance for Java command line.
-     * @param cmdargs The args from the command line.
+     * Ctor.
      */
-    @SuppressWarnings({"PMD.DoNotCallSystemExit", "PMD.AvoidCatchingGenericException"})
+    public Polystat() {
+        // nothing
+    }
+
+    /**
+     * Main entrance for Java command line.
+     * @param cmdargs The args from the command line
+     */
     public static void main(final String... cmdargs) {
         final List<String> confargs = new ListOf<>(
             new Config(Paths.get(".polystat"))
         );
         confargs.addAll(new ListOf<>(cmdargs));
-        final String[] args = confargs.toArray(new String[0]);
-        new CommandLine(new Polystat()).execute(args);
+        new CommandLine(new Polystat()).execute(
+            confargs.toArray(new String[0])
+        );
     }
 
     @Override
@@ -128,7 +132,7 @@ public final class Polystat implements Callable<Integer> {
         }
         final Path sources;
         if (this.source == null) {
-            sources = readCodeFromStdin();
+            sources = Polystat.stdin();
         } else {
             sources = this.source;
         }
@@ -137,24 +141,17 @@ public final class Polystat implements Callable<Integer> {
                 String.format("Provided directory doesn't have any files: %s", sources)
             );
         }
-        final Iterable<Result> errors =
-            this.scan(sources, tempdir);
+        final Iterable<Result> errors = this.scan(sources, tempdir);
         final Supplier<String> out;
         if (this.sarif) {
             out = new AsSarif(errors);
         } else {
             out = new AsConsole(errors);
         }
-        Logger.info(this, "%s\n", out.get());
+        Logger.info(this, "%s%n", out.get());
         return 0;
     }
 
-    /**
-     * Scan.
-     * @param src Path with sources
-     * @param tmp Path with temp files
-     * @return Errors
-     */
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
     private Iterable<Result> scan(final Path src, final Path tmp) {
         final Func<String, XML> xmir = new Program(src, tmp);
@@ -164,104 +161,49 @@ public final class Polystat implements Callable<Integer> {
             try {
                 for (final String file : src.toFile().list()) {
                     if (file.endsWith(extension)) {
-                        final String filename = file.split(extension)[0];
                         errors.addAll(
                             new ListOf<>(
-                                analysis.errors(xmir, String.format("\\Phi.%s", filename))
+                                analysis.errors(
+                                    xmir,
+                                    String.format(
+                                        "\\Phi.%s",
+                                        file.substring(
+                                            0, file.length() - extension.length()
+                                        )
+                                    )
+                                )
                             )
                         );
                     }
                 }
             // @checkstyle IllegalCatchCheck (1 line)
             } catch (final Exception ex) {
-                final Result.Failed result = new Result.Failed(
-                    analysis.getClass(), ex, analysis.getClass().getName()
+                errors.add(
+                    new Result.Failed(
+                        analysis.getClass(), ex, analysis.getClass().getName()
+                    )
                 );
-                errors.add(result);
             }
         }
         final Collection<Result> filtered;
         if (this.inex == null) {
             filtered = errors;
-        } else if (this.inex.exclude == null) {
-            filtered = errors.stream().filter(
-                e -> this.inex.includeList().stream().anyMatch(rule -> e.ruleId().equals(rule))
-            ).collect(Collectors.toList());
         } else {
-            filtered = errors.stream().filter(
-                e -> this.inex.excludeList().stream().anyMatch(rule -> !e.ruleId().equals(rule))
-            ).collect(Collectors.toList());
+            filtered = errors.stream()
+                .filter(this.inex::allows)
+                .collect(Collectors.toList());
         }
         return filtered;
     }
 
-    /**
-     * Reads the EO code from standard input,
-     * creates a temporary directory and
-     * writes the code to a new file in this directory called "test.eo".
-     * @return Path object of "{tmpdir}/test.eo" files.
-     * @throws Exception When IO fails.
-     */
-    private static Path readCodeFromStdin() throws Exception {
+    private static Path stdin() throws Exception {
         final Path tmpdir = Files.createTempDirectory("polystat_stdin");
-        final String name = "test.eo";
-        final Path fullpath = tmpdir.resolve(Paths.get(name));
-        final Path tmpfile = Files.createFile(fullpath);
         new LengthOf(
             new TeeInput(
                 new Stdin(),
-                new OutputTo(tmpfile)
+                new OutputTo(Files.createFile(tmpdir.resolve("test.eo")))
             )
         ).value();
         return tmpdir;
     }
-
-    /**
-     * Version.
-     * @since 1.0
-     */
-    static final class Version implements CommandLine.IVersionProvider {
-        @Override
-        public String[] getVersion() {
-            return new String[]{
-                Manifests.read("Polystat-Version"),
-                Manifests.read("EO-Version"),
-            };
-        }
-    }
-
-    /**
-     * Mutually exclusive arguments --exclude and --exclude.
-     * @since 1.0
-     */
-    private static final class IncludeExclude {
-        /**
-         * These rules will be excluded from the output.
-         */
-        @CommandLine.Option(names = "--exclude", split = ",", required = true)
-        private Collection<String> exclude;
-
-        /**
-         * Only these rules will be included in the output.
-         */
-        @CommandLine.Option(names = "--include", split = ",", required = true)
-        private Collection<String> include;
-
-        /**
-         * Returns exclude list.
-         * @return Exclude list.
-         */
-        public Collection<String> excludeList() {
-            return this.exclude;
-        }
-
-        /**
-         * Returns include list.
-         * @return Include list.
-         */
-        public Collection<String> includeList() {
-            return this.include;
-        }
-    }
-
 }

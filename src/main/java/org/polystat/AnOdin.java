@@ -33,31 +33,29 @@ import org.polystat.odin.interop.java.OdinAnalysisResultInterop;
 
 /**
  * The implementation of analysis via odin (object dependency inspector).
- *
  * @see <a href="https://github.com/polystat/odin">Github</a>
  * @since 0.3
  */
 public final class AnOdin implements Analysis {
 
-    @Override
-    @SuppressWarnings("PMD.AvoidCatchingGenericException")
-    public Iterable<Result> errors(final Func<String, XML> xmir,
-        final String locator) throws Exception {
-        final XML xml = xmir.apply(locator);
-        final String str = getObjectsHierarchy(xmir, xml);
-        final Iterable<Result> result = new EOOdinAnalyzer.EOOdinXmirAnalyzer()
-            .analyze(str).stream()
-            .map(res -> extractResults(res))
-            .collect(Collectors.toList());
-        return result;
+    /**
+     * Ctor.
+     */
+    public AnOdin() {
+        // nothing
     }
 
-    /**
-     * Converts OdinAnalysisResultInterop to org.polystat.Result.
-     * @param res Odin result object
-     * @return Polystat result object
-     */
-    private static Result extractResults(final OdinAnalysisResultInterop res) {
+    @Override
+    public Iterable<Result> errors(final Func<String, XML> xmir,
+        final String locator) throws Exception {
+        return new EOOdinAnalyzer.EOOdinXmirAnalyzer()
+            .analyze(AnOdin.hierarchy(xmir, xmir.apply(locator)))
+            .stream()
+            .map(AnOdin::extracted)
+            .collect(Collectors.toList());
+    }
+
+    private static Result extracted(final OdinAnalysisResultInterop res) {
         final Result result;
         if (res.analyzerFailure().isPresent()) {
             result = new Result.Failed(
@@ -81,33 +79,17 @@ public final class AnOdin implements Analysis {
         return result;
     }
 
-    /**
-     * Resolves object hierarchy for the give object represented in XMIR and
-     * returns a well-formed XML.
-     * @param xmir Function to retrieve XMIR by locator
-     * @param xml XMIR of object to get hierarchy for
-     * @return Well-formed XML containing objects that form a hierarchy in XMIR
-     * @throws Exception on errors
-     */
-    private static String getObjectsHierarchy(final Func<String, XML> xmir,
+    private static String hierarchy(final Func<String, XML> xmir,
         final XML xml) throws Exception {
         return String.format(
             "%s%n%s%n%s",
             "<objects>",
-            resolveObjectHierarchy(xmir, xml),
+            AnOdin.decoratees(xmir, xml),
             "</objects>"
         );
     }
 
-    /**
-     * Recursively resolves the decoratees for the given decorator object
-     * represented as XMIR.
-     * @param xmir Function to retrieve XMIR by locator
-     * @param xml XMIR that represents an object
-     * @return Concatenated XML string containing the whole object hierarchy
-     * @throws Exception on errors
-     */
-    private static String resolveObjectHierarchy(final Func<String, XML> xmir,
+    private static String decoratees(final Func<String, XML> xmir,
         final XML xml) throws Exception {
         String result = xml.toString();
         for (final String decoratee : xml.xpath("o[@name='@']/@base")) {

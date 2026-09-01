@@ -23,8 +23,8 @@
  */
 package org.polystat;
 
-import com.jcabi.xml.XML;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import org.cactoos.Text;
 import org.cactoos.io.ResourceOf;
@@ -40,7 +40,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test case for {@link Program}.
- *
  * @since 0.1
  */
 final class ProgramTest {
@@ -62,34 +61,17 @@ final class ProgramTest {
         this.assertOutput(temp, temp);
     }
 
-    /**
-     * Write to file.
-     * @param data Data.
-     * @param file File.
-     */
     private void writeFile(final Text data, final Path file) {
         new Unchecked<>(new LengthOf(new TeeInput(data, file))).value();
     }
 
-    /**
-     * Run program & check output.
-     * @param sources Source dir.
-     * @param temp Temp dir.
-     * @throws Exception If program fails.
-     */
     private void assertOutput(final Path sources, final Path temp) throws Exception {
-        final Program program = new Program(sources, temp);
-        final XML test = program.apply("\\Phi.test.fv");
         MatcherAssert.assertThat(
-            test.xpath("@name").get(0),
+            new Program(sources, temp).apply("\\Phi.test.fv").xpath("@name").get(0),
             Matchers.equalTo("fv")
         );
     }
 
-    /**
-     * Write source code.
-     * @param dir Output dir.
-     */
     private void writeSources(final Path dir) {
         final Iterable<String> sources = Arrays.asList(
             "org/polystat/test.eo",
@@ -100,7 +82,7 @@ final class ProgramTest {
                 new TextOf(
                     new ResourceOf(src)
                 ),
-                dir.resolve(src.split("/")[2])
+                dir.resolve(Paths.get(src).getFileName())
             );
         }
     }

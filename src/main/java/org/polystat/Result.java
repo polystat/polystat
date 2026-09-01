@@ -29,14 +29,13 @@ import java.util.Optional;
 
 /**
  * Analysis result.
- *
  * @since 1.0
  */
 public interface Result extends Iterable<String> {
 
     /**
      * Analysis type.
-     * @return Class.
+     * @return Class
      */
     Class<? extends Analysis> analysis();
 
@@ -48,13 +47,12 @@ public interface Result extends Iterable<String> {
 
     /**
      * Failure if occurred.
-     * @return Present if analysis failed.
+     * @return Present if analysis failed
      */
     Optional<? extends Throwable> failure();
 
     /**
      * Completed analysis result.
-     *
      * @since 1.0
      */
     final class Completed implements Result {
@@ -76,9 +74,9 @@ public interface Result extends Iterable<String> {
 
         /**
          * Ctor.
-         * @param type Type.
-         * @param errors Errors.
-         * @param ruleid ID of the rule that was run.
+         * @param type Type
+         * @param errors Errors
+         * @param ruleid ID of the rule that was run
          */
         public Completed(
             final Class<? extends Analysis> type,
@@ -113,7 +111,6 @@ public interface Result extends Iterable<String> {
 
     /**
      * Failed Analysis result.
-     *
      * @since 1.0
      */
     final class Failed implements Result {
@@ -135,9 +132,9 @@ public interface Result extends Iterable<String> {
 
         /**
          * Ctor.
-         * @param type Analysis.
-         * @param error Exception.
-         * @param ruleid ID of the rule that was run.
+         * @param type Analysis
+         * @param error Exception
+         * @param ruleid ID of the rule that was run
          */
         public Failed(
             final Class<? extends Analysis> type,
