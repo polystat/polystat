@@ -13,7 +13,7 @@ jobs:
         with:
           path: white-paper
           opts: -pdf
-          packages: ffcode href-ul huawei fmtcount trimspaces catchfile catchfile transparent textpos fvextra xstring framed environ titlesec
+          packages: anyfontsize biblatex caption catchfile changepage currfile datetime enumitem environ fancyhdr ffcode filehook float fmtcount fontsize footmisc framed fvextra geometry href-ul huawei hyperref iexec koma-script lastpage libertine listings listingsutf8 makecell microtype minted pagecolor paralist pdfcol pgf pgfopts ragged2e setspace svg tcolorbox textpos tikzfill titlesec titling transparent trimspaces upquote wrapfig xcolor xstring
       - run: mkdir white-paper/pdf
       - run: cp white-paper/wp.pdf white-paper/pdf
       - uses: JamesIves/github-pages-deploy-action@v4.9.0
