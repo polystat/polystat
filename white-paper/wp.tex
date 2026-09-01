@@ -21,7 +21,8 @@
 % SOFTWARE.
 
 \documentclass[nosecurity,nobrand]{huawei}
-\usepackage{ffcode}
+\usepackage[nonumbers]{ffcode}
+\lstset{showstringspaces=false}
 \usepackage{href-ul}
 \renewcommand*\theauthor{Yegor Bugayenko}
 \renewcommand*\thecompany{Polystat.org}
@@ -191,13 +192,13 @@ of Java maintainability bug detectable by the
 ``check'' of PMD analyzer; the code sample is adopted
 from the book of~\citet[p.475]{sierra2005head}:
 
-\begin{minted}{java}
+\begin{ffcode}[language=Java]
 char[] buffer = new char[1024];
 int pos = 0;
 while ((data = reader.read()) > 0) {
   buffer[pos++] = (char) data;
 }
-\end{minted}
+\end{ffcode}
 
 Here, the variable \ff{data} is assigned and at the same time used
 as an operand for the \ff{while} statement. Such a construct
@@ -207,7 +208,7 @@ In order to increase
 readability of the code it may be refactored~\citep{fowler2018refactoring}
 to decrease complexity, coupling, and other qualities~\citep{yamashita2012code}:
 
-\begin{minted}{java}
+\begin{ffcode}[language=Java]
 char[] buffer = new char[1024];
 int pos = 0;
 while (true) {
@@ -217,7 +218,7 @@ while (true) {
   }
   buffer[pos++] = (char) data;
 }
-\end{minted}
+\end{ffcode}
 
 \sector{Functional Bugs}
 Functional bugs are more difficult to find, but they are more important,
@@ -227,7 +228,7 @@ code snippet mentioned above contains a functional bug related to a possible
 buffer overflow, if the number of symbols in the reader is bigger than 1024.
 A possible fix would look like this:
 
-\begin{minted}{java}
+\begin{ffcode}[language=Java]
 char[] buffer = new char[1024];
 int pos = 0;
 while (true) {
@@ -240,7 +241,7 @@ while (true) {
   }
   buffer[pos++] = (char) data;
 }
-\end{minted}
+\end{ffcode}
 
 This is not a perfect fix though. One may argue that it does not improve the code in any way, since
 the exception it throws is an unspecific runtime exception as opposed to
@@ -260,7 +261,7 @@ remains in memory. If the data is sensitive and the application crashes
 right after the exception is raised, the memory will contain the data
 open for exposure. Here is how this problem could be fixed:
 
-\begin{minted}{java}
+\begin{ffcode}[language=Java]
 char[] buffer = new char[1024];
 int pos = 0;
 while (true) {
@@ -274,7 +275,7 @@ while (true) {
   }
   buffer[pos++] = (char) data;
 }
-\end{minted}
+\end{ffcode}
 
 It's important to mention that as a result of simple analysis the code
 above grew up from five lines to 13 lines. This is a well-known effect
@@ -294,7 +295,7 @@ The code above doesn't call \ff{close()}, which may lead to resource leakage
 and eventual program crash. The code may be fixed like this (\ff{try/finally}
 statements are added):
 
-\begin{minted}{java}
+\begin{ffcode}[language=Java]
 char[] buffer = new char[1024];
 int pos = 0;
 try {
@@ -312,7 +313,7 @@ try {
 } finally {
   reader.close();
 }
-\end{minted}
+\end{ffcode}
 
 There are other bugs related solely to violations of object design.
 There is a short list of most obvious ones, while the full list is

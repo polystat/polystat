@@ -2,11 +2,10 @@
 *.bcf
 *.blg
 *.fdb_latexmk
-_minted-*
+*.ffcode
 *.fls
 *.log
 *.run.xml
 *.aux
-*.pyg
 *.out
 wp.pdf
