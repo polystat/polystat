@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: Copyright (c) 2020-2022 Polystat.org
+# SPDX-License-Identifier: MIT
+---
+name: reuse
+'on':
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+concurrency:
+  group: reuse-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  reuse:
+    timeout-minutes: 15
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: fsfe/reuse-action@v6
