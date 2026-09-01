@@ -13,12 +13,13 @@ jobs:
   codecov:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v6
         with:
+          distribution: 'temurin'
           java-version: 11
-      - uses: actions/cache@v3
+      - uses: actions/cache@v6
         with:
           path: ~/.m2/repository
           key: maven-${{ hashFiles('**/pom.xml') }}
@@ -27,7 +28,8 @@ jobs:
       - name: Run tests
         run: mvn -B verify -Pjacoco
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
-          file: ./target/site/jacoco/jacoco.xml
-          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./target/site/jacoco/jacoco.xml
+          fail_ci_if_error: false

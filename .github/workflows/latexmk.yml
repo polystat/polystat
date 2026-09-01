@@ -8,15 +8,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: yegor256/latexmk-action@0.7.1
+      - uses: actions/checkout@v7
+      - uses: yegor256/latexmk-action@0.20.0
         with:
           path: white-paper
           opts: -pdf
           packages: ffcode href-ul huawei fmtcount trimspaces catchfile catchfile transparent textpos fvextra xstring framed environ titlesec
       - run: mkdir white-paper/pdf
       - run: cp white-paper/wp.pdf white-paper/pdf
-      - uses: JamesIves/github-pages-deploy-action@v4.4.1
+      - uses: JamesIves/github-pages-deploy-action@v4.9.0
         with:
           branch: gh-pages
           folder: white-paper/pdf
