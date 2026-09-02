@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 ---
 # yamllint disable rule:line-length
-name: reuse
+name: typos
 'on':
   push:
     branches:
@@ -11,9 +11,11 @@ name: reuse
     branches:
       - master
 jobs:
-  reuse:
+  typos:
     timeout-minutes: 15
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
-      - uses: fsfe/reuse-action@v6
+      - uses: crate-ci/typos@v1.49.0
+        with:
+          config: ./.github/typos.toml

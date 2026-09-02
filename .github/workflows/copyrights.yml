@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: Copyright (c) 2020-2022 Polystat.org
+# SPDX-License-Identifier: MIT
+---
+# yamllint disable rule:line-length
+name: copyrights
+'on':
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  copyrights:
+    timeout-minutes: 15
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: yegor256/copyrights-action@0.0.12
+        with:
+          globs: >-
+            **/LICENSE.txt
+            **/*.sh
+            **/*.yml
+            **/*.yaml
+            **/*.eo
+            **/*.xmir
+            **/*.xml
+            **/*.xsl
+            **/*.xsd
+            **/*.ini
+            **/*.java
+            **/*.g4
+            **/*.properties
+            **/*.toml
+            **/*.groovy

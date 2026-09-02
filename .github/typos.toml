@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: Copyright (c) 2020-2022 Polystat.org
+# SPDX-License-Identifier: MIT
+
+[files]
+extend-exclude = [
+
+]
