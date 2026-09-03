@@ -3,5 +3,9 @@
 
 [files]
 extend-exclude = [
-
+  "white-paper/main.bib",
 ]
+
+[default.extend-words]
+inex = "inex"
+elipse = "elipse"

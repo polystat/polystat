@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: Copyright (c) 2020-2022 Polystat.org
+# SPDX-License-Identifier: MIT
 +package sandbox
 +alias stdout org.eolang.io.stdout
 +alias sprintf org.eolang.txt.sprintf

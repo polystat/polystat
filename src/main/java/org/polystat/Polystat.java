@@ -65,7 +65,7 @@ public final class Polystat implements Callable<Integer> {
     private Path source;
 
     /**
-     * Output directoty. If not specified, defaults to a temporary directory.
+     * Output directory. If not specified, defaults to a temporary directory.
      */
     @CommandLine.Option(
         names = "--tmp",
@@ -74,7 +74,7 @@ public final class Polystat implements Callable<Integer> {
     private Path temp;
 
     /**
-     * Output directoty.
+     * Output directory.
      */
     @CommandLine.Option(
         names = "--sarif",
