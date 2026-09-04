@@ -62,7 +62,7 @@
   </distributionManagement>
   <properties>
     <odin.version>0.4.5</odin.version>
-    <eo.version>0.22.2</eo.version>
+    <eo.version>0.63.1</eo.version>
   </properties>
   <dependencies>
     <dependency>
